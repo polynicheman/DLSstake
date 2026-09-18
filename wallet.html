@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Wallet — DLS Stake</title>
+<meta name="description" content="Deposit, withdraw, and review your DLS Stake transactions." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+.wrap{width:100%;max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:860px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+.page-head{margin-bottom:26px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
+
+/* BALANCE HERO */
+.balance-hero{
+  background:linear-gradient(160deg, var(--surface-3), var(--bg-2));
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:28px;
+  margin-bottom:24px;
+  display:grid;gap:22px;grid-template-columns:1fr;
+  position:relative;overflow:hidden;
+}
+.balance-hero::after{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle, rgba(0,217,126,.14), transparent 65%);pointer-events:none}
+@media(min-width:760px){.balance-hero{grid-template-columns:1.4fr 1fr;align-items:center;padding:34px 32px}}
+.balance-label{font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.balance-value{font-family:var(--ff-mono);font-size:clamp(2.2rem,6vw,3.2rem);font-weight:900;letter-spacing:-.04em;color:var(--primary);line-height:1}
+.balance-sub{font-size:.82rem;color:var(--muted);margin-top:10px}
+.balance-side{display:grid;gap:10px}
+.mini-stat{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:rgba(7,13,22,.4);border:1px solid var(--border);border-radius:var(--radius)}
+.mini-stat .k{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.mini-stat .v{font-family:var(--ff-mono);font-weight:800;font-size:.9rem;color:var(--text-2)}
+.mini-stat .v.good{color:var(--primary)}
+.mini-stat .v.mid{color:var(--warn)}
+.mini-stat .v.bad{color:var(--danger)}
+
+/* GRID */
+.grid-2{display:grid;gap:20px;grid-template-columns:1fr;margin-bottom:24px}
+@media(min-width:860px){.grid-2{grid-template-columns:1fr 1fr}}
+
+.panel{
+  background:linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:26px;
+}
+.panel-head{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.panel-head .ico{
+  width:44px;height:44px;border-radius:14px;
+  background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24);
+  display:grid;place-items:center;font-size:1.2rem;
+}
+.panel-head.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.24)}
+.panel-head h2{font-size:1.05rem;font-weight:900;letter-spacing:-.02em}
+.panel-head p{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label{font-size:.78rem;font-weight:700;color:var(--text-2)}
+.amount-input{display:flex;align-items:center;gap:12px;padding:6px 8px 6px 18px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius);transition:border-color .15s,box-shadow .15s}
+.amount-input:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.amount-input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.15)}
+.amount-input .cur{font-family:var(--ff-mono);font-size:1.25rem;font-weight:900;color:var(--muted)}
+.amount-input input{flex:1;padding:14px 0;font-family:var(--ff-mono);font-size:1.5rem;font-weight:900;background:transparent;border:none;outline:none;color:var(--text);min-width:0}
+.amount-input .suffix{font-size:.7rem;font-weight:800;letter-spacing:.08em;color:var(--muted);padding:6px 10px;border:1px solid var(--border-2);border-radius:var(--radius-sm)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{padding:8px 14px;border-radius:var(--radius-full);background:var(--surface-2);border:1px solid var(--border);font-size:.82rem;font-weight:700;color:var(--text-2);font-family:var(--ff-mono);transition:.15s}
+.chip:hover{border-color:var(--primary);color:var(--text)}
+.chip.active{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.4);color:var(--primary)}
+
+.err{font-size:.78rem;color:var(--danger);display:none;margin-bottom:12px}
+.err.show{display:block}
+
+.info-note{display:flex;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);font-size:.8rem;line-height:1.5;margin-bottom:16px}
+.info-note.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.25);color:#9cc4ff}
+.info-note.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.25);color:#ffd08a}
+.info-note b{font-weight:800}
+
+.input-select{width:100%;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none}
+.input-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text{width:100%;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input-text:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;border:1px solid transparent;cursor:pointer;transition:transform .12s, box-shadow .18s, opacity .18s, background .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 28px;font-size:1rem}
+
+/* HISTORY */
+.panel-full{margin-bottom:24px}
+.history-table{display:grid;gap:0}
+.history-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.history-row:last-child{border-bottom:none}
+.h-ico{width:38px;height:38px;min-width:38px;border-radius:11px;display:grid;place-items:center;font-size:.95rem;font-weight:900}
+.h-ico.dep{background:rgba(0,217,126,.12);color:var(--primary)}
+.h-ico.wd{background:rgba(255,176,32,.12);color:var(--warn)}
+.h-ico.tx{background:rgba(47,128,237,.12);color:#7cb4ff}
+.h-ico.fee{background:rgba(139,92,246,.12);color:#c4b5fd}
+.h-txt{flex:1;min-width:0}
+.h-txt h4{font-size:.86rem;font-weight:700;margin-bottom:2px;text-transform:capitalize;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-txt p{font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
+.h-amt{font-family:var(--ff-mono);font-weight:800;font-size:.92rem;white-space:nowrap}
+.h-amt.pos{color:var(--primary)}
+.h-amt.neg{color:var(--danger)}
+.h-amt.neu{color:var(--warn)}
+
+.status-badge{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);margin-left:8px}
+.status-badge.pending{background:rgba(255,176,32,.14);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
+.status-badge.success{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.status-badge.failed{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+
+.empty{padding:34px 22px;text-align:center;background:var(--surface-2);border:1px dashed var(--border-2);border-radius:var(--radius)}
+.empty .ico-big{font-size:2rem;margin-bottom:12px;opacity:.85}
+.empty h3{font-size:1rem;font-weight:800;margin-bottom:6px}
+.empty p{font-size:.84rem;color:var(--muted);max-width:380px;margin:0 auto}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="create-match.html">Create</a>
+      <a href="wallet.html" class="active">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="page-head">
+    <div class="eyebrow">Wallet</div>
+    <h1 class="page-title">Deposit &amp; withdraw</h1>
+    <div class="page-sub">Fund your account with Paystack. Withdrawals land in your Nigerian bank account.</div>
+  </div>
+
+  <!-- BALANCE HERO -->
+  <div class="balance-hero">
+    <div>
+      <div class="balance-label">Available balance</div>
+      <div class="balance-value" id="balanceValue">₦0.00</div>
+      <div class="balance-sub" id="balanceSub">Loading…</div>
+    </div>
+    <div class="balance-side">
+      <div class="mini-stat"><span class="k">In escrow</span><span class="v" id="escrowVal">₦0.00</span></div>
+      <div class="mini-stat"><span class="k">Trust score</span><span class="v good" id="trustVal">100</span></div>
+      <div class="mini-stat"><span class="k">KYC status</span><span class="v" id="kycVal">Pending</span></div>
+    </div>
+  </div>
+
+  <!-- DEPOSIT + WITHDRAW -->
+  <div class="grid-2">
+    <!-- Deposit -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="ico">＋</div>
+        <div style="flex:1">
+          <h2>Deposit</h2>
+          <p>Instant credit after payment</p>
+        </div>
+      </div>
+
+      <div class="info-note info">
+        <span>ℹ</span>
+        <div>You'll be redirected to <b>Paystack</b> to complete payment. Balance updates within seconds after confirmation.</div>
+      </div>
+
+      <div class="field">
+        <label>Amount</label>
+        <div class="amount-input" id="depWrap">
+          <span class="cur">₦</span>
+          <input id="depAmount" type="number" inputmode="numeric" placeholder="0" min="500" step="100">
+          <span class="suffix">NGN</span>
+        </div>
+      </div>
+
+      <div class="chips" id="depChips">
+        <button class="chip" data-amt="1000">₦1,000</button>
+        <button class="chip" data-amt="5000">₦5,000</button>
+        <button class="chip" data-amt="10000">₦10,000</button>
+        <button class="chip" data-amt="20000">₦20,000</button>
+        <button class="chip" data-amt="50000">₦50,000</button>
+      </div>
+
+      <div class="err" id="depErr"></div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="depBtn" onclick="Wallet.deposit()">
+        Pay with Paystack
+      </button>
+    </div>
+
+    <!-- Withdraw -->
+    <div class="panel">
+      <div class="panel-head blue">
+        <div class="ico">↗</div>
+        <div style="flex:1">
+          <h2>Withdraw</h2>
+          <p>Send to your bank account</p>
+        </div>
+      </div>
+
+      <div class="info-note warn" id="wdKycNote" style="display:none">
+        <span>⚠</span>
+        <div><b>KYC required.</b> You must verify your identity before withdrawing.</div>
+      </div>
+
+      <div class="field">
+        <label>Amount</label>
+        <div class="amount-input" id="wdWrap">
+          <span class="cur">₦</span>
+          <input id="wdAmount" type="number" inputmode="numeric" placeholder="0" min="500" step="100">
+          <span class="suffix">NGN</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Bank</label>
+        <select id="wdBank" class="input-select">
+          <option value="">Select bank…</option>
+          <option value="044">Access Bank</option>
+          <option value="063">Access Bank (Diamond)</option>
+          <option value="035">ALAT by Wema</option>
+          <option value="057">Zenith Bank</option>
+          <option value="058">Guaranty Trust Bank (GTB)</option>
+          <option value="011">First Bank of Nigeria</option>
+          <option value="214">First City Monument Bank (FCMB)</option>
+          <option value="070">Fidelity Bank</option>
+          <option value="030">Heritage Bank</option>
+          <option value="301">Jaiz Bank</option>
+          <option value="082">Keystone Bank</option>
+          <option value="526">Parallex Bank</option>
+          <option value="076">Polaris Bank</option>
+          <option value="221">Stanbic IBTC</option>
+          <option value="068">Standard Chartered</option>
+          <option value="232">Sterling Bank</option>
+          <option value="100">Suntrust Bank</option>
+          <option value="032">Union Bank</option>
+          <option value="033">United Bank for Africa (UBA)</option>
+          <option value="215">Unity Bank</option>
+          <option value="035">Wema Bank</option>
+          <option value="50211">Kuda</option>
+          <option value="999992">Opay</option>
+          <option value="50515">Moniepoint</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Account number (10 digits)</label>
+        <input id="wdAcct" class="input-text" type="text" inputmode="numeric" maxlength="10" placeholder="0123456789">
+      </div>
+
+      <div class="field">
+        <label>Account name</label>
+        <input id="wdName" class="input-text" type="text" placeholder="As it appears on your bank statement">
+      </div>
+
+      <div class="err" id="wdErr"></div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="wdBtn" onclick="Wallet.withdraw()">
+        Request withdrawal
+      </button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="panel panel-full">
+    <div class="panel-head">
+      <div class="ico">📜</div>
+      <div style="flex:1">
+        <h2>Transaction history</h2>
+        <p>Deposits, withdrawals, and match settlements</p>
+      </div>
+    </div>
+    <div id="history">
+      <div class="empty">
+        <div class="ico-big">📭</div>
+        <h3>No transactions yet</h3>
+        <p>Your deposits, withdrawals, and match payouts will appear here.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="lobby.html">Lobby</a>
+        <a href="create-match.html">Create</a>
+        <a href="profile.html">Profile</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  CURRENCY:          '₦',
+  MIN_DEPOSIT:       500,
+  MIN_WITHDRAWAL:    500,
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  },
+  busy(btnId, isBusy, label='Please wait…'){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isBusy){
+      btn.dataset.label = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spin"></span> ${label}`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.label || btn.innerHTML;
+    }
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  deposits: [],
+  withdrawals: [],
+  transactions: [],
+  loading: true
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
+      catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  }
+};
+
+/* ============================================================================
+   WALLET
+   ============================================================================ */
+const Wallet = {
+
+  async init(){
+    log('Wallet init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    /* Deposit return */
+    const params = new URLSearchParams(location.search);
+    if (params.get('deposit') === '1'){
+      UI.toast('Payment received. Balance will update shortly.', 'ok');
+      setTimeout(()=>Wallet.reload(true), 2500);
+      history.replaceState(null, '', location.pathname);
+    }
+
+    /* Wire chips */
+    $$('#depChips .chip').forEach(c => {
+      c.addEventListener('click', () => {
+        $('#depAmount').value = c.dataset.amt;
+        $$('#depChips .chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        $('#depWrap').classList.remove('invalid');
+        $('#depErr').classList.remove('show');
+      });
+    });
+
+    await this.reload();
+
+    window.addEventListener('focus', () => Wallet.reload(true));
+  },
+
+  async reload(silent){
+    try {
+      let payload = null;
+
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        payload = {
+          profile: u || {},
+          deposits: [],
+          withdrawals: [],
+          transactions: []
+        };
+      } else {
+        const { data, error } = await Supa.client.rpc('get_my_wallet');
+        if (error){ warn('wallet error:', error.message); }
+        payload = data || null;
+        if (!payload){
+          const { data: p } = await Supa.client.from('profiles').select('*').eq('id', State.session.user.id).maybeSingle();
+          payload = { profile: p || {}, deposits: [], withdrawals: [], transactions: [] };
+        }
+      }
+
+      State.profile = payload.profile;
+      State.deposits = payload.deposits || [];
+      State.withdrawals = payload.withdrawals || [];
+      State.transactions = payload.transactions || [];
+      State.loading = false;
+
+      this.renderNav();   /* ← FIX: populate the nav avatar + name */
+      this.render();
+      if (!silent) log('Wallet loaded');
+    } catch(e){ err('reload threw:', e); }
+  },
+
+  /* ========================================================================
+     NAV RENDER  —  this is what was missing before
+     ======================================================================== */
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    if (!u) return;
+
+    const username = p?.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
+    const av = document.getElementById('navAvatar');
+    const nm = document.getElementById('navName');
+    if (av) av.textContent = UI.initials(username);
+    if (nm) nm.textContent = username;
+  },
+
+  render(){
+    const p = State.profile || {};
+
+    /* Balance hero */
+    const balance = Number(p.balance || 0);
+    const escrow  = Number(p.in_escrow || 0);
+    const trust   = Number(p.trust_score ?? 100);
+    const kyc     = p.kyc_status || 'pending';
+
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('balanceValue', UI.money(balance));
+    set('balanceSub',   `Available to stake · Escrow holds ${UI.money(escrow)}`);
+    set('escrowVal',    UI.money(escrow));
+    set('trustVal',     trust);
+    set('kycVal',       kyc.charAt(0).toUpperCase() + kyc.slice(1));
+
+    const tv = $('#trustVal');
+    if (tv) tv.className = 'v ' + (trust >= 80 ? 'good' : trust >= 50 ? 'mid' : 'bad');
+
+    /* KYC gate on withdrawal */
+    const wdBtn = $('#wdBtn');
+    if (kyc !== 'verified'){
+      $('#wdKycNote').style.display = 'flex';
+      if (wdBtn) wdBtn.disabled = true;
+    } else {
+      $('#wdKycNote').style.display = 'none';
+      if (wdBtn) wdBtn.disabled = false;
+    }
+
+    /* History */
+    const all = [];
+    State.deposits.forEach(d => all.push({
+      kind: 'deposit', amount: Number(d.amount),
+      status: d.status, when: d.created_at,
+      note: `Deposit · ${d.provider_reference || 'Paystack'}`
+    }));
+    State.withdrawals.forEach(w => all.push({
+      kind: 'withdrawal', amount: Number(w.amount),
+      status: w.status, when: w.created_at,
+      note: `Withdrawal · ${(w.bank_account?.account_name || 'Bank')}`
+    }));
+    State.transactions.forEach(t => {
+      if (t.type === 'deposit' || t.type === 'withdrawal') return;
+      all.push({
+        kind: 'tx', amount: Number(t.amount),
+        status: null, when: t.created_at,
+        note: t.note || t.type, type: t.type
+      });
+    });
+    all.sort((a,b) => new Date(b.when) - new Date(a.when));
+
+    const hist = $('#history');
+    if (!all.length){
+      hist.innerHTML = `
+        <div class="empty">
+          <div class="ico-big">📭</div>
+          <h3>No transactions yet</h3>
+          <p>Your deposits, withdrawals, and match payouts will appear here.</p>
+        </div>`;
+      return;
+    }
+
+    hist.innerHTML = '<div class="history-table">' + all.slice(0, 50).map(item => this.historyRow(item)).join('') + '</div>';
+  },
+
+  historyRow(item){
+    let icon = '•', iconCls = 'tx', amtCls = 'neu', sign = '';
+    if (item.kind === 'deposit'){ icon = '↓'; iconCls = 'dep'; amtCls = 'pos'; sign = '+'; }
+    else if (item.kind === 'withdrawal'){ icon = '↑'; iconCls = 'wd'; amtCls = 'neg'; sign = '−'; }
+    else {
+      const t = item.type || '';
+      if (t === 'stake_lock'){ icon = '🔒'; amtCls = 'neu'; }
+      else if (t === 'stake_release'){ icon = '★'; amtCls = 'pos'; sign = '+'; }
+      else if (t === 'refund'){ icon = '↩'; amtCls = 'neu'; sign = ''; }
+      else if (t === 'fee'){ icon = '⚙'; iconCls = 'fee'; amtCls = 'neg'; sign = '−'; }
+    }
+
+    const statusBadge = item.status
+      ? `<span class="status-badge ${item.status}">${item.status}</span>` : '';
+
+    return `
+      <div class="history-row">
+        <div class="h-ico ${iconCls}">${icon}</div>
+        <div class="h-txt">
+          <h4>${UI.escape(item.note || 'Transaction')}${statusBadge}</h4>
+          <p>${UI.timeAgo(item.when)}</p>
+        </div>
+        <div class="h-amt ${amtCls}">${sign}${UI.money(Math.abs(item.amount))}</div>
+      </div>`;
+  },
+
+  /* ── Deposit ─────────────────────────────────────────────── */
+  async deposit(){
+    const raw = Number($('#depAmount').value);
+    const errEl = $('#depErr'); errEl.classList.remove('show');
+    $('#depWrap').classList.remove('invalid');
+
+    if (!raw || raw < CONFIG.MIN_DEPOSIT){
+      errEl.textContent = `Minimum deposit is ${UI.money(CONFIG.MIN_DEPOSIT)}.`;
+      errEl.classList.add('show');
+      $('#depWrap').classList.add('invalid');
+      return;
+    }
+
+    if (!Supa.HAS){
+      UI.toast('Demo mode — simulating deposit…', 'info');
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      const u = users.find(x => x.id === State.session.user.id);
+      if (u){
+        u.balance = Number(u.balance || 0) + raw;
+        localStorage.setItem('dls_demo_users', JSON.stringify(users));
+      }
+      UI.toast(`₦${raw.toLocaleString()} added (demo).`, 'ok');
+      await this.reload();
+      return;
+    }
+
+    const btn = $('#depBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Redirecting…';
+
+    try {
+      const { data, error } = await Supa.client.functions.invoke('initialize-deposit', {
+        body: { amount: raw, returnTo: 'wallet.html' }
+      });
+      if (error || !data?.authorization_url){
+        throw new Error(error?.message || data?.error || 'Could not initialize payment');
+      }
+      log('Redirecting to Paystack:', data.authorization_url);
+      window.location.href = data.authorization_url;
+    } catch (e){
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      errEl.textContent = e.message || 'Payment initialization failed.';
+      errEl.classList.add('show');
+    }
+  },
+
+  /* ── Withdraw ────────────────────────────────────────────── */
+  async withdraw(){
+    const amount = Number($('#wdAmount').value);
+    const bank   = $('#wdBank').value;
+    const acct   = $('#wdAcct').value.trim();
+    const name   = $('#wdName').value.trim();
+    const errEl = $('#wdErr'); errEl.classList.remove('show');
+    $('#wdWrap').classList.remove('invalid');
+
+    if (!amount || amount < CONFIG.MIN_WITHDRAWAL){
+      errEl.textContent = `Minimum withdrawal is ${UI.money(CONFIG.MIN_WITHDRAWAL)}.`;
+      errEl.classList.add('show');
+      $('#wdWrap').classList.add('invalid');
+      return;
+    }
+    if (amount > Number(State.profile?.balance || 0)){
+      errEl.textContent = `Insufficient balance. You have ${UI.money(State.profile?.balance)}.`;
+      errEl.classList.add('show');
+      return;
+    }
+    if (!bank){ errEl.textContent = 'Select your bank.'; errEl.classList.add('show'); return; }
+    if (!/^\d{10}$/.test(acct)){ errEl.textContent = 'Account number must be 10 digits.'; errEl.classList.add('show'); return; }
+    if (!name){ errEl.textContent = 'Enter the account name.'; errEl.classList.add('show'); return; }
+
+    const btn = $('#wdBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Requesting…';
+
+    try {
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        if (u){ u.balance = Number(u.balance || 0) - amount; }
+        localStorage.setItem('dls_demo_users', JSON.stringify(users));
+        UI.toast('Withdrawal requested (demo).', 'ok');
+        btn.disabled = false; btn.innerHTML = orig;
+        $('#wdAmount').value = ''; $('#wdAcct').value = ''; $('#wdName').value = '';
+        await this.reload();
+        return;
+      }
+
+      const { error } = await Supa.client.rpc('request_withdrawal', {
+        p_amount: amount,
+        p_bank: { bank_code: bank, account_number: acct, account_name: name }
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = orig;
+
+      if (error) throw error;
+
+      UI.toast('Withdrawal requested. Funds will arrive within 24h.', 'ok');
+      $('#wdAmount').value = '';
+      $('#wdAcct').value = '';
+      $('#wdName').value = '';
+      await this.reload(true);
+    } catch (e){
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      errEl.textContent = e.message || 'Withdrawal failed.';
+      errEl.classList.add('show');
+    }
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Wallet boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Wallet (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Wallet (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Wallet.init(); }
+  catch(e){ err('Wallet init failed:', e); UI.toast('Failed to load wallet.', 'err'); }
+})();
+
+window.DLS = {
+  version: 'wallet-2.0.0',
+  async debug(){
+    console.log('======== DLS Wallet v2 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Profile:', State.profile);
+    console.log('Deposits:', State.deposits.length);
+    console.log('Withdrawals:', State.withdrawals.length);
+    console.log('Transactions:', State.transactions.length);
+    console.log('===============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
