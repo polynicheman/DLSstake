@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Dashboard — DLS Stake</title>
+<meta name="description" content="Your DLS Stake dashboard — balance, escrow, active matches, wallet, and quick actions." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:860px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* DASHBOARD */
+.dash{padding:36px 0 80px}
+.hero{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.hero-id{display:flex;align-items:center;gap:18px}
+.hero-avatar{width:64px;height:64px;border-radius:18px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:1.4rem;box-shadow:0 8px 22px rgba(0,217,126,.18)}
+.hero-name{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:2px}
+.hero-meta{font-size:.85rem;color:var(--muted)}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:var(--radius-full)}
+.badge-live{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.badge-warn{background:rgba(255,176,32,.14);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
+.badge-blue{background:rgba(47,128,237,.15);color:#7cb4ff;border:1px solid rgba(47,128,237,.3)}
+.badge-danger{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.badge-purple{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2);border-color:var(--muted-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-purple{background:linear-gradient(180deg,#8b5cf6,#6d3ee0);color:#fff;box-shadow:0 6px 20px rgba(139,92,246,.28)}
+.btn-purple:hover:not(:disabled){filter:brightness(1.08)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){background:var(--danger-dark)}
+.btn-block{width:100%}
+.btn-sm{padding:8px 15px;font-size:.82rem}
+.btn-xs{padding:6px 12px;font-size:.76rem}
+
+/* STATS */
+.stat-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr);margin-bottom:24px}
+@media(min-width:820px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
+.stat{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .18s,transform .18s;position:relative;overflow:hidden}
+.stat:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.stat .k{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.stat .k .ico{width:16px;height:16px;border-radius:5px;display:grid;place-items:center;font-size:.7rem;background:rgba(0,217,126,.1);color:var(--primary)}
+.stat .v{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.stat .v.primary{color:var(--primary)}
+.stat .v.mono{font-family:var(--ff-mono)}
+.stat .v.mono-sm{font-family:var(--ff-mono);font-size:1.35rem}
+.stat .sub{font-size:.74rem;color:var(--muted-2);margin-top:6px}
+
+/* LAYOUT */
+.grid-2{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid-2{grid-template-columns:1.35fr 1fr}}
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+.panel + .panel{margin-top:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.panel-head h2{font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.panel-head .link{font-size:.78rem;font-weight:700;color:var(--primary)}
+.panel-head .link:hover{text-decoration:underline}
+.panel-head .count-pill{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3);padding:2px 9px;border-radius:var(--radius-full)}
+
+/* ACTIONS */
+.action-list{display:grid;gap:12px}
+.action-tile{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:left;width:100%;transition:transform .15s,border-color .15s,background .15s;cursor:pointer}
+.action-tile:hover{transform:translateY(-2px);border-color:var(--primary);background:var(--surface-3)}
+.action-tile.admin:hover{border-color:var(--purple)}
+.action-tile .ico{width:42px;height:42px;min-width:42px;border-radius:12px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:1.15rem}
+.action-tile.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.24)}
+.action-tile.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.24)}
+.action-tile.admin .ico{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.24)}
+.action-tile .txt{flex:1;min-width:0}
+.action-tile .txt h3{font-size:.94rem;font-weight:800;margin-bottom:2px}
+.action-tile .txt p{font-size:.78rem;color:var(--muted);line-height:1.4}
+.action-tile .chev{color:var(--muted-2);font-size:1.1rem;transition:transform .15s}
+.action-tile:hover .chev{transform:translateX(3px);color:var(--primary)}
+.action-tile.admin:hover .chev{color:var(--purple)}
+
+/* ACTIVE MATCHES */
+.match-list{display:grid;gap:10px}
+.match-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s,transform .15s}
+.match-item:hover{border-color:var(--border-2);transform:translateY(-1px)}
+.match-item.urgent{border-color:rgba(255,176,32,.4)}
+.match-item.invite{border-color:rgba(255,176,32,.45);background:linear-gradient(180deg, rgba(255,176,32,.04), var(--surface-2))}
+.match-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.match-code{font-family:var(--ff-mono);font-size:.72rem;color:var(--muted)}
+.match-players{font-size:.85rem;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.match-players .vs{color:var(--muted-2);font-size:.7rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase}
+.match-players .you{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);border:1px solid rgba(0,217,126,.35);padding:1px 6px;border-radius:var(--radius-full);margin-left:4px}
+.match-side{display:flex;gap:8px;align-items:center;flex-direction:column;text-align:right}
+.match-pot{font-family:var(--ff-mono);font-weight:900;font-size:1rem;color:var(--primary)}
+.match-hint{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.match-hint.play{color:var(--accent)}
+@media(max-width:640px){.match-item{grid-template-columns:1fr}.match-side{align-items:flex-start;text-align:left}}
+
+/* HISTORY */
+.history-list{display:grid;gap:0}
+.h-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.h-item:last-child{border-bottom:none}
+.h-ico{width:38px;height:38px;min-width:38px;border-radius:11px;display:grid;place-items:center;font-size:.95rem;font-weight:900}
+.h-ico.win{background:rgba(0,217,126,.14);color:var(--primary)}
+.h-ico.lose{background:rgba(255,77,94,.14);color:var(--danger)}
+.h-ico.draw{background:rgba(255,176,32,.14);color:var(--warn)}
+.h-ico.dep{background:rgba(0,217,126,.14);color:var(--primary)}
+.h-ico.wd{background:rgba(255,176,32,.14);color:var(--warn)}
+.h-ico.tx{background:rgba(47,128,237,.14);color:#7cb4ff}
+.h-txt{flex:1;min-width:0}
+.h-txt h4{font-size:.86rem;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-txt p{font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
+.h-amt{font-family:var(--ff-mono);font-weight:800;font-size:.92rem;white-space:nowrap}
+.h-amt.pos{color:var(--primary)}
+.h-amt.neg{color:var(--danger)}
+.h-amt.neu{color:var(--muted)}
+
+/* EMPTY */
+.empty{padding:30px 20px;text-align:center;background:var(--surface-2);border:1px dashed var(--border-2);border-radius:var(--radius)}
+.empty .ico-big{font-size:1.9rem;margin-bottom:10px;opacity:.85}
+.empty h3{font-size:.95rem;font-weight:800;margin-bottom:6px}
+.empty p{font-size:.82rem;color:var(--muted);line-height:1.5;max-width:360px;margin:0 auto 14px}
+
+/* ACCOUNT */
+.detail-list{display:grid;gap:0}
+.detail-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-row .label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.detail-row .value{font-size:.84rem;color:var(--text-2);font-family:var(--ff-mono);max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.detail-row .value.text{font-family:var(--ff)}
+
+/* TRUST */
+.trust-wrap{margin-top:16px}
+.trust-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.trust-label{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.trust-val{font-family:var(--ff-mono);font-weight:800;font-size:.92rem}
+.trust-val.good{color:var(--primary)}
+.trust-val.mid{color:var(--warn)}
+.trust-val.bad{color:var(--danger)}
+.trust-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden}
+.trust-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width .4s ease}
+.trust-bar.mid i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
+.trust-bar.bad i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
+
+/* CALL-OUTS */
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius);font-size:.82rem;line-height:1.5;margin-top:16px}
+.callout.warn{background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.24);color:#ffd08a}
+.callout.info{background:rgba(47,128,237,.07);border:1px solid rgba(47,128,237,.24);color:#9cc4ff}
+.callout.admin{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.24);color:#c4b5fd}
+.callout b{font-weight:800}
+.callout .ico{font-size:1.05rem}
+.callout .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.callout button{color:inherit;font-weight:800;font-size:.78rem;text-decoration:underline}
+
+/* LOADING */
+.loading{padding:56px 22px;text-align:center;color:var(--muted);font-size:.9rem}
+.spin{width:20px;height:20px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="create-match.html">Create</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap dash" id="app">
+  <div id="loading" class="loading"><span class="spin"></span> Loading dashboard…</div>
+
+  <div id="content" style="display:none">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-id">
+        <div class="hero-avatar" id="heroAvatar">?</div>
+        <div>
+          <h1 class="hero-name" id="heroName">…</h1>
+          <div class="hero-meta" id="heroMeta">—</div>
+          <div class="hero-badges" id="heroBadges"></div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-ghost btn-sm" onclick="Dashboard.refresh()">↻ Refresh</button>
+        <button class="btn btn-primary btn-sm" onclick="location.href='wallet.html'">＋ Deposit</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="k"><span class="ico">₦</span> Balance</div>
+        <div class="v primary mono" id="statBalance">₦0.00</div>
+        <div class="sub">Available to stake</div>
+      </div>
+      <div class="stat">
+        <div class="k"><span class="ico">🔒</span> In Escrow</div>
+        <div class="v mono-sm" id="statEscrow">₦0.00</div>
+        <div class="sub">Locked in active matches</div>
+      </div>
+      <div class="stat">
+        <div class="k"><span class="ico">⚔</span> Matches</div>
+        <div class="v" id="statPlayed">0</div>
+        <div class="sub" id="statWon">0 wins</div>
+      </div>
+      <div class="stat">
+        <div class="k"><span class="ico">★</span> Win Rate</div>
+        <div class="v" id="statWinRate">—</div>
+        <div class="sub">All-time average</div>
+      </div>
+    </div>
+
+    <!-- TWO COLUMN -->
+    <div class="grid-2">
+
+      <!-- LEFT -->
+      <section>
+
+        <!-- INVITATIONS -->
+        <div class="panel" id="invitesPanel" style="display:none">
+          <div class="panel-head">
+            <h2>Invitations</h2>
+            <span class="count-pill" id="invitesCount">0</span>
+          </div>
+          <div id="invitesList" class="match-list"></div>
+        </div>
+
+        <!-- ACTIVE MATCHES -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Active matches</h2>
+            <span class="count-pill" id="activeCount">0</span>
+          </div>
+          <div id="activeList" class="match-list"></div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="panel">
+          <div class="panel-head"><h2>Quick actions</h2></div>
+          <div class="action-list">
+            <button class="action-tile" onclick="location.href='lobby.html'">
+              <div class="ico">🎯</div>
+              <div class="txt">
+                <h3>Match lobby</h3>
+                <p>Browse invitations and your matches.</p>
+              </div>
+              <div class="chev">→</div>
+            </button>
+            <button class="action-tile blue" onclick="location.href='create-match.html'">
+              <div class="ico">⚡</div>
+              <div class="txt">
+                <h3>Challenge a player</h3>
+                <p>Pick an opponent and post a stake.</p>
+              </div>
+              <div class="chev">→</div>
+            </button>
+            <button class="action-tile warn" onclick="location.href='wallet.html'">
+              <div class="ico">＋</div>
+              <div class="txt">
+                <h3>Deposit funds</h3>
+                <p>Top up with Paystack — card or bank transfer.</p>
+              </div>
+              <div class="chev">→</div>
+            </button>
+            <button class="action-tile" onclick="location.href='wallet.html'">
+              <div class="ico">↗</div>
+              <div class="txt">
+                <h3>Withdraw</h3>
+                <p>Send your balance to a Nigerian bank account.</p>
+              </div>
+              <div class="chev">→</div>
+            </button>
+            <button class="action-tile admin" id="adminTile" style="display:none" onclick="location.href='admin.html'">
+              <div class="ico">⚙️</div>
+              <div class="txt">
+                <h3>Admin console</h3>
+                <p>KYC review, disputes, withdrawals, revenue.</p>
+              </div>
+              <div class="chev">→</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- RECENT MATCHES -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Recent matches</h2>
+            <a class="link" href="lobby.html">View all →</a>
+          </div>
+          <div id="recentList" class="history-list"></div>
+        </div>
+
+        <!-- TRANSACTIONS -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Recent transactions</h2>
+            <a class="link" href="wallet.html">Wallet →</a>
+          </div>
+          <div id="txList" class="history-list"></div>
+        </div>
+
+      </section>
+
+      <!-- RIGHT -->
+      <section>
+
+        <!-- ACCOUNT -->
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Account</h2>
+            <span class="badge badge-blue"><i></i> <span id="authBadgeText">Connected</span></span>
+          </div>
+
+          <div class="detail-list">
+            <div class="detail-row"><span class="label">Username</span><span class="value text" id="dUsername">—</span></div>
+            <div class="detail-row"><span class="label">Email</span><span class="value text" id="dEmail">—</span></div>
+            <div class="detail-row"><span class="label">DLS Username</span><span class="value" id="dDls">—</span></div>
+            <div class="detail-row"><span class="label">Role</span><span class="value text" id="dRole">Player</span></div>
+            <div class="detail-row"><span class="label">KYC</span><span class="value text" id="dKyc">Pending</span></div>
+            <div class="detail-row"><span class="label">Member since</span><span class="value text" id="dJoined">—</span></div>
+          </div>
+
+          <div class="trust-wrap">
+            <div class="trust-row">
+              <span class="trust-label">Trust score</span>
+              <span class="trust-val good" id="trustVal">100</span>
+            </div>
+            <div class="trust-bar" id="trustBar"><i style="width:100%"></i></div>
+          </div>
+
+          <div class="callout warn" id="kycBanner" style="display:none">
+            <span class="ico">⚠</span>
+            <div>
+              <b>Verify your identity to unlock withdrawals.</b><br />
+              Upload your ID — approval within 24 hours.
+              <div class="actions">
+                <button onclick="location.href='kyc.html'">Start verification →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout admin" id="adminCallout" style="display:none">
+            <span class="ico">⚙️</span>
+            <div>
+              <b>You have admin access.</b><br />
+              Manage KYC, disputes, withdrawals and revenue.
+              <div class="actions">
+                <button onclick="location.href='admin.html'">Open admin console →</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout info" id="pendingDepositCallout" style="display:none">
+            <span class="ico">⏳</span>
+            <div id="pendingDepositBody"></div>
+          </div>
+
+          <div class="callout warn" id="pendingWithdrawalCallout" style="display:none">
+            <span class="ico">⏳</span>
+            <div id="pendingWithdrawalBody"></div>
+          </div>
+
+          <div style="display:flex;gap:10px;margin-top:20px">
+            <button class="btn btn-ghost btn-block" onclick="location.href='profile.html'">Profile</button>
+            <button class="btn btn-danger btn-block" onclick="Auth.signOut()">Sign out</button>
+          </div>
+        </div>
+
+        <!-- WALLET SNAPSHOT -->
+        <div class="panel">
+          <div class="panel-head"><h2>Wallet summary</h2></div>
+          <div class="detail-list">
+            <div class="detail-row"><span class="label">Total deposited</span><span class="value" id="wTotalDep">₦0.00</span></div>
+            <div class="detail-row"><span class="label">Total withdrawn</span><span class="value" id="wTotalWd">₦0.00</span></div>
+            <div class="detail-row"><span class="label">Pending deposits</span><span class="value" id="wPendDep">0</span></div>
+            <div class="detail-row"><span class="label">Pending withdrawals</span><span class="value" id="wPendWd">0</span></div>
+          </div>
+          <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="location.href='wallet.html'">
+            Open wallet
+          </button>
+        </div>
+
+      </section>
+    </div>
+
+    <footer>
+      <div class="foot-inner">
+        <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+        <div class="foot-links">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="lobby.html">Lobby</a>
+          <a href="create-match.html">Create</a>
+          <a href="wallet.html">Wallet</a>
+          <a href="profile.html">Profile</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  CURRENCY:          '₦',
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); },
+  dateShort(iso){ if(!iso) return '—'; try { return new Date(iso).toLocaleDateString('en-NG',{year:'numeric',month:'short',day:'numeric'}); } catch { return '—'; } },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  },
+  until(iso){
+    if (!iso) return null;
+    const secs = Math.floor((new Date(iso).getTime() - Date.now()) / 1000);
+    if (secs <= 0) return { text: 'expired', secs: 0, expired: true };
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    if (m >= 1) return { text: `${m}:${String(s).padStart(2,'0')}`, secs };
+    return { text: `${s}s`, secs };
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  data: null,
+  loading: true,
+  _poll: null,
+  _ticker: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
+      catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async signOut(){
+    try {
+      if (!Supa.HAS) localStorage.removeItem('dls_demo_session');
+      else await Supa.client.auth.signOut();
+    } catch(e){ err('signOut:', e); }
+    UI.toast('Signed out.', 'ok');
+    setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 400);
+  }
+};
+
+/* ============================================================================
+   DASHBOARD
+   ============================================================================ */
+const Dashboard = {
+
+  async init(){
+    log('Dashboard init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    /* Deposit return */
+    const params = new URLSearchParams(location.search);
+    if (params.get('deposit') === '1'){
+      UI.toast('Payment received. Balance updating shortly.', 'ok');
+      setTimeout(()=>Dashboard.reload(true), 2500);
+      history.replaceState(null, '', location.pathname + '#dashboard');
+    }
+
+    await this.reload();
+
+    /* Focus + timer refresh */
+    window.addEventListener('focus', () => Dashboard.reload(true));
+    State._poll   = setInterval(() => Dashboard.reload(true), 30000);
+    State._ticker = setInterval(() => Dashboard.tick(), 1000);
+  },
+
+  async reload(silent){
+    try {
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
+        const uid = State.session.user.id;
+        const u = users.find(x => x.id === uid);
+        const mine = matches.filter(m => m.creator_id === uid || m.opponent_id === uid);
+        State.data = {
+          profile: u || {},
+          recent: mine.filter(m => ['settled','cancelled','disputed'].includes(m.status)),
+          active: mine.filter(m => ['accepted','awaiting_submission','verifying'].includes(m.status)),
+          invites_received: mine.filter(m => m.status === 'pending_invite' && m.opponent_id === uid),
+          transactions: [],
+          pending_deposits: [],
+          pending_withdrawals: [],
+          stats: { total_deposited:0, total_withdrawn:0, pending_deposits_count:0, pending_withdrawals_count:0 }
+        };
+      } else {
+        const { data, error } = await Supa.client.rpc('get_dashboard_summary');
+        if (error){
+          warn('summary error:', error.message);
+          if (!silent) UI.toast('Could not load dashboard: ' + error.message, 'err');
+          return;
+        }
+        State.data = data;
+      }
+
+      State.loading = false;
+      this.render();
+    } catch(e){
+      err('reload threw:', e);
+      if (!silent) UI.toast('Failed to refresh.', 'err');
+    }
+  },
+
+  async refresh(){
+    UI.toast('Refreshing…', 'info', 1400);
+    await this.reload();
+    UI.toast('Updated.', 'ok', 1400);
+  },
+
+  render(){
+    const d = State.data;
+    const u = State.session?.user;
+    if (!d || !u) return;
+
+    $('#loading').style.display = 'none';
+    $('#content').style.display = 'block';
+
+    const p = d.profile || {};
+    const stats = d.stats || {};
+
+    const username = p.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
+    const dls      = p.dls_username || '—';
+    const email    = u.email || '—';
+    const kyc      = p.kyc_status || 'pending';
+    const trust    = Number(p.trust_score ?? 100);
+    const frozen   = Boolean(p.frozen);
+    const isAdmin  = Boolean(p.is_admin);
+    const role     = p.role || 'player';
+    const balance  = Number(p.balance || 0);
+    const escrow   = Number(p.in_escrow || 0);
+    const played   = Number(p.matches_played || 0);
+    const won      = Number(p.matches_won || 0);
+    const joined   = p.created_at || u.created_at;
+
+    /* Nav */
+    const na = $('#navAvatar'); if (na) na.textContent = UI.initials(username);
+    const nn = $('#navName');   if (nn) nn.textContent = username;
+
+    /* Hero */
+    const ha = $('#heroAvatar'); if (ha) ha.textContent = UI.initials(username);
+    const hn = $('#heroName');   if (hn) hn.textContent = username;
+    const hm = $('#heroMeta');   if (hm) hm.textContent = email;
+
+    const hb = $('#heroBadges');
+    if (hb){
+      const kycBadge = kyc === 'verified'
+        ? '<span class="badge badge-live"><i></i> KYC Verified</span>'
+        : `<span class="badge badge-warn"><i></i> KYC ${kyc.charAt(0).toUpperCase()+kyc.slice(1)}</span>`;
+      const frozenBadge = frozen ? '<span class="badge badge-danger"><i></i> Frozen</span>' : '';
+      const adminBadge = isAdmin ? `<span class="badge badge-purple"><i></i> ${role === 'super_admin' ? 'Super Admin' : 'Admin'}</span>` : '';
+      const modeBadge = Supa.HAS
+        ? '<span class="badge badge-blue"><i></i> Supabase</span>'
+        : '<span class="badge badge-blue"><i></i> Demo</span>';
+      hb.innerHTML = kycBadge + adminBadge + frozenBadge + modeBadge;
+    }
+
+    /* Stats */
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('statBalance', UI.money(balance));
+    set('statEscrow',  UI.money(escrow));
+    set('statPlayed',  played);
+    set('statWon',     `${won} win${won === 1 ? '' : 's'}`);
+    set('statWinRate', played > 0 ? Math.round((won/played)*100) + '%' : '—');
+
+    /* Account */
+    set('dUsername', username);
+    set('dEmail',    email);
+    set('dDls',      dls);
+    set('dRole',     isAdmin
+      ? (role === 'super_admin' ? 'Super Admin' : role.charAt(0).toUpperCase()+role.slice(1))
+      : 'Player');
+    set('dKyc',      kyc.charAt(0).toUpperCase() + kyc.slice(1));
+    set('dJoined',   UI.dateShort(joined));
+
+    /* Trust */
+    const tv = $('#trustVal'), tb = $('#trustBar');
+    if (tv && tb){
+      tv.textContent = String(trust);
+      const cls = trust >= 80 ? 'good' : trust >= 50 ? 'mid' : 'bad';
+      tv.className = 'trust-val ' + cls;
+      tb.className = 'trust-bar' + (trust < 80 ? ' ' + cls : '');
+      tb.innerHTML = `<i style="width:${Math.min(100,trust)}%"></i>`;
+    }
+
+    /* Admin UI */
+    const adminTile = $('#adminTile'); if (adminTile) adminTile.style.display = isAdmin ? 'flex' : 'none';
+    const adminCallout = $('#adminCallout'); if (adminCallout) adminCallout.style.display = isAdmin ? 'flex' : 'none';
+
+    /* Auth badge */
+    const ab = $('#authBadgeText'); if (ab) ab.textContent = Supa.HAS ? 'Supabase' : 'Demo';
+
+    /* KYC banner */
+    const kb = $('#kycBanner'); if (kb) kb.style.display = kyc === 'verified' ? 'none' : 'flex';
+
+    /* Pending deposits */
+    const pd = d.pending_deposits || [];
+    const pdc = $('#pendingDepositCallout');
+    if (pdc){
+      if (pd.length){
+        pdc.style.display = 'flex';
+        const tot = pd.reduce((s,x) => s + Number(x.amount || 0), 0);
+        $('#pendingDepositBody').innerHTML =
+          `<b>${UI.money(tot)} deposit pending.</b><br />Awaiting Paystack confirmation. Balances update in seconds.`;
+      } else pdc.style.display = 'none';
+    }
+
+    /* Pending withdrawals */
+    const pw = d.pending_withdrawals || [];
+    const pwc = $('#pendingWithdrawalCallout');
+    if (pwc){
+      if (pw.length){
+        pwc.style.display = 'flex';
+        const tot = pw.reduce((s,x) => s + Number(x.amount || 0), 0);
+        $('#pendingWithdrawalBody').innerHTML =
+          `<b>${UI.money(tot)} withdrawal pending.</b><br />Processed within 24 hours.`;
+      } else pwc.style.display = 'none';
+    }
+
+    /* Wallet summary */
+    set('wTotalDep',  UI.money(stats.total_deposited || 0));
+    set('wTotalWd',   UI.money(stats.total_withdrawn || 0));
+    set('wPendDep',   stats.pending_deposits_count || 0);
+    set('wPendWd',    stats.pending_withdrawals_count || 0);
+
+    /* Invites */
+    const invites = d.invites_received || [];
+    const invitesPanel = $('#invitesPanel');
+    if (invitesPanel){
+      if (invites.length){
+        invitesPanel.style.display = 'block';
+        $('#invitesCount').textContent = invites.length;
+        $('#invitesList').innerHTML = invites.map(m => this.inviteCard(m, u.id)).join('');
+      } else {
+        invitesPanel.style.display = 'none';
+      }
+    }
+
+    /* Active matches */
+    this.renderActive(d.active || [], u.id);
+
+    /* Recent */
+    this.renderRecent(d.recent || [], u.id);
+
+    /* Transactions */
+    this.renderTransactions(d.transactions || []);
+  },
+
+  inviteCard(m, uid){
+    const from = m.creator_username || 'Player';
+    const fromDls = m.creator_dls_username || '—';
+    const pot = Number(m.pot_amount || m.stake_amount * 2);
+    const winner = pot * 0.96;
+    const until = UI.until(m.expires_at);
+    const cdId = 'inv-' + m.id;
+    return `
+      <div class="match-item invite">
+        <div>
+          <div class="match-top">
+            <span class="badge badge-warn">● New invite</span>
+            <span class="match-code">${UI.escape(m.match_code)}</span>
+          </div>
+          <div class="match-players">
+            <span>${UI.escape(from)} <span class="muted" style="font-weight:500;color:var(--muted)">wants to challenge you</span></span>
+          </div>
+          <div style="font-family:var(--ff-mono);font-size:.72rem;color:var(--muted);margin-top:4px">${UI.escape(fromDls)}</div>
+          ${until ? `<div style="font-size:.74rem;color:var(--warn);margin-top:8px">Expires in <b id="${cdId}" style="font-family:var(--ff-mono)">${until.text}</b></div>` : ''}
+        </div>
+        <div class="match-side">
+          <div class="match-pot">${UI.money(winner)}</div>
+          <div style="font-size:.68rem;color:var(--muted-2);font-family:var(--ff-mono)">Pot ${UI.money(pot)}</div>
+          <button class="btn btn-primary btn-xs" onclick="location.href='lobby.html'">Open lobby →</button>
+        </div>
+      </div>`;
+  },
+
+  renderActive(list, uid){
+    const container = $('#activeList');
+    const pill = $('#activeCount');
+    if (pill) pill.textContent = list.length;
+
+    if (!list.length){
+      container.innerHTML = `
+        <div class="empty">
+          <div class="ico-big">🎮</div>
+          <h3>No active matches</h3>
+          <p>Challenge a player or accept an invitation from the lobby.</p>
+          <button class="btn btn-primary btn-sm" onclick="location.href='create-match.html'">Challenge a player</button>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(m => {
+      const isCreator = m.creator_id === uid;
+      const creator  = m.creator_username  || 'Creator';
+      const opponent = m.opponent_username || 'Waiting…';
+      const other    = isCreator ? opponent : creator;
+      const me       = isCreator ? creator  : opponent;
+
+      const statusLabel = {
+        accepted:            '● In match',
+        awaiting_submission: 'Awaiting result',
+        verifying:           'Awaiting opponent'
+      }[m.status] || m.status;
+
+      const statusCls = {
+        accepted:            'badge-blue',
+        awaiting_submission: 'badge-warn',
+        verifying:           'badge-warn'
+      }[m.status] || 'badge-blue';
+
+      let urgent = false;
+      let hint = '';
+      let cdId = 'match-cd-' + m.id;
+      if (m.status === 'accepted' && m.match_ends_at){
+        urgent = true;
+        const u = UI.until(m.match_ends_at);
+        hint = `Match ends in <b id="${cdId}" style="font-family:var(--ff-mono)">${u ? u.text : '5:00'}</b>`;
+      } else if (m.status === 'awaiting_submission' && m.submission_started_at){
+        const deadline = new Date(new Date(m.submission_started_at).getTime() + 5*60*1000).toISOString();
+        const u = UI.until(deadline);
+        hint = `Submit in <b id="${cdId}" style="font-family:var(--ff-mono)">${u ? u.text : '—'}</b>`;
+      } else if (m.status === 'verifying'){
+        hint = 'Waiting for opponent';
+      }
+
+      return `
+        <div class="match-item ${urgent ? 'urgent' : ''}">
+          <div>
+            <div class="match-top">
+              <span class="badge ${statusCls}">${statusLabel}</span>
+              <span class="match-code">${UI.escape(m.match_code)}</span>
+            </div>
+            <div class="match-players">
+              <span>${UI.escape(me)}${isCreator ? ' <span class="you">You</span>' : ''}</span>
+              <span class="vs">vs</span>
+              <span>${UI.escape(other)}${!isCreator ? ' <span class="you">You</span>' : ''}</span>
+            </div>
+            ${hint ? `<div class="match-hint" style="margin-top:8px">${hint}</div>` : ''}
+          </div>
+          <div class="match-side">
+            <div class="match-pot">${UI.money(m.pot_amount || m.stake_amount)}</div>
+            <button class="btn btn-primary btn-xs" onclick="location.href='match.html?id=${m.id}'">Open →</button>
+          </div>
+        </div>`;
+    }).join('');
+  },
+
+  renderRecent(list, uid){
+    const container = $('#recentList');
+    if (!list.length){
+      container.innerHTML = `
+        <div class="empty">
+          <div class="ico-big">📭</div>
+          <h3>Nothing yet</h3>
+          <p>Your played matches will appear here once settled.</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(m => {
+      const isWinner = m.winner_id === uid;
+      const isDraw   = m.status === 'settled' && !m.winner_id;
+      const isCancel = m.status === 'cancelled';
+      const isDisp   = m.status === 'disputed';
+
+      let cls = 'draw', icon = '≈', label = 'Draw', amt = '', amtCls = 'neu';
+      if (isDraw){ cls='draw'; icon='≈'; label='Draw — refund'; amt = UI.money(m.stake_amount); amtCls='neu'; }
+      if (isWinner){ cls='win'; icon='★'; label='Won'; amt = '+'+UI.money(m.pot_amount); amtCls='pos'; }
+      if (m.status === 'settled' && m.winner_id && !isWinner){ cls='lose'; icon='✕'; label='Lost'; amt = '−'+UI.money(m.stake_amount); amtCls='neg'; }
+      if (isCancel){ cls='draw'; icon='↩'; label='Cancelled'; amt = UI.money(m.stake_amount); amtCls='neu'; }
+      if (isDisp){ cls='draw'; icon='⚖'; label='Disputed'; amt = UI.money(m.pot_amount); amtCls='neu'; }
+
+      const opp = m.creator_id === uid ? m.opponent_username : m.creator_username;
+
+      return `
+        <div class="h-item">
+          <div class="h-ico ${cls}">${icon}</div>
+          <div class="h-txt">
+            <h4>${label} · ${UI.escape(m.match_code)}${opp ? ' vs ' + UI.escape(opp) : ''}</h4>
+            <p>${UI.timeAgo(m.settled_at || m.created_at)}</p>
+          </div>
+          <div class="h-amt ${amtCls}">${amt}</div>
+        </div>`;
+    }).join('');
+  },
+
+  renderTransactions(list){
+    const container = $('#txList');
+    if (!list.length){
+      container.innerHTML = `
+        <div class="empty">
+          <div class="ico-big">💳</div>
+          <h3>No transactions yet</h3>
+          <p>Deposits, withdrawals, and match payouts appear here.</p>
+          <button class="btn btn-primary btn-sm" onclick="location.href='wallet.html'">Open wallet</button>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(t => {
+      let cls = 'tx', icon = '•', sign = '', amtCls = 'neu';
+      if (t.type === 'deposit'){ cls='dep'; icon='↓'; sign='+'; amtCls='pos'; }
+      else if (t.type === 'withdrawal'){ cls='wd'; icon='↑'; sign='−'; amtCls='neg'; }
+      else if (t.type === 'stake_lock'){ cls='tx'; icon='🔒'; amtCls='neu'; }
+      else if (t.type === 'stake_release'){ cls='win'; icon='★'; sign='+'; amtCls='pos'; }
+      else if (t.type === 'refund'){ cls='draw'; icon='↩'; amtCls='neu'; }
+      else if (t.type === 'fee'){ cls='wd'; icon='⚙'; sign='−'; amtCls='neg'; }
+
+      return `
+        <div class="h-item">
+          <div class="h-ico ${cls}">${icon}</div>
+          <div class="h-txt">
+            <h4>${UI.escape(t.note || t.type)}</h4>
+            <p>${UI.timeAgo(t.created_at)}</p>
+          </div>
+          <div class="h-amt ${amtCls}">${sign}${UI.money(Math.abs(Number(t.amount||0)))}</div>
+        </div>`;
+    }).join('');
+  },
+
+  /* Live countdown ticker */
+  tick(){
+    const d = State.data;
+    if (!d) return;
+
+    /* Invitation countdowns */
+    (d.invites_received || []).forEach(m => {
+      const el = document.getElementById('inv-' + m.id);
+      if (!el) return;
+      const u = UI.until(m.expires_at);
+      el.textContent = u ? u.text : '—';
+    });
+
+    /* Active match countdowns */
+    (d.active || []).forEach(m => {
+      const el = document.getElementById('match-cd-' + m.id);
+      if (!el) return;
+
+      if (m.status === 'accepted' && m.match_ends_at){
+        const u = UI.until(m.match_ends_at);
+        el.textContent = u ? u.text : '0:00';
+      } else if (m.status === 'awaiting_submission' && m.submission_started_at){
+        const deadline = new Date(new Date(m.submission_started_at).getTime() + 5*60*1000).toISOString();
+        const u = UI.until(deadline);
+        el.textContent = u ? u.text : '0:00';
+      }
+    });
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Dashboard boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Dashboard (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Dashboard (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Dashboard.init(); }
+  catch(e){ err('Dashboard init failed:', e); UI.toast('Failed to load dashboard.', 'err'); }
+
+  window.addEventListener('beforeunload', () => {
+    if (State._poll)   clearInterval(State._poll);
+    if (State._ticker) clearInterval(State._ticker);
+  });
+})();
+
+window.DLS = {
+  version: 'dashboard-4.0.0',
+  async debug(){
+    console.log('======== DLS Dashboard v4 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Profile:', State.data?.profile);
+    console.log('Active:', State.data?.active?.length);
+    console.log('Invites:', State.data?.invites_received?.length);
+    console.log('==================================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
