@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Match — DLS Stake</title>
+<meta name="description" content="Your DLS Stake match — play, submit, get paid." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:860px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:30px 0 80px}
+.mhead{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary)}
+.mtitle{font-family:var(--ff-mono);font-size:1.7rem;font-weight:900;letter-spacing:-.03em;margin-top:4px}
+.msub{font-size:.85rem;color:var(--muted);margin-top:4px}
+.mhead-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:var(--radius-full)}
+.badge-live{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.badge-warn{background:rgba(255,176,32,.14);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
+.badge-blue{background:rgba(47,128,237,.15);color:#7cb4ff;border:1px solid rgba(47,128,237,.3)}
+.badge-danger{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* TIMELINE */
+.timeline{display:flex;gap:6px;margin-bottom:22px}
+.tl-step{flex:1;display:flex;flex-direction:column;gap:8px;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);text-align:center}
+.tl-step .bar{height:4px;border-radius:2px;background:var(--border);transition:.3s}
+.tl-step.done .bar{background:var(--primary)}
+.tl-step.active .bar{background:var(--primary);animation:pulse 1.4s ease-in-out infinite}
+.tl-step.done,.tl-step.active{color:var(--text)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* PLAYERS */
+.players{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;padding:22px;background:linear-gradient(170deg,var(--surface-2),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);margin-bottom:20px}
+.pcard{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;min-width:0}
+.pcard .avatar{width:56px;height:56px;border-radius:16px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:1.15rem}
+.pcard .avatar.b{background:linear-gradient(140deg,#2f80ed,#1f66c9);color:#fff}
+.pcard .you{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);border:1px solid rgba(0,217,126,.35);padding:2px 8px;border-radius:var(--radius-full)}
+.pcard .name{font-size:.92rem;font-weight:800;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard .dls{font-family:var(--ff-mono);font-size:.72rem;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.versus{font-weight:900;font-size:.78rem;letter-spacing:.16em;color:var(--muted-2);text-transform:uppercase}
+
+/* PHASE CARD */
+.phase-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;margin-bottom:18px}
+
+.banner{padding:16px 18px;border-radius:var(--radius);display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}
+.banner .ico{font-size:1.4rem;line-height:1;flex-shrink:0}
+.banner .body{flex:1;min-width:0}
+.banner .body h3{font-size:1.02rem;font-weight:800;margin-bottom:6px}
+.banner .body p{font-size:.86rem;line-height:1.6;color:var(--text-2)}
+.banner.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28)}
+.banner.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.28)}
+.banner.ok{background:rgba(0,217,126,.08);border:1px solid rgba(0,217,126,.28)}
+.banner.danger{background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.28)}
+
+/* TIMER */
+.timer-card{display:flex;flex-direction:column;align-items:center;gap:8px;padding:26px;text-align:center;background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;position:relative;overflow:hidden}
+.timer-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%, rgba(0,217,126,.08), transparent 60%);pointer-events:none}
+.timer-label{font-size:.7rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);position:relative}
+.timer-val{font-family:var(--ff-mono);font-size:clamp(2.8rem,10vw,4.2rem);font-weight:900;letter-spacing:-.05em;color:var(--primary);line-height:1;position:relative}
+.timer-val.warn{color:var(--warn)}
+.timer-val.danger{color:var(--danger);animation:pulse 1s ease-in-out infinite}
+.timer-sub{font-size:.82rem;color:var(--muted);position:relative}
+.timer-bar{width:100%;height:6px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:14px;position:relative}
+.timer-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width .5s linear, background .3s}
+.timer-bar.warn i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
+.timer-bar.danger i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
+
+/* PLAY SIDE BY SIDE */
+.play-sidebyside{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:520px){.play-sidebyside{grid-template-columns:1fr}}
+.play-info{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.play-info .k{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.play-info .v{font-family:var(--ff-mono);font-size:.9rem;color:var(--text-2);font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* SUBMIT GRID */
+.submit-grid{display:grid;gap:14px;grid-template-columns:1fr;margin-bottom:20px}
+@media(min-width:720px){.submit-grid{grid-template-columns:1fr 1fr}}
+
+.slot{background:var(--surface-2);border:2px dashed var(--border-2);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;transition:.2s;cursor:pointer;position:relative;min-height:250px}
+.slot:hover:not(.locked){border-color:var(--primary);background:var(--surface-3)}
+.slot.clickable{cursor:pointer}
+.slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);background:rgba(0,217,126,.04);cursor:default}
+.slot.locked{opacity:.6;border-style:solid;cursor:not-allowed}
+.slot-badge{position:absolute;top:12px;right:12px;font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:var(--radius-full)}
+.slot-badge.ok{background:rgba(0,217,126,.18);color:var(--primary)}
+.slot-badge.wait{background:rgba(255,176,32,.16);color:var(--warn)}
+.slot-badge.no{background:rgba(255,77,94,.15);color:var(--danger)}
+.slot-title{font-size:.88rem;font-weight:800;margin-top:6px}
+.slot-help{font-size:.78rem;color:var(--muted);line-height:1.5;max-width:230px}
+.slot-preview{width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);background:#000}
+.slot input[type="file"]{display:none}
+
+.score-row{display:flex;align-items:center;gap:12px;margin-top:auto;width:100%;justify-content:center}
+.score-label{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.score-input{width:72px;padding:10px;font-family:var(--ff-mono);font-size:1.5rem;font-weight:900;text-align:center;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.score-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+
+/* RESULT */
+.result{padding:34px 26px;text-align:center;border-radius:var(--radius-lg);margin-bottom:22px}
+.result.win{background:linear-gradient(180deg,rgba(0,217,126,.14),rgba(0,217,126,.03));border:1px solid rgba(0,217,126,.35)}
+.result.lose{background:linear-gradient(180deg,rgba(255,77,94,.1),rgba(255,77,94,.02));border:1px solid rgba(255,77,94,.3)}
+.result.draw{background:linear-gradient(180deg,rgba(255,176,32,.12),rgba(255,176,32,.03));border:1px solid rgba(255,176,32,.3)}
+.result .verdict{font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}
+.result.win .verdict{color:var(--primary)}
+.result.lose .verdict{color:var(--danger)}
+.result.draw .verdict{color:var(--warn)}
+.result .amount{font-family:var(--ff-mono);font-size:clamp(2rem,7vw,3rem);font-weight:900;letter-spacing:-.04em;line-height:1;margin-bottom:8px}
+.result.win .amount{color:var(--primary)}
+.result .amount-sub{color:var(--muted);font-size:.86rem}
+.result .score-line{font-family:var(--ff-mono);font-size:1.9rem;font-weight:900;letter-spacing:-.03em;margin-top:18px}
+.result .fee-line{font-size:.76rem;color:var(--muted-2);margin-top:10px;font-family:var(--ff-mono)}
+
+/* THUMBS */
+.thumbs{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:16px}
+.thumb{border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);background:var(--bg-2)}
+.thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.thumb .lbl{padding:8px 10px;font-size:.72rem;font-weight:700;background:var(--bg-2);text-align:center;color:var(--muted)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.92rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 22px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 10px 32px var(--primary-glow)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2);border-color:var(--muted-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 26px;font-size:1rem}
+
+/* NOTICE */
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.55;margin-bottom:18px}
+.notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.notice .ico{font-size:1rem;line-height:1.3;flex-shrink:0}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:40px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* LOADING */
+.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+.spin{width:20px;height:20px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="create-match.html">Create</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="mhead">
+    <div>
+      <div class="eyebrow">Match</div>
+      <h1 class="mtitle" id="matchCode">—</h1>
+      <div class="msub" id="matchSub">—</div>
+    </div>
+    <div class="mhead-actions">
+      <span class="badge" id="statusBadge">—</span>
+      <button class="btn btn-ghost btn-sm" onclick="Match.reload()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="timeline" id="timeline"></div>
+
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading match…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="lobby.html">Lobby</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="profile.html">Profile</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  LOBBY_PAGE:        'lobby.html',
+  CURRENCY:          '₦',
+  PLATFORM_FEE_PCT:  4,
+  MATCH_DURATION_SEC: 300,
+  SUBMIT_WINDOW_SEC:  300,
+  POLL_INTERVAL_MS:   12000,
+  DEBUG:             true
+};
+
+const $ = (s) => document.querySelector(s);
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); },
+  clock(secs){
+    const s = Math.max(0, Math.floor(secs));
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    return `${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  match: null,
+  matchId: null,
+  myUpload: null,
+  myScore: '',
+  busy: false,
+  flipped: false,
+  unsub: null,
+  ticker: null,
+  poll: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
+      catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  }
+};
+
+/* ============================================================================
+   MATCHES DB
+   ============================================================================ */
+const Matches = {
+  async getById(id){
+    if (!Supa.HAS) return { data: Demo.getById(id), error: null };
+    try {
+      const { data, error } = await Supa.client
+        .from('matches')
+        .select(`
+          *,
+          creator:profiles!matches_creator_id_fkey  ( id, username, dls_username ),
+          opponent:profiles!matches_opponent_id_fkey ( id, username, dls_username )
+        `)
+        .eq('id', id)
+        .maybeSingle();
+      return { data, error };
+    } catch(e){ return { data:null, error:e }; }
+  },
+  async startSubmission(id){
+    if (!Supa.HAS) return Demo.startSubmission(id);
+    const { data, error } = await Supa.client.rpc('start_submission', { p_match_id: id });
+    return { data, error };
+  },
+  async submitResult(id, side, score, url){
+    if (!Supa.HAS) return Demo.submitResult(id, side, score, url);
+    const { data, error } = await Supa.client.rpc('submit_result', {
+      p_match_id: id, p_side: side, p_score: score, p_screenshot_url: url
+    });
+    return { data, error };
+  },
+  async forfeit(id, side){
+    if (!Supa.HAS) return Demo.forfeit(id, side);
+    const { data, error } = await Supa.client.rpc('forfeit_match', { p_match_id: id, p_side: side });
+    return { data, error };
+  },
+  async upload(matchId, playerId, file){
+    if (!Supa.HAS){
+      const dataUrl = await new Promise((res,rej)=>{
+        const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+      });
+      return { data:{ url:dataUrl }, error:null };
+    }
+    try {
+      const ext = (file.name.split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g,'');
+      const path = `${matchId}/${playerId}.${ext}`;
+      const { error: upErr } = await Supa.client.storage
+        .from('screenshots')
+        .upload(path, file, { upsert:true, contentType:file.type||'image/png', cacheControl:'3600' });
+      if (upErr) return { error: upErr };
+      const { data: pub } = Supa.client.storage.from('screenshots').getPublicUrl(path);
+      return { data:{ url: pub.publicUrl, path }, error:null };
+    } catch(e){ return { error:{ message:e.message } }; }
+  },
+  subscribe(id, cb){
+    if (!Supa.HAS) return () => {};
+    try {
+      const ch = Supa.client.channel('match:' + id)
+        .on('postgres_changes', { event:'UPDATE', schema:'public', table:'matches', filter:`id=eq.${id}` }, cb)
+        .subscribe();
+      return () => Supa.client.removeChannel(ch);
+    } catch { return () => {}; }
+  }
+};
+
+/* ============================================================================
+   DEMO BACKEND
+   ============================================================================ */
+const Demo = (() => {
+  const KEY = 'dls_demo_matches';
+  function read(){ try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+  function write(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
+  function users(){ return JSON.parse(localStorage.getItem('dls_demo_users') || '[]'); }
+  function saveUsers(u){ localStorage.setItem('dls_demo_users', JSON.stringify(u)); }
+  function patchUser(id, patch){
+    const us = users(); const u = us.find(x=>x.id===id);
+    if (u){ Object.assign(u, patch); saveUsers(us); }
+  }
+
+  return {
+    getById(id){
+      const m = read().find(x => x.id === id);
+      if (!m) return null;
+      const us = users();
+      const c = us.find(u => u.id === m.creator_id);
+      const o = us.find(u => u.id === m.opponent_id);
+      return {
+        ...m,
+        creator:  c ? { id:c.id, username:c.username, dls_username:c.dls_username } : null,
+        opponent: o ? { id:o.id, username:o.username, dls_username:o.dls_username } : null
+      };
+    },
+    startSubmission(id){
+      const all = read(); const m = all.find(x=>x.id===id);
+      if (!m) return { error:{ message:'Match not found' } };
+      if (m.status !== 'accepted') return { error:{ message:'Cannot start from '+m.status } };
+      m.status = 'awaiting_submission';
+      m.submission_started_at = new Date().toISOString();
+      write(all);
+      return { data:{ match_id:id, status:'awaiting_submission' }, error:null };
+    },
+    submitResult(id, side, score, url){
+      const all = read(); const m = all.find(x=>x.id===id);
+      if (!m) return { error:{ message:'Match not found' } };
+      const now = new Date().toISOString();
+      if (side === 'creator'){ m.creator_score = score; m.creator_screenshot_url = url; m.creator_submitted_at = now; }
+      else { m.opponent_score = score; m.opponent_screenshot_url = url; m.opponent_submitted_at = now; }
+
+      if (m.creator_submitted_at && m.opponent_submitted_at){
+        const cs = Number(m.creator_score), os = Number(m.opponent_score);
+        const pot = Number(m.pot_amount || m.stake_amount * 2);
+        const fee = Math.round(pot * 0.04 * 100) / 100;
+        const payout = pot - fee;
+
+        if (cs === os){
+          patchUser(m.creator_id, {
+            balance: Number(users().find(x=>x.id===m.creator_id).balance||0) + Number(m.stake_amount),
+            in_escrow: Math.max(0, Number(users().find(x=>x.id===m.creator_id).in_escrow||0) - Number(m.stake_amount)),
+            matches_played: Number(users().find(x=>x.id===m.creator_id).matches_played||0) + 1
+          });
+          patchUser(m.opponent_id, {
+            balance: Number(users().find(x=>x.id===m.opponent_id).balance||0) + Number(m.stake_amount),
+            in_escrow: Math.max(0, Number(users().find(x=>x.id===m.opponent_id).in_escrow||0) - Number(m.stake_amount)),
+            matches_played: Number(users().find(x=>x.id===m.opponent_id).matches_played||0) + 1
+          });
+          m.winner_id = null;
+          m.platform_fee = 0;
+        } else {
+          const wid = cs > os ? m.creator_id : m.opponent_id;
+          const lid = cs > os ? m.opponent_id : m.creator_id;
+          patchUser(wid, {
+            balance: Number(users().find(x=>x.id===wid).balance||0) + payout,
+            in_escrow: Math.max(0, Number(users().find(x=>x.id===wid).in_escrow||0) - Number(m.stake_amount)),
+            matches_played: Number(users().find(x=>x.id===wid).matches_played||0) + 1,
+            matches_won: Number(users().find(x=>x.id===wid).matches_won||0) + 1
+          });
+          patchUser(lid, {
+            in_escrow: Math.max(0, Number(users().find(x=>x.id===lid).in_escrow||0) - Number(m.stake_amount)),
+            matches_played: Number(users().find(x=>x.id===lid).matches_played||0) + 1
+          });
+          m.winner_id = wid;
+          m.platform_fee = fee;
+        }
+        m.status = 'settled';
+        m.settled_at = now;
+      } else {
+        m.status = 'verifying';
+      }
+      write(all);
+      return { data:{ match_id:id, status:m.status }, error:null };
+    },
+    forfeit(id, side){
+      const all = read(); const m = all.find(x=>x.id===id);
+      if (!m) return { error:{ message:'Match not found' } };
+      const fid = side === 'creator' ? m.creator_id : m.opponent_id;
+      const wid = side === 'creator' ? m.opponent_id : m.creator_id;
+      const pot = Number(m.pot_amount || m.stake_amount * 2);
+      const fee = Math.round(pot * 0.04 * 100) / 100;
+      const payout = pot - fee;
+
+      patchUser(wid, {
+        balance: Number(users().find(x=>x.id===wid).balance||0) + payout,
+        in_escrow: Math.max(0, Number(users().find(x=>x.id===wid).in_escrow||0) - Number(m.stake_amount)),
+        matches_played: Number(users().find(x=>x.id===wid).matches_played||0) + 1,
+        matches_won: Number(users().find(x=>x.id===wid).matches_won||0) + 1
+      });
+      patchUser(fid, {
+        in_escrow: Math.max(0, Number(users().find(x=>x.id===fid).in_escrow||0) - Number(m.stake_amount)),
+        matches_played: Number(users().find(x=>x.id===fid).matches_played||0) + 1
+      });
+      m.status = 'settled'; m.winner_id = wid; m.settled_at = new Date().toISOString();
+      write(all);
+      return { data:{ match_id:id, winner_id:wid, status:'settled' }, error:null };
+    }
+  };
+})();
+
+/* ============================================================================
+   MATCH PAGE
+   ============================================================================ */
+const Match = {
+
+  async init(){
+    log('Match init');
+
+    const params = new URLSearchParams(location.search);
+    State.matchId = params.get('id');
+    if (!State.matchId){
+      UI.toast('No match id.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOBBY_PAGE, 600);
+      return;
+    }
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    this.renderNav();
+
+    await this.reload();
+
+    State.unsub = Matches.subscribe(State.matchId, () => { log('Realtime update'); this.reload(true); });
+    State.ticker = setInterval(()=>this.tick(), 1000);
+    State.poll = setInterval(()=>this.reload(true), CONFIG.POLL_INTERVAL_MS);
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const name = u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  mySide(){
+    const m = State.match;
+    const uid = State.session?.user?.id;
+    if (!m || !uid) return null;
+    if (m.creator_id  === uid) return 'creator';
+    if (m.opponent_id === uid) return 'opponent';
+    return null;
+  },
+
+  otherSide(s){ return s === 'creator' ? 'opponent' : 'creator'; },
+
+  async reload(silent){
+    const { data, error } = await Matches.getById(State.matchId);
+    if (error || !data){
+      $('#body').innerHTML = `
+        <div class="loading-card" style="border-color:rgba(255,77,94,.3);color:#ff97a4">
+          Match not found or you don't have access.
+          <br/><button class="btn btn-ghost btn-sm" style="margin-top:14px" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+        </div>`;
+      return;
+    }
+    State.match = data;
+    this.render();
+    if (!silent) log('Match loaded:', data.match_code, data.status);
+  },
+
+  render(){
+    const m = State.match;
+    if (!m) return;
+    const side = this.mySide();
+
+    $('#matchCode').textContent = m.match_code || '—';
+    $('#matchSub').textContent  = `Stake ${UI.money(m.stake_amount)} · Pot ${UI.money(m.pot_amount)}`;
+
+    const statusMap = {
+      pending_invite:      { cls:'badge-warn',  label:'● Invite pending' },
+      accepted:            { cls:'badge-blue',  label:'● In match' },
+      awaiting_submission: { cls:'badge-warn',  label:'Awaiting result' },
+      verifying:           { cls:'badge-warn',  label:'Verifying' },
+      settled:             { cls:'badge-live',  label:'Settled' },
+      disputed:            { cls:'badge-danger',label:'Disputed' },
+      cancelled:           { cls:'badge-warn',  label:'Cancelled' }
+    };
+    const st = statusMap[m.status] || { cls:'badge-blue', label:m.status };
+    const sb = $('#statusBadge');
+    sb.className = 'badge ' + st.cls;
+    sb.textContent = st.label;
+
+    const steps = ['accepted','awaiting_submission','verifying','settled'];
+    let cur = steps.indexOf(m.status);
+    if (m.status === 'pending_invite') cur = -1;
+    $('#timeline').innerHTML = ['Accepted','Playing','Submission','Result']
+      .map((label,i)=>{
+        const cls = i < cur ? 'done' : i === cur ? 'active' : '';
+        return `<div class="tl-step ${cls}"><div class="bar"></div><div>${label}</div></div>`;
+      }).join('');
+
+    const body = $('#body');
+    if (!side){
+      body.innerHTML = `<div class="banner warn"><div class="ico">⚠</div><div class="body"><h3>Not your match</h3><p>You are not a participant in this match.</p></div></div>`;
+      return;
+    }
+
+    body.innerHTML = this.playersHtml(m, side) + this.phaseHtml(m, side);
+    this.tick();
+  },
+
+  playersHtml(m, side){
+    const me  = side === 'creator' ? m.creator  : m.opponent;
+    const opp = side === 'creator' ? m.opponent : m.creator;
+    const meDls  = side === 'creator' ? m.creator_dls_username  : m.opponent_dls_username;
+    const oppDls = side === 'creator' ? m.opponent_dls_username : m.creator_dls_username;
+    return `
+      <div class="players">
+        <div class="pcard">
+          <div class="avatar">${UI.escape(UI.initials(me?.username||'?'))}</div>
+          <div class="you">You</div>
+          <div class="name">${UI.escape(me?.username||'—')}</div>
+          <div class="dls">${UI.escape(meDls || me?.dls_username || '—')}</div>
+        </div>
+        <div class="versus">vs</div>
+        <div class="pcard">
+          <div class="avatar b">${UI.escape(UI.initials(opp?.username||'?'))}</div>
+          <div class="name">${UI.escape(opp?.username||'—')}</div>
+          <div class="dls">${UI.escape(oppDls || opp?.dls_username || '—')}</div>
+        </div>
+      </div>`;
+  },
+
+  phaseHtml(m, side){
+    if (m.status === 'pending_invite')      return this.phasePending(m, side);
+    if (m.status === 'accepted')            return this.phasePlaying(m, side);
+    if (m.status === 'awaiting_submission') return this.phaseSubmission(m, side);
+    if (m.status === 'verifying')           return this.phaseVerifying(m, side);
+    if (m.status === 'settled')             return this.phaseSettled(m, side);
+    if (m.status === 'disputed')            return this.phaseDisputed(m);
+    if (m.status === 'cancelled')           return `<div class="banner warn"><div class="ico">✕</div><div class="body"><h3>Cancelled</h3><p>Stakes refunded.</p></div></div>`;
+    return '';
+  },
+
+  phasePending(m, side){
+    if (side === 'creator'){
+      return `
+        <div class="phase-card">
+          <div class="banner warn">
+            <div class="ico">📨</div>
+            <div class="body">
+              <h3>Waiting for your opponent to accept</h3>
+              <p>Your stake is locked. If they decline or don't accept within 30 minutes, you're fully refunded.</p>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-block" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+        </div>`;
+    }
+    return `
+      <div class="phase-card">
+        <div class="banner info">
+          <div class="ico">📨</div>
+          <div class="body">
+            <h3>This is your invitation</h3>
+            <p>Head to the lobby to accept or decline it.</p>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Open lobby</button>
+      </div>`;
+  },
+
+  phasePlaying(m, side){
+    const oppDls = side === 'creator' ? m.opponent_dls_username : m.creator_dls_username;
+    return `
+      <div class="timer-card">
+        <div class="timer-label">Match time remaining</div>
+        <div class="timer-val" id="matchTimer">05:00</div>
+        <div class="timer-sub">Play your Friend Match now</div>
+        <div class="timer-bar" id="matchTimerBar"><i style="width:100%"></i></div>
+      </div>
+
+      <div class="play-sidebyside">
+        <div class="play-info">
+          <div class="k">Add this opponent in DLS</div>
+          <div class="v">${UI.escape(oppDls || '—')}</div>
+        </div>
+        <div class="play-info">
+          <div class="k">Match code</div>
+          <div class="v">${UI.escape(m.match_code)}</div>
+        </div>
+      </div>
+
+      <div class="notice info">
+        <span class="ico">ℹ</span>
+        <div>
+          Play a <b>Friend Match</b> in Dream League Soccer. When the timer hits zero,
+          you and your opponent both get a short window to upload the final score screenshot.
+        </div>
+      </div>
+
+      <button class="btn btn-ghost btn-block" style="margin-top:10px"
+              onclick="Match.confirmForfeit('${side}')">
+        I can't play — forfeit
+      </button>
+    `;
+  },
+
+  phaseSubmission(m, side){
+    const other = this.otherSide(side);
+    const mySub  = Boolean(m[`${side}_submitted_at`]);
+    const oppSub = Boolean(m[`${other}_submitted_at`]);
+
+    return `
+      <div class="timer-card">
+        <div class="timer-label">Submission window closes in</div>
+        <div class="timer-val" id="matchTimer">05:00</div>
+        <div class="timer-sub">Upload your final-score screenshot before it ends</div>
+        <div class="timer-bar" id="matchTimerBar"><i style="width:100%"></i></div>
+      </div>
+
+      ${mySub ? `<div class="notice ok"><span class="ico">✓</span><div><b>Your result is in.</b> Waiting for your opponent…</div></div>` : ''}
+
+      <div class="submit-grid">
+        ${this.slotMine(m, side, mySub)}
+        ${this.slotOpp(m, other, oppSub)}
+      </div>
+
+      ${mySub ? '' : `<button class="btn btn-primary btn-lg btn-block" id="submitBtn" onclick="Match.doSubmit(this)">Submit my result</button>`}
+
+      ${mySub ? '' : `<button class="btn btn-danger btn-block" style="margin-top:10px" onclick="Match.confirmForfeit('${side}')">Forfeit this match</button>`}
+    `;
+  },
+
+  slotMine(m, side, submitted){
+    if (submitted){
+      const score = m[`${side}_score`];
+      const url = m[`${side}_screenshot_url`];
+      return `
+        <div class="slot filled">
+          <div class="slot-badge ok">Submitted</div>
+          <div class="slot-title">Your result</div>
+          ${url ? `<img class="slot-preview" src="${UI.escape(url)}" alt="">` : ''}
+          <div class="slot-help">Score: <b style="color:var(--primary);font-family:var(--ff-mono);font-size:1.1rem">${score}</b></div>
+        </div>`;
+    }
+    const preview = State.myUpload?.dataUrl
+      ? `<img class="slot-preview" src="${State.myUpload.dataUrl}" alt="">` : '';
+    const hasFile = Boolean(State.myUpload);
+
+    return `
+      <label class="slot clickable ${hasFile ? 'filled' : ''}" for="fileInput">
+        <div class="slot-title">Your result</div>
+        <div class="slot-help">${hasFile ? 'Tap to replace the screenshot' : 'Upload the final score screen from DLS'}</div>
+        ${preview}
+        <input type="file" id="fileInput" accept="image/*" onchange="Match.pickFile(this.files[0])">
+        <div class="score-row">
+          <span class="score-label">Your goals</span>
+          <input class="score-input" type="number" inputmode="numeric" min="0" max="99"
+                 value="${UI.escape(String(State.myScore||''))}"
+                 placeholder="0"
+                 onclick="event.preventDefault()"
+                 onchange="State.myScore=this.value">
+        </div>
+      </label>`;
+  },
+
+  slotOpp(m, other, submitted){
+    const score = m[`${other}_score`];
+    const url = m[`${other}_screenshot_url`];
+
+    if (submitted){
+      return `
+        <div class="slot filled">
+          <div class="slot-badge ok">Submitted</div>
+          <div class="slot-title">Opponent's result</div>
+          ${url ? `<img class="slot-preview" src="${UI.escape(url)}" alt="">` : ''}
+          <div class="slot-help">Score: <b style="color:var(--primary);font-family:var(--ff-mono);font-size:1.1rem">${score}</b></div>
+        </div>`;
+    }
+    return `
+      <div class="slot locked">
+        <div class="slot-badge wait">Waiting</div>
+        <div class="slot-title">Opponent's result</div>
+        <div class="slot-help">Waiting for them to submit their screenshot and score…</div>
+      </div>`;
+  },
+
+  phaseVerifying(m, side){
+    const cin = Boolean(m.creator_submitted_at);
+    const oin = Boolean(m.opponent_submitted_at);
+    const both = cin && oin;
+
+    return `
+      <div class="banner warn">
+        <div class="ico">⏳</div>
+        <div class="body">
+          <h3>${both ? 'Verifying result' : 'Waiting for opponent'}</h3>
+          <p>${both
+            ? 'Both sides submitted. Finalising the outcome.'
+            : 'One side submitted. Waiting for the other or for the submission window to end.'}</p>
+        </div>
+      </div>
+
+      <div class="submit-grid">
+        ${this.slotView('Your side', side==='creator'?m.creator_score : m.opponent_score, side==='creator'?m.creator_screenshot_url : m.opponent_screenshot_url)}
+        ${this.slotView('Opponent side', side==='creator'?m.opponent_score : m.creator_score, side==='creator'?m.opponent_screenshot_url : m.creator_screenshot_url)}
+      </div>
+    `;
+  },
+
+  slotView(label, score, url){
+    return `
+      <div class="slot filled">
+        <div class="slot-badge ${score!=null?'ok':'wait'}">${score!=null?'Submitted':'Waiting'}</div>
+        <div class="slot-title">${label}</div>
+        ${url ? `<img class="slot-preview" src="${UI.escape(url)}" alt="">` : ''}
+        <div class="slot-help">Score: <b style="color:var(--primary);font-family:var(--ff-mono);font-size:1.1rem">${score ?? '—'}</b></div>
+      </div>`;
+  },
+
+  phaseSettled(m, side){
+    const uid = State.session?.user?.id;
+    const myScore = side === 'creator' ? m.creator_score  : m.opponent_score;
+    const oppScore = side === 'creator' ? m.opponent_score : m.creator_score;
+    const pot = Number(m.pot_amount || m.stake_amount * 2);
+    const fee = Number(m.platform_fee || pot * 0.04);
+    const payout = pot - fee;
+
+    let cls, verdict, amount, sub;
+    if (!m.winner_id){
+      cls='draw'; verdict='Draw'; amount=UI.money(m.stake_amount); sub='Your stake was refunded.';
+    } else if (m.winner_id === uid){
+      cls='win'; verdict='You won'; amount='+'+UI.money(payout); sub='Paid to your balance.';
+    } else {
+      cls='lose'; verdict='You lost'; amount='−'+UI.money(m.stake_amount); sub='Better luck next time.';
+    }
+
+    const feeNote = m.winner_id
+      ? `Pot ${UI.money(pot)} · fee ${UI.money(fee)} (4%)`
+      : 'No fee on a draw.';
+
+    return `
+      <div class="result ${cls}">
+        <div class="verdict">${verdict}</div>
+        <div class="amount">${amount}</div>
+        <div class="amount-sub">${sub}</div>
+        <div class="score-line">${myScore ?? '—'} – ${oppScore ?? '—'}</div>
+        <div class="fee-line">${feeNote}</div>
+      </div>
+
+      <div class="thumbs">
+        <div class="thumb">
+          <img src="${UI.escape(side==='creator'?m.creator_screenshot_url:m.opponent_screenshot_url)||''}" alt="">
+          <div class="lbl">Your screenshot</div>
+        </div>
+        <div class="thumb">
+          <img src="${UI.escape(side==='creator'?m.opponent_screenshot_url:m.creator_screenshot_url)||''}" alt="">
+          <div class="lbl">Opponent's screenshot</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+        <button class="btn btn-ghost" onclick="location.href='create-match.html'">New challenge</button>
+      </div>
+    `;
+  },
+
+  phaseDisputed(m){
+    return `
+      <div class="banner danger">
+        <div class="ico">⚖️</div>
+        <div class="body">
+          <h3>Under dispute</h3>
+          <p>This match is under review. A human arbiter will resolve it within 24 hours.</p>
+        </div>
+      </div>`;
+  },
+
+  /* ── Ticker ────────────────────────────────────────────────── */
+  tick(){
+    const m = State.match;
+    if (!m) return;
+
+    const timerEl = document.getElementById('matchTimer');
+    const barEl   = document.getElementById('matchTimerBar');
+    if (!timerEl) return;
+
+    let secsLeft = 0;
+    let total = 0;
+    let cls = '';
+
+    if (m.status === 'accepted' && m.match_ends_at){
+      total = CONFIG.MATCH_DURATION_SEC;
+      secsLeft = (new Date(m.match_ends_at).getTime() - Date.now()) / 1000;
+
+      if (secsLeft <= 0){
+        if (!State.flipped){
+          State.flipped = true;
+          this.autoFlip();
+        }
+        secsLeft = 0;
+      }
+
+      if (secsLeft <= 30) cls = 'danger';
+      else if (secsLeft <= 60) cls = 'warn';
+
+    } else if (m.status === 'awaiting_submission' && m.submission_started_at){
+      total = CONFIG.SUBMIT_WINDOW_SEC;
+      const deadline = new Date(m.submission_started_at).getTime() + CONFIG.SUBMIT_WINDOW_SEC * 1000;
+      secsLeft = (deadline - Date.now()) / 1000;
+
+      if (secsLeft <= 30) cls = 'danger';
+      else if (secsLeft <= 60) cls = 'warn';
+
+      if (secsLeft <= 0){
+        secsLeft = 0;
+      }
+    } else {
+      return;
+    }
+
+    timerEl.textContent = UI.clock(secsLeft);
+    timerEl.className = 'timer-val ' + cls;
+
+    if (barEl){
+      barEl.className = 'timer-bar ' + cls;
+      const pct = total > 0 ? Math.max(0, (secsLeft / total) * 100) : 0;
+      const i = barEl.querySelector('i');
+      if (i) i.style.width = pct + '%';
+    }
+  },
+
+  async autoFlip(){
+    log('Auto-flipping to awaiting_submission');
+    try {
+      const { error } = await Matches.startSubmission(State.matchId);
+      if (error) warn('start_submission error:', error.message || error);
+    } catch(e){ warn('autoFlip threw:', e); }
+    await this.reload(true);
+  },
+
+  /* ── File + score ──────────────────────────────────────────── */
+  async pickFile(file){
+    if (!file) return;
+    if (!file.type.startsWith('image/')){ UI.toast('Please pick an image.', 'err'); return; }
+    if (file.size > 8*1024*1024){ UI.toast('Image too large (8 MB max).', 'err'); return; }
+    const dataUrl = await new Promise((res, rej) => {
+      const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+    });
+    State.myUpload = { file, dataUrl };
+    this.render();
+  },
+
+  async doSubmit(btn){
+    if (State.busy) return;
+    const m = State.match; if (!m) return;
+    const side = this.mySide(); if (!side) return;
+
+    if (!State.myUpload){ UI.toast('Upload your screenshot first.', 'err'); return; }
+    const score = Number(State.myScore);
+    if (!Number.isFinite(score) || score < 0 || score > 99){
+      UI.toast('Enter your final goals (0–99).', 'err');
+      return;
+    }
+
+    State.busy = true;
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Uploading…';
+
+    const upRes = await Matches.upload(m.id, State.session.user.id, State.myUpload.file);
+    if (upRes.error){
+      State.busy = false;
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      UI.toast('Upload failed: ' + (upRes.error.message || 'unknown'), 'err');
+      return;
+    }
+
+    btn.innerHTML = '<span class="spin"></span> Submitting…';
+    const { error } = await Matches.submitResult(m.id, side, score, upRes.data.url);
+    State.busy = false;
+
+    if (error){
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      UI.toast(error.message || 'Submit failed.', 'err');
+      return;
+    }
+
+    UI.toast('Result submitted.', 'ok');
+    State.myUpload = null;
+    State.myScore = '';
+    await this.reload();
+  },
+
+  confirmForfeit(side){
+    if (!confirm('Forfeit this match? Your stake will be lost and your opponent gets the pot (after the 4% fee).')) return;
+    this.doForfeit(side);
+  },
+
+  async doForfeit(side){
+    const { error } = await Matches.forfeit(State.matchId, side);
+    if (error){ UI.toast(error.message || 'Forfeit failed.', 'err'); return; }
+    UI.toast('You forfeited.', 'info');
+    await this.reload();
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Match boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Match (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Match (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Match.init(); }
+  catch(e){ err('Match init failed:', e); UI.toast('Failed to load match.', 'err'); }
+
+  window.addEventListener('beforeunload', () => {
+    if (State.unsub) State.unsub();
+    if (State.ticker) clearInterval(State.ticker);
+    if (State.poll) clearInterval(State.poll);
+  });
+})();
+
+window.DLS = {
+  version: 'match-3.0.0',
+  async debug(){
+    console.log('======== DLS Match v3 ========');
+    console.log('URL:', location.href);
+    console.log('MatchId:', State.matchId);
+    console.log('Match status:', State.match?.status);
+    console.log('Match ends at:', State.match?.match_ends_at);
+    console.log('My side:', Match.mySide());
+    console.log('===============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
