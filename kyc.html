@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Verify identity — DLS Stake</title>
+<meta name="description" content="Verify your identity to unlock withdrawals on DLS Stake." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:860px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+.page-head{margin-bottom:26px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
+
+.grid{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:980px){.grid{grid-template-columns:1.3fr 1fr;align-items:start}}
+
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px}
+.panel + .panel{margin-top:18px}
+.panel h2{font-size:1rem;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.panel .sub{font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.55}
+
+/* STATUS BANNER */
+.status-banner{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:var(--radius-lg);margin-bottom:22px}
+.status-banner .ico{font-size:1.6rem;line-height:1;flex-shrink:0}
+.status-banner .body{flex:1;min-width:0}
+.status-banner .body h3{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+.status-banner .body p{font-size:.86rem;line-height:1.6;color:var(--text-2)}
+.status-banner .body .meta{font-size:.74rem;color:var(--muted);margin-top:8px;font-family:var(--ff-mono)}
+.status-banner.pending{background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.28)}
+.status-banner.pending .ico{color:var(--warn)}
+.status-banner.verified{background:rgba(0,217,126,.07);border:1px solid rgba(0,217,126,.28)}
+.status-banner.verified .ico{color:var(--primary)}
+.status-banner.rejected{background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28)}
+.status-banner.rejected .ico{color:var(--danger)}
+
+/* STEPS */
+.steps{display:flex;gap:6px;margin-bottom:24px}
+.step-dot{flex:1;display:flex;flex-direction:column;gap:6px;font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);text-align:center}
+.step-dot .bar{height:4px;border-radius:2px;background:var(--border);transition:.3s}
+.step-dot.done .bar{background:var(--primary)}
+.step-dot.active .bar{background:var(--primary);animation:pulse 1.4s ease-in-out infinite}
+.step-dot.done,.step-dot.active{color:var(--text)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* SECTION LABEL */
+.section-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-label .num{width:22px;height:22px;border-radius:7px;background:rgba(0,217,126,.12);border:1px solid rgba(0,217,126,.28);display:grid;place-items:center;font-size:.7rem;font-weight:900;color:var(--primary);font-family:var(--ff-mono)}
+.panel-section{margin-bottom:28px}
+.panel-section:last-child{margin-bottom:0}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.label{font-size:.82rem;font-weight:700;color:var(--text-2);display:flex;justify-content:space-between;align-items:baseline}
+.label .hint{font-size:.74rem;font-weight:600;color:var(--muted-2)}
+.input{width:100%;padding:14px 16px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input::placeholder{color:var(--muted-2)}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.15)}
+
+.err{font-size:.78rem;color:var(--danger);display:none;margin-top:-8px;margin-bottom:12px}
+.err.show{display:block}
+
+/* UPLOAD SLOTS */
+.upload-grid{display:grid;gap:14px;grid-template-columns:1fr;margin-bottom:18px}
+@media(min-width:640px){.upload-grid{grid-template-columns:1fr 1fr}}
+
+.upload-slot{
+  position:relative;
+  padding:24px 18px;
+  border:2px dashed var(--border-2);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  min-height:180px;
+  cursor:pointer;
+  transition:.2s;
+}
+.upload-slot:hover:not(.filled){border-color:var(--primary);background:var(--surface-3)}
+.upload-slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);background:rgba(0,217,126,.04);cursor:default}
+.upload-slot input[type="file"]{display:none}
+.upload-slot .uico{font-size:1.8rem;opacity:.85}
+.upload-slot .utitle{font-size:.9rem;font-weight:800}
+.upload-slot .usub{font-size:.75rem;color:var(--muted);line-height:1.5;max-width:220px}
+.upload-slot .upreview{width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);background:#000;display:block}
+.upload-slot .ubadge{position:absolute;top:10px;right:10px;font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:var(--radius-full)}
+.upload-slot .ubadge.ok{background:rgba(0,217,126,.2);color:var(--primary)}
+.upload-slot .ubadge.no{background:rgba(255,176,32,.18);color:var(--warn)}
+
+/* SELFIE */
+.selfie-wrap{display:flex;justify-content:center;margin-bottom:16px}
+.selfie-slot{
+  width:180px;height:180px;border-radius:50%;
+  border:3px dashed var(--border-2);
+  background:var(--surface-2);
+  display:grid;place-items:center;
+  cursor:pointer;transition:.2s;
+  overflow:hidden;position:relative;
+}
+.selfie-slot:hover:not(.filled){border-color:var(--primary);background:var(--surface-3)}
+.selfie-slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);cursor:default}
+.selfie-slot img{width:100%;height:100%;object-fit:cover}
+.selfie-slot .placeholder{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted)}
+.selfie-slot .placeholder .e{font-size:2rem;opacity:.8}
+.selfie-slot .placeholder .t{font-size:.78rem;font-weight:700}
+.selfie-slot .placeholder .s{font-size:.68rem;color:var(--muted-2)}
+.selfie-slot input{display:none}
+
+/* TWO COLUMN */
+.two{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:520px){.two{grid-template-columns:1fr 1fr}}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 22px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 10px 32px var(--primary-glow)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 26px;font-size:1rem}
+
+/* NOTICE */
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.55;margin-bottom:18px}
+.notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.notice .ico{font-size:1rem;line-height:1.3;flex-shrink:0}
+.notice b{font-weight:800}
+
+/* ASIDE */
+.aside-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;position:sticky;top:calc(var(--nav-h) + 20px)}
+.aside-card + .aside-card{margin-top:18px}
+.aside-card h3{font-size:.92rem;font-weight:800;letter-spacing:-.01em;margin-bottom:14px}
+.aside-list{display:grid;gap:14px}
+.aside-item{display:flex;gap:12px;align-items:flex-start}
+.aside-item .ico{width:36px;height:36px;min-width:36px;border-radius:10px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:.95rem}
+.aside-item.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.22)}
+.aside-item.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.22)}
+.aside-item .txt{flex:1;min-width:0}
+.aside-item .txt h4{font-size:.85rem;font-weight:800;margin-bottom:2px}
+.aside-item .txt p{font-size:.76rem;color:var(--muted);line-height:1.5}
+
+.checklist{display:grid;gap:10px;font-size:.82rem;color:var(--text-2);line-height:1.6;list-style:none}
+.checklist li{display:flex;gap:8px;align-items:flex-start}
+.checklist li::before{content:'✓';color:var(--primary);font-weight:900;flex-shrink:0}
+
+/* LOADING */
+.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="create-match.html">Create</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+
+  <div class="page-head">
+    <div class="eyebrow">Identity</div>
+    <h1 class="page-title">Verify your identity</h1>
+    <div class="page-sub">Required to withdraw your winnings to a Nigerian bank account.</div>
+  </div>
+
+  <div id="statusBanner"></div>
+
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="profile.html">Profile</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  DASHBOARD_PAGE:    'dashboard.html',
+  CURRENCY:          '₦',
+  DEBUG:             true
+};
+
+const $ = (s) => document.querySelector(s);
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  timeAgo(iso){
+    if (!iso) return '—';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  },
+  fieldError(inputId, message){
+    const input = document.getElementById(inputId);
+    const errEl = document.getElementById(inputId + 'Err');
+    if (message){
+      if (input) input.classList.add('invalid');
+      if (errEl){ errEl.textContent = message; errEl.classList.add('show'); }
+    } else {
+      if (input) input.classList.remove('invalid');
+      if (errEl){ errEl.textContent = ''; errEl.classList.remove('show'); }
+    }
+  },
+  alert(containerId, message, type='info'){
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!message){ el.innerHTML = ''; return; }
+    const icon = type === 'warn' ? '⚠' : type === 'ok' ? '✓' : type === 'danger' ? '⚠' : 'ℹ';
+    el.innerHTML = `<div class="notice ${type}"><span class="ico">${icon}</span><div>${message}</div></div>`;
+  },
+  busy(btnId, isBusy, label='Please wait…'){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isBusy){
+      btn.dataset.label = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spin"></span> ${label}`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.label || btn.innerHTML;
+    }
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  idFront: null,
+  idBack: null,
+  selfie: null,
+  busy: false
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
+      catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   KYC
+   ============================================================================ */
+const KYC = {
+
+  async init(){
+    log('KYC init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id);
+    this.renderNav();
+    this.render();
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    if (!u) return;
+    const username = p?.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
+    const av = document.getElementById('navAvatar');
+    const nm = document.getElementById('navName');
+    if (av) av.textContent = UI.initials(username);
+    if (nm) nm.textContent = username;
+  },
+
+  currentStatus(){
+    return (State.profile?.kyc_status || 'pending').toLowerCase();
+  },
+
+  render(){
+    const status = this.currentStatus();
+    this.renderBanner(status);
+    this.renderBody(status);
+  },
+
+  renderBanner(status){
+    const banner = $('#statusBanner');
+    let cls, ico, title, sub;
+
+    if (status === 'verified'){
+      cls='verified'; ico='✓';
+      title = 'Identity verified';
+      sub = 'You can now withdraw your winnings to a Nigerian bank account.';
+    } else if (status === 'rejected'){
+      cls='rejected'; ico='✕';
+      title = 'Verification failed';
+      sub = 'Please review the reason below and re-submit your documents.';
+    } else {
+      cls='pending'; ico='⏳';
+      title = 'Verification required';
+      sub = 'Complete the steps below to unlock withdrawals. Approval usually takes under 24 hours.';
+    }
+
+    const updated = State.profile?.updated_at
+      ? `<div class="meta">Last updated ${UI.timeAgo(State.profile.updated_at)}</div>` : '';
+
+    banner.innerHTML = `
+      <div class="status-banner ${cls}">
+        <div class="ico">${ico}</div>
+        <div class="body">
+          <h3>${title}</h3>
+          <p>${sub}</p>
+          ${updated}
+        </div>
+      </div>`;
+  },
+
+  renderBody(status){
+    const body = $('#body');
+    if (status === 'verified'){
+      body.innerHTML = this.verifiedView();
+      return;
+    }
+    body.innerHTML = this.formView(status);
+    this.wireUploads();
+  },
+
+  verifiedView(){
+    const p = State.profile;
+    const bank = p?.bank_details || null;
+    return `
+      <div class="grid">
+        <div>
+          <div class="panel">
+            <h2>Your verified identity</h2>
+            <div class="sub">This information is encrypted and only used to process withdrawals.</div>
+
+            <div class="panel-section">
+              <div class="section-label"><span class="num">1</span> Account</div>
+              <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;font-size:.9rem;line-height:1.7">
+                <div><b>Username:</b> ${UI.escape(p?.username || '—')}</div>
+                <div><b>DLS username:</b> ${UI.escape(p?.dls_username || '—')}</div>
+                <div><b>Email:</b> ${UI.escape(p?.email || '—')}</div>
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-label"><span class="num">2</span> Bank account on file</div>
+              ${bank ? `
+                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;font-size:.9rem;line-height:1.7">
+                  <div><b>Bank:</b> ${UI.escape(bank.bank_name || bank.bank_code || '—')}</div>
+                  <div><b>Account:</b> <span style="font-family:var(--ff-mono)">${UI.escape(bank.account_number || '—')}</span></div>
+                  <div><b>Name:</b> ${UI.escape(bank.account_name || '—')}</div>
+                </div>
+                <button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="KYC.updateBank()">Update bank details</button>
+              ` : `
+                <div class="notice warn">
+                  <span class="ico">⚠</span>
+                  <div>No bank account on file. You'll be asked for it the first time you withdraw.</div>
+                </div>
+                <button class="btn btn-primary btn-block" onclick="KYC.updateBank()">Add bank details</button>
+              `}
+            </div>
+          </div>
+        </div>
+        <aside>
+          <div class="aside-card">
+            <h3>Status</h3>
+            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+              <span style="color:var(--muted);font-size:.8rem">KYC</span>
+              <span style="color:var(--primary);font-size:.78rem;font-weight:800">Verified ✓</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:12px 0">
+              <span style="color:var(--muted);font-size:.8rem">Withdrawals</span>
+              <span style="color:var(--primary);font-size:.85rem;font-weight:800">Unlocked</span>
+            </div>
+            <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="location.href='${CONFIG.DASHBOARD_PAGE}'">
+              Back to dashboard
+            </button>
+          </div>
+        </aside>
+      </div>`;
+  },
+
+  formView(status){
+    const rejected = status === 'rejected';
+    return `
+      <div class="grid">
+        <div>
+          <div class="panel">
+            <h2>Identity verification</h2>
+            <div class="sub">All documents are encrypted and only used to confirm you're you. Approval typically within 24 hours.</div>
+
+            <div class="steps">
+              <div class="step-dot active"><div class="bar"></div><div>Documents</div></div>
+              <div class="step-dot"><div class="bar"></div><div>Selfie</div></div>
+              <div class="step-dot"><div class="bar"></div><div>Bank</div></div>
+              <div class="step-dot"><div class="bar"></div><div>Review</div></div>
+            </div>
+
+            ${rejected ? `
+              <div class="notice warn">
+                <span class="ico">⚠</span>
+                <div><b>Previous submission was rejected.</b> Please re-upload the documents below, making sure all details are clearly visible and match your account name.</div>
+              </div>` : ''}
+
+            <div class="panel-section">
+              <div class="section-label"><span class="num">1</span> Government ID</div>
+
+              <div class="upload-grid">
+                <label class="upload-slot" for="idFrontInput" id="idFrontSlot">
+                  <div class="ubadge no" id="idFrontBadge">Required</div>
+                  <div class="uico">🪪</div>
+                  <div class="utitle">Front of ID</div>
+                  <div class="usub">NIN slip, driver's licence, voter's card, or international passport</div>
+                  <input type="file" id="idFrontInput" accept="image/*" capture="environment">
+                </label>
+
+                <label class="upload-slot" for="idBackInput" id="idBackSlot">
+                  <div class="ubadge no" id="idBackBadge">Required</div>
+                  <div class="uico">🪪</div>
+                  <div class="utitle">Back of ID</div>
+                  <div class="usub">If your ID has information on both sides</div>
+                  <input type="file" id="idBackInput" accept="image/*" capture="environment">
+                </label>
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-label"><span class="num">2</span> Selfie with your ID</div>
+              <div class="notice info">
+                <span class="ico">ℹ</span>
+                <div>Hold your ID next to your face and take a clear selfie. Your face and the ID details must both be visible.</div>
+              </div>
+              <div class="selfie-wrap">
+                <label class="selfie-slot" for="selfieInput" id="selfieSlot">
+                  <div class="placeholder">
+                    <div class="e">🤳</div>
+                    <div class="t">Take selfie</div>
+                    <div class="s">Tap to open camera</div>
+                  </div>
+                  <input type="file" id="selfieInput" accept="image/*" capture="user">
+                </label>
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <div class="section-label"><span class="num">3</span> Bank account</div>
+
+              <div class="two">
+                <div class="field">
+                  <label class="label" for="bankName">Bank</label>
+                  <select id="bankName" class="input">
+                    <option value="">Select bank…</option>
+                    <option value="Access Bank" data-code="044">Access Bank</option>
+                    <option value="Access Bank (Diamond)" data-code="063">Access Bank (Diamond)</option>
+                    <option value="ALAT by Wema" data-code="035">ALAT by Wema</option>
+                    <option value="Zenith Bank" data-code="057">Zenith Bank</option>
+                    <option value="GTBank" data-code="058">Guaranty Trust Bank (GTB)</option>
+                    <option value="First Bank" data-code="011">First Bank of Nigeria</option>
+                    <option value="FCMB" data-code="214">First City Monument Bank (FCMB)</option>
+                    <option value="Fidelity Bank" data-code="070">Fidelity Bank</option>
+                    <option value="Heritage Bank" data-code="030">Heritage Bank</option>
+                    <option value="Jaiz Bank" data-code="301">Jaiz Bank</option>
+                    <option value="Keystone Bank" data-code="082">Keystone Bank</option>
+                    <option value="Parallex Bank" data-code="526">Parallex Bank</option>
+                    <option value="Polaris Bank" data-code="076">Polaris Bank</option>
+                    <option value="Stanbic IBTC" data-code="221">Stanbic IBTC</option>
+                    <option value="Standard Chartered" data-code="068">Standard Chartered</option>
+                    <option value="Sterling Bank" data-code="232">Sterling Bank</option>
+                    <option value="Suntrust Bank" data-code="100">Suntrust Bank</option>
+                    <option value="Union Bank" data-code="032">Union Bank</option>
+                    <option value="UBA" data-code="033">United Bank for Africa (UBA)</option>
+                    <option value="Unity Bank" data-code="215">Unity Bank</option>
+                    <option value="Wema Bank" data-code="035">Wema Bank</option>
+                    <option value="Kuda" data-code="50211">Kuda</option>
+                    <option value="Opay" data-code="999992">Opay</option>
+                    <option value="Moniepoint" data-code="50515">Moniepoint</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="label" for="bankAcct">Account number</label>
+                  <input class="input" id="bankAcct" type="text" inputmode="numeric" maxlength="10" placeholder="10 digits">
+                </div>
+              </div>
+              <div class="field">
+                <label class="label" for="bankAcctName">Account name</label>
+                <input class="input" id="bankAcctName" type="text" placeholder="As it appears on your bank statement">
+              </div>
+            </div>
+
+            <div class="err" id="submitErr"></div>
+
+            <button class="btn btn-primary btn-lg btn-block" id="submitBtn" onclick="KYC.submit()">
+              Submit for verification
+            </button>
+
+            <div class="notice info" style="margin-top:16px">
+              <span class="ico">🔒</span>
+              <div>Your documents are stored encrypted and are never shared. They're only used to verify your identity.</div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="aside-card">
+            <h3>Why we ask</h3>
+            <div class="aside-list">
+              <div class="aside-item">
+                <div class="ico">🛡️</div>
+                <div class="txt">
+                  <h4>Prevent fraud</h4>
+                  <p>Real identity verification stops stolen accounts and fake payouts.</p>
+                </div>
+              </div>
+              <div class="aside-item blue">
+                <div class="ico">🏦</div>
+                <div class="txt">
+                  <h4>Bank compliance</h4>
+                  <p>Nigerian banks require us to know who's receiving payouts.</p>
+                </div>
+              </div>
+              <div class="aside-item warn">
+                <div class="ico">⏱️</div>
+                <div class="txt">
+                  <h4>Fast approval</h4>
+                  <p>Most verifications complete within 24 hours.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aside-card">
+            <h3>Document checklist</h3>
+            <ul class="checklist">
+              <li>All four corners of the ID visible</li>
+              <li>Text sharp and readable</li>
+              <li>No reflections or glare</li>
+              <li>Not expired</li>
+              <li>Photo on the ID matches your selfie</li>
+              <li>Name matches the account you're using</li>
+            </ul>
+          </div>
+        </aside>
+      </div>`;
+  },
+
+  wireUploads(){
+    const wire = (inputId, key, isSelfie) => {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')){
+          UI.toast('Please pick an image.', 'err');
+          return;
+        }
+        if (file.size > 6 * 1024 * 1024){
+          UI.toast('Image too large (6 MB max).', 'err');
+          return;
+        }
+
+        const dataUrl = await new Promise((res, rej) => {
+          const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+        });
+
+        State[key] = { file, dataUrl };
+
+        if (isSelfie){
+          const slot = document.getElementById('selfieSlot');
+          slot.classList.add('filled');
+          slot.innerHTML = `<img src="${dataUrl}" alt=""><input type="file" id="selfieInput" accept="image/*" capture="user">`;
+          wire('selfieInput', key, true);
+        } else {
+          const slot = document.getElementById(inputId.replace('Input','Slot'));
+          slot.classList.add('filled');
+          const existingInput = slot.querySelector('input[type="file"]');
+          slot.innerHTML = `
+            <div class="ubadge ok">Ready</div>
+            <img class="upreview" src="${dataUrl}" alt="">
+            <div class="utitle" style="font-size:.8rem">${inputId === 'idFrontInput' ? 'Front' : 'Back'} uploaded</div>
+            <div class="usub" style="font-size:.7rem">Tap to replace</div>
+          `;
+          slot.appendChild(existingInput);
+        }
+      });
+    };
+
+    wire('idFrontInput', 'idFront', false);
+    wire('idBackInput',  'idBack',  false);
+    wire('selfieInput',  'selfie',  true);
+  },
+
+  validate(){
+    const errEl = $('#submitErr');
+    errEl.classList.remove('show');
+
+    const fail = (msg) => {
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+      errEl.scrollIntoView({ behavior:'smooth', block:'center' });
+      return false;
+    };
+
+    if (!State.idFront) return fail('Upload the front of your ID.');
+    if (!State.idBack)  return fail('Upload the back of your ID.');
+    if (!State.selfie)  return fail('Take a selfie holding your ID.');
+
+    const bankSel = document.getElementById('bankName');
+    const bankName = bankSel.value;
+    const bankCode = bankSel.selectedOptions[0]?.dataset.code;
+    const bankAcct = document.getElementById('bankAcct').value.trim();
+    const bankAcctName = document.getElementById('bankAcctName').value.trim();
+
+    if (!bankName) return fail('Select your bank.');
+    if (!/^\d{10}$/.test(bankAcct)) return fail('Account number must be 10 digits.');
+    if (!bankAcctName) return fail('Enter the account name.');
+
+    return { bankName, bankCode, bankAcct, bankAcctName };
+  },
+
+  async submit(){
+    if (State.busy) return;
+    const v = this.validate();
+    if (!v) return;
+
+    State.busy = true;
+    UI.busy('submitBtn', true, 'Uploading…');
+
+    try {
+      const uid = State.session.user.id;
+      const ts = Date.now();
+      const folder = `kyc/${uid}`;
+
+      const uploadOne = async (input, name) => {
+        if (!Supa.HAS) return input.dataUrl;
+        const ext = (input.file.name.split('.').pop() || 'jpg').toLowerCase();
+        const path = `${folder}/${name}-${ts}.${ext}`;
+        const { error: upErr } = await Supa.client.storage
+          .from('kyc-docs')
+          .upload(path, input.file, { upsert: true, contentType: input.file.type || 'image/jpeg', cacheControl:'600' });
+        if (upErr) throw upErr;
+        return path;
+      };
+
+      const idFrontPath = await uploadOne(State.idFront, 'front');
+      const idBackPath  = await uploadOne(State.idBack,  'back');
+      const selfiePath  = await uploadOne(State.selfie,  'selfie');
+
+      if (Supa.HAS){
+        const { error: upErr } = await Supa.client
+          .from('profiles')
+          .update({
+            kyc_status: 'pending',
+            bank_details: {
+              bank_name:      v.bankName,
+              bank_code:      v.bankCode,
+              account_number: v.bankAcct,
+              account_name:   v.bankAcctName
+            }
+          })
+          .eq('id', uid);
+        if (upErr) throw upErr;
+
+        const { error: insErr } = await Supa.client
+          .from('kyc_submissions')
+          .insert({
+            user_id: uid,
+            id_front_path: idFrontPath,
+            id_back_path:  idBackPath,
+            selfie_path:   selfiePath,
+            bank_details: {
+              bank_name:      v.bankName,
+              bank_code:      v.bankCode,
+              account_number: v.bankAcct,
+              account_name:   v.bankAcctName
+            },
+            status: 'pending'
+          });
+        if (insErr) warn('kyc_submissions insert failed:', insErr.message);
+      } else {
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === uid);
+        if (u){
+          u.kyc_status = 'pending';
+          u.bank_details = {
+            bank_name: v.bankName,
+            bank_code: v.bankCode,
+            account_number: v.bankAcct,
+            account_name: v.bankAcctName
+          };
+          localStorage.setItem('dls_demo_users', JSON.stringify(users));
+        }
+      }
+
+      UI.busy('submitBtn', false);
+      State.busy = false;
+
+      State.profile = await Auth.fetchProfile(uid);
+      UI.toast('Submitted! Approval within 24 hours.', 'ok');
+      this.render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (e){
+      err('KYC submit failed:', e);
+      UI.busy('submitBtn', false);
+      State.busy = false;
+      const errEl = $('#submitErr');
+      errEl.textContent = e.message || 'Submission failed. Please try again.';
+      errEl.classList.add('show');
+    }
+  },
+
+  async updateBank(){
+    const bankName = prompt('Bank name (e.g. GTBank):');
+    if (!bankName) return;
+    const acct = prompt('10-digit account number:');
+    if (!acct || !/^\d{10}$/.test(acct)){ UI.toast('Invalid account number.', 'err'); return; }
+    const name = prompt('Account name:');
+    if (!name) return;
+
+    try {
+      if (Supa.HAS){
+        const { error } = await Supa.client.from('profiles').update({
+          bank_details: { bank_name: bankName, account_number: acct, account_name: name }
+        }).eq('id', State.session.user.id);
+        if (error) throw error;
+      } else {
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        if (u){
+          u.bank_details = { bank_name: bankName, account_number: acct, account_name: name };
+          localStorage.setItem('dls_demo_users', JSON.stringify(users));
+        }
+      }
+      UI.toast('Bank details updated.', 'ok');
+      State.profile = await Auth.fetchProfile(State.session.user.id);
+      this.render();
+    } catch(e){
+      err(e);
+      UI.toast(e.message || 'Failed to update.', 'err');
+    }
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('KYC boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — KYC (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — KYC (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await KYC.init(); }
+  catch(e){ err('KYC init failed:', e); UI.toast('Failed to load page.', 'err'); }
+})();
+
+window.DLS = {
+  version: 'kyc-2.0.0',
+  async debug(){
+    console.log('======== DLS KYC v2 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Profile:', State.profile);
+    console.log('Files:', { idFront: !!State.idFront, idBack: !!State.idBack, selfie: !!State.selfie });
+    console.log('============================');
+  }
+};
+</script>
+</body>
+</html>
