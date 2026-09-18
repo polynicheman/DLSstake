@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Create your account — DLS Stake</title>
+<meta name="description" content="Join DLS Stake. Challenge players on Dream League Soccer and win the pot." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--ff);background:var(--bg);color:var(--text);
+  line-height:1.55;-webkit-font-smoothing:antialiased;
+  min-height:100vh;min-height:100dvh;overflow-x:hidden;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+    radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+    radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);
+}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:60;height:var(--nav-h);
+  background:rgba(7,13,22,.82);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  height:var(--nav-h);display:flex;align-items:center;
+  justify-content:space-between;gap:16px;
+}
+.brand{ display:flex;align-items:center;gap:10px;cursor:pointer; }
+.brand-mark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(140deg,var(--primary),var(--accent));
+  display:grid;place-items:center;
+  font-weight:900;font-size:.85rem;color:#04140c;
+  box-shadow:0 4px 14px var(--primary-glow);
+}
+.brand-text{ font-weight:900;font-size:1.06rem;letter-spacing:-.03em; }
+.brand-text span{ color:var(--primary); }
+
+.nav-links{ display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted); }
+.nav-links a{ cursor:pointer; }
+.nav-links a:hover{ color:var(--text); }
+@media(min-width:860px){ .nav-links{ display:flex; } }
+
+.nav-actions{ display:flex;align-items:center;gap:10px; }
+.nav-user{
+  display:flex;align-items:center;gap:10px;
+  padding:5px 12px 5px 5px;
+  border-radius:var(--radius-full);
+  background:var(--surface);border:1px solid var(--border);
+  cursor:pointer;transition:border-color .15s, background .15s;
+}
+.nav-user:hover{ background:var(--surface-2);border-color:var(--border-2); }
+.nav-user .avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(140deg,var(--primary),var(--accent));
+  display:grid;place-items:center;
+  color:#04140c;font-weight:900;font-size:.72rem;
+}
+.nav-user .name{ font-size:.82rem;font-weight:700; }
+@media(max-width:520px){ .nav-user .name{ display:none; } }
+
+/* ============================================================
+   SPLIT LAYOUT
+   ============================================================ */
+.auth-shell{
+  min-height:calc(100vh - var(--nav-h));
+  min-height:calc(100dvh - var(--nav-h));
+  display:grid;grid-template-columns:1fr;
+}
+@media(min-width:960px){
+  .auth-shell{ grid-template-columns:1.05fr .95fr; }
+}
+
+/* -------- Brand panel (left) -------- */
+.brand-panel{
+  display:none;position:relative;
+  padding:56px 56px 40px;
+  background:linear-gradient(160deg, #0a1626 0%, #070d16 60%);
+  border-right:1px solid var(--border);
+  overflow:hidden;
+}
+@media(min-width:960px){ .brand-panel{ display:flex; flex-direction:column; } }
+
+.brand-panel::before{
+  content:'';position:absolute;inset:0;opacity:.35;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(30,48,72,.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,48,72,.55) 1px, transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse at 30% 40%, black 30%, transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse at 30% 40%, black 30%, transparent 80%);
+}
+.brand-panel::after{
+  content:'';position:absolute;top:-160px;right:-160px;width:520px;height:520px;
+  background:radial-gradient(circle, rgba(0,217,126,.16), transparent 65%);
+  pointer-events:none;
+}
+.brand-top{ display:flex; align-items:center; gap:12px; position:relative; z-index:1; }
+.brand-hero{
+  margin:auto 0;max-width:560px;position:relative;z-index:1;padding:40px 0;
+}
+.brand-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px 6px 8px;border-radius:var(--radius-full);
+  background:rgba(0,217,126,.08);border:1px solid rgba(0,217,126,.28);
+  font-size:.74rem;font-weight:700;color:var(--primary);margin-bottom:24px;
+}
+.brand-eyebrow b{
+  background:var(--primary);color:#04140c;padding:2px 8px;
+  border-radius:var(--radius-full);font-size:.66rem;
+  font-weight:800;letter-spacing:.04em;
+}
+.brand-headline{
+  font-size:clamp(2.1rem,3.6vw,3rem);
+  font-weight:900;line-height:1.08;letter-spacing:-.035em;
+  margin-bottom:22px;
+}
+.brand-headline em{
+  font-style:normal;
+  background:linear-gradient(100deg,var(--primary) 0%,#5ce0ff 55%,var(--accent) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+}
+.brand-sub{
+  color:var(--text-2);font-size:1rem;line-height:1.65;
+  max-width:480px;margin-bottom:34px;
+}
+
+.brand-features{ display:flex;flex-direction:column;gap:16px;position:relative;z-index:1; }
+.brand-feature{ display:flex;align-items:flex-start;gap:14px; }
+.brand-feature .ico{
+  width:38px;height:38px;min-width:38px;border-radius:11px;
+  background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);
+  display:grid;place-items:center;font-size:1.05rem;
+}
+.brand-feature .txt h4{ font-size:.94rem;font-weight:800;margin-bottom:3px; }
+.brand-feature .txt p{ font-size:.83rem;color:var(--muted);line-height:1.55; }
+
+.brand-foot{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-top:26px;border-top:1px solid var(--border);
+  font-size:.76rem;color:var(--muted-2);
+  position:relative;z-index:1;
+}
+.brand-foot .stats{ display:flex;gap:22px; }
+.brand-foot .stats b{ color:var(--text);font-weight:800; }
+
+/* -------- Form panel (right) -------- */
+.form-panel{
+  display:flex;align-items:center;justify-content:center;
+  padding:40px 24px;position:relative;
+}
+.form-card{ width:100%;max-width:440px;animation:fadeIn .4s ease; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.mobile-brand{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:30px;
+}
+@media(min-width:960px){ .mobile-brand{ display:none; } }
+
+.form-head{ margin-bottom:26px; }
+.form-head h1{
+  font-size:1.7rem;font-weight:900;letter-spacing:-.03em;
+  margin-bottom:6px;
+}
+.form-head p{ color:var(--muted);font-size:.9rem; }
+
+/* ---------- Form controls ---------- */
+.field{ display:flex;flex-direction:column;gap:7px; margin-bottom:14px; }
+.label{
+  font-size:.82rem;font-weight:600;color:var(--text-2);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.input{
+  width:100%;padding:13px 15px;border-radius:var(--radius-sm);
+  background:var(--bg-2);border:1px solid var(--border-2);
+  color:var(--text);font-size:.95rem;outline:none;
+  transition:border-color .18s, box-shadow .18s, background .18s;
+}
+.input::placeholder{ color:var(--muted-2); }
+.input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px var(--primary-glow);
+  background:var(--surface);
+}
+.input.invalid{ border-color:var(--danger); box-shadow:0 0 0 3px rgba(255,77,94,.15); }
+.input-wrap{ position:relative;display:flex;align-items:center; }
+.input-wrap .input{ padding-right:52px; }
+.input-suffix{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  color:var(--muted);cursor:pointer;padding:5px 8px;border-radius:6px;
+  font-size:.7rem;font-weight:700;letter-spacing:.05em;
+}
+.input-suffix:hover{ color:var(--text);background:rgba(255,255,255,.05); }
+
+.field-help{ font-size:.74rem;color:var(--muted-2);line-height:1.5; }
+.err{
+  font-size:.76rem;color:var(--danger);
+  display:none;align-items:center;gap:5px;
+}
+.err.show{ display:flex; }
+.err::before{ content:'!';font-weight:900; }
+
+/* Password strength */
+.strength{ display:flex;gap:4px;margin-top:6px; }
+.strength i{
+  flex:1;height:3px;border-radius:2px;background:var(--border);
+  transition:background .25s;
+}
+.strength.s1 i:nth-child(1){ background:var(--danger); }
+.strength.s2 i:nth-child(-n+2){ background:var(--warn); }
+.strength.s3 i:nth-child(-n+3){ background:#6fcf3f; }
+.strength.s4 i{ background:var(--primary); }
+
+/* Checkbox */
+.check{
+  display:flex;align-items:flex-start;gap:11px;
+  cursor:pointer;font-size:.84rem;color:var(--text-2);line-height:1.5;
+  margin-top:16px;margin-bottom:6px;
+}
+.check input{
+  appearance:none;-webkit-appearance:none;
+  width:19px;height:19px;min-width:19px;margin-top:1px;
+  border:1.5px solid var(--border-2);border-radius:5px;
+  background:var(--bg-2);cursor:pointer;position:relative;
+  transition:.15s;
+}
+.check input:checked{ background:var(--primary);border-color:var(--primary); }
+.check input:checked::after{
+  content:'';position:absolute;left:6px;top:2px;
+  width:5px;height:10px;
+  border:solid #04140c;border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+.check a{ color:var(--primary);font-weight:600; }
+.check a:hover{ text-decoration:underline; }
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:14px 22px;border-radius:var(--radius-full);
+  font-weight:700;font-size:.95rem;letter-spacing:.01em;
+  border:1px solid transparent;cursor:pointer;
+  transition:transform .12s, box-shadow .18s, background .18s, opacity .18s;
+  white-space:nowrap;user-select:none;
+}
+.btn:active{ transform:translateY(1px) scale(.99); }
+.btn:disabled{ opacity:.55;cursor:not-allowed;transform:none; }
+.btn-primary{
+  background:linear-gradient(180deg,var(--primary) 0%,var(--primary-dark) 100%);
+  color:#04140c;box-shadow:0 6px 22px var(--primary-glow);
+}
+.btn-primary:hover:not(:disabled){
+  box-shadow:0 10px 32px var(--primary-glow);
+  filter:brightness(1.06);
+}
+.btn-ghost{ background:var(--surface);color:var(--text);border-color:var(--border-2); }
+.btn-ghost:hover:not(:disabled){ background:var(--surface-2);border-color:var(--muted-2); }
+.btn-outline{ background:transparent;color:var(--text);border-color:var(--border-2); }
+.btn-outline:hover:not(:disabled){ background:rgba(255,255,255,.04); }
+.btn-block{ width:100%; }
+.btn-lg{ padding:15px 30px;font-size:1rem; }
+.btn-sm{ padding:8px 15px;font-size:.82rem; }
+
+/* ---------- Inline alert ---------- */
+.notice{
+  display:flex;gap:10px;padding:13px 15px;
+  border-radius:var(--radius-sm);font-size:.83rem;line-height:1.55;
+  margin-bottom:18px;
+}
+.notice-info{ background:rgba(47,128,237,.1);border:1px solid rgba(47,128,237,.28);color:#9cc4ff; }
+.notice-warn{ background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a; }
+.notice-ok{ background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0; }
+.notice .btn{ margin-top:10px;padding:8px 15px;font-size:.82rem; }
+
+/* ---------- Form footer ---------- */
+.form-foot{
+  text-align:center;font-size:.86rem;color:var(--muted);
+  margin-top:22px;
+}
+.form-foot a, .form-foot button{
+  color:var(--primary);font-weight:700;
+}
+.form-foot a:hover, .form-foot button:hover{ text-decoration:underline; }
+.form-foot .trouble{
+  font-size:.78rem;color:var(--muted-2);margin-top:14px;
+}
+
+/* ============================================================
+   SUCCESS OVERLAY
+   ============================================================ */
+#successOverlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(7,13,22,.92);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  display:grid;place-items:center;padding:24px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s ease;
+}
+#successOverlay.show{ opacity:1;pointer-events:auto; }
+
+.success-card{
+  max-width:440px;width:100%;
+  background:linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  padding:40px 30px 34px;
+  text-align:center;
+  box-shadow:var(--shadow-lg);
+  transform:scale(.94);
+  transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+}
+#successOverlay.show .success-card{ transform:scale(1); }
+
+.check-ring{
+  width:72px;height:72px;margin:0 auto 22px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,217,126,.18), rgba(0,217,126,.04));
+  border:2px solid rgba(0,217,126,.4);
+  display:grid;place-items:center;
+  animation:pop .5s cubic-bezier(.2,.9,.3,1.5);
+}
+@keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.check-ring svg{ width:32px;height:32px; }
+.check-ring svg path{
+  stroke:var(--primary);
+  stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:40;stroke-dashoffset:40;
+  animation:check .5s .2s forwards ease-out;
+}
+@keyframes check{to{stroke-dashoffset:0}}
+
+.success-card h2{
+  font-size:1.4rem;font-weight:900;letter-spacing:-.02em;
+  margin-bottom:8px;
+}
+.success-card p{
+  color:var(--text-2);font-size:.9rem;line-height:1.6;
+  margin-bottom:6px;
+}
+.success-card p b{ color:var(--primary);font-weight:700; }
+.success-card .small{ font-size:.8rem;color:var(--muted);margin-top:14px; }
+.success-card .btn{ margin-top:22px; }
+
+.countdown{
+  display:inline-block;
+  font-family:var(--ff-mono);font-weight:800;color:var(--primary);
+}
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+#toasts{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:400;display:flex;flex-direction:column;gap:9px;
+  width:calc(100% - 32px);max-width:400px;pointer-events:none;
+}
+.toast{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:13px 15px;border-radius:var(--radius-sm);
+  background:var(--surface-2);border:1px solid var(--border-2);
+  box-shadow:var(--shadow);font-size:.86rem;
+  animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);
+  pointer-events:auto;
+}
+.toast.out{ animation:toastOut .22s forwards; }
+.toast.ok{ border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15); }
+.toast.err{ border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e); }
+.toast.info{ border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622); }
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* Spinner */
+.spin{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+
+    <div class="nav-links">
+      <a onclick="Signup.scrollTo('how')">How it works</a>
+      <a onclick="Signup.scrollTo('safety')">Safety</a>
+      <a onclick="Signup.scrollTo('faq')">FAQ</a>
+    </div>
+
+    <div class="nav-actions" id="navActions">
+      <!-- Populated by JS based on auth state -->
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     SPLIT AUTH SCREEN
+     ============================================================ -->
+<div class="auth-shell">
+
+  <!-- LEFT — BRAND PANEL -->
+  <aside class="brand-panel">
+    <div class="brand-top">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+
+    <div class="brand-hero">
+      <div class="brand-eyebrow"><b>NEW</b> Instant Naira payouts</div>
+      <h2 class="brand-headline">
+        Play Dream League Soccer.<br />
+        <em>Winner takes the pot.</em>
+      </h2>
+      <p class="brand-sub">
+        Challenge a specific player, stake an amount you both agree on, and let escrow hold the money.
+        The winner gets paid automatically — minus a 4% platform fee. Draws refund both players.
+      </p>
+
+      <div class="brand-features">
+        <div class="brand-feature">
+          <div class="ico">🔒</div>
+          <div class="txt">
+            <h4>Escrow-held stakes</h4>
+            <p>Neither player can touch the pot until the match settles.</p>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="ico">⏱️</div>
+          <div class="txt">
+            <h4>5-minute matches</h4>
+            <p>Play a Friend Match in DLS. Both players then upload the final score.</p>
+          </div>
+        </div>
+        <div class="brand-feature">
+          <div class="ico">⚖️</div>
+          <div class="txt">
+            <h4>Human arbitration</h4>
+            <p>Conflicting evidence goes to a trained arbiter who issues a binding ruling.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brand-foot">
+      <div class="stats">
+        <span>Min stake <b>₦100</b></span>
+        <span>Max stake <b>₦500k</b></span>
+        <span>Fee <b>4%</b></span>
+      </div>
+      <span>© 2026 DLS Stake</span>
+    </div>
+  </aside>
+
+  <!-- RIGHT — FORM -->
+  <main class="form-panel">
+    <div class="form-card">
+
+      <div class="mobile-brand">
+        <div class="brand-mark">DLS</div>
+        <div class="brand-text">DLS<span>Stake</span></div>
+      </div>
+
+      <div class="form-head">
+        <h1>Create your account</h1>
+        <p>Start staking in under two minutes.</p>
+      </div>
+
+      <div id="formAlert"></div>
+
+      <form id="signupForm" novalidate>
+
+        <div class="field">
+          <label class="label" for="username">Username</label>
+          <input class="input" type="text" id="username"
+                 placeholder="e.g. nathi_msibi"
+                 autocomplete="username" autocapitalize="off" spellcheck="false" required />
+          <div class="err" id="usernameErr"></div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="dlsUsername">Dream League Soccer username</label>
+          <input class="input" type="text" id="dlsUsername"
+                 placeholder="e.g. [KOS] NATHI MSIBI"
+                 autocomplete="off" autocapitalize="off" spellcheck="false" required />
+          <div class="err" id="dlsUsernameErr"></div>
+          <div class="field-help">Must match exactly what appears on your DLS result screen.</div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="email">Email address</label>
+          <input class="input" type="email" id="email"
+                 placeholder="you@example.com"
+                 autocomplete="email" autocapitalize="off" spellcheck="false" required />
+          <div class="err" id="emailErr"></div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">Password</label>
+          <div class="input-wrap">
+            <input class="input" type="password" id="password"
+                   placeholder="Minimum 8 characters"
+                   autocomplete="new-password" required />
+            <button type="button" class="input-suffix" onclick="Signup.togglePw('password', this)">SHOW</button>
+          </div>
+          <div class="strength" id="pwStrength"><i></i><i></i><i></i><i></i></div>
+          <div class="err" id="passwordErr"></div>
+        </div>
+
+        <div class="field">
+          <label class="label" for="confirm">Confirm password</label>
+          <div class="input-wrap">
+            <input class="input" type="password" id="confirm"
+                   placeholder="Re-enter password"
+                   autocomplete="new-password" required />
+            <button type="button" class="input-suffix" onclick="Signup.togglePw('confirm', this)">SHOW</button>
+          </div>
+          <div class="err" id="confirmErr"></div>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="terms" />
+          <span>
+            I am 18 or older and I agree to the
+            <a href="#" onclick="UI.toast('Terms page coming soon.','info');return false;">Terms of Service</a>
+            and
+            <a href="#" onclick="UI.toast('Responsible Gaming page coming soon.','info');return false;">Responsible Gaming Policy</a>.
+          </span>
+        </label>
+        <div class="err" id="termsErr"></div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn" style="margin-top:22px">
+          Create account
+        </button>
+
+      </form>
+
+      <div class="form-foot">
+        Already have an account?
+        <a href="login.html">Sign in</a>
+
+        <div class="trouble">
+          Stuck?
+          <a href="#" onclick="DLS.reset();return false;">Clear session &amp; reload</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ============================================================
+     SUCCESS OVERLAY
+     ============================================================ -->
+<div id="successOverlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="success-card">
+    <div class="check-ring">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>
+    </div>
+    <h2 id="successTitle">Account created!</h2>
+    <p id="successBody">Welcome to DLS Stake, <b id="successName">player</b>.</p>
+    <p class="small" id="successHint">Setting up your dashboard…</p>
+    <button class="btn btn-primary btn-block" id="successBtn" onclick="location.href='dashboard.html'">
+      Continue to dashboard
+    </button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  DASHBOARD_PAGE:    'dashboard.html',
+  PROFILE_PAGE:      'profile.html',
+  LOGIN_PAGE:        'login.html',
+  DEBUG:             true
+};
+
+const $ = (s) => document.querySelector(s);
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  fieldError(inputId, message){
+    const input = document.getElementById(inputId);
+    const errEl = document.getElementById(inputId + 'Err');
+    if (message){
+      if (input) input.classList.add('invalid');
+      if (errEl){ errEl.textContent = message; errEl.classList.add('show'); }
+    } else {
+      if (input) input.classList.remove('invalid');
+      if (errEl){ errEl.textContent = ''; errEl.classList.remove('show'); }
+    }
+  },
+  clearErrors(formId){
+    document.querySelectorAll(`#${formId} .input`).forEach(i => i.classList.remove('invalid'));
+    document.querySelectorAll(`#${formId} .err`).forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+  },
+  alert(containerId, message, type='info'){
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!message){ el.innerHTML = ''; return; }
+    const icon = type === 'warn' ? '⚠' : type === 'ok' ? '✓' : 'ℹ';
+    el.innerHTML = `<div class="notice notice-${type}"><span>${icon}</span><div>${message}</div></div>`;
+  },
+  alertHtml(containerId, html, type='info'){
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!html){ el.innerHTML = ''; return; }
+    const icon = type === 'warn' ? '⚠' : type === 'ok' ? '✓' : 'ℹ';
+    el.innerHTML = `<div class="notice notice-${type}"><span>${icon}</span><div>${html}</div></div>`;
+  },
+  busy(btnId, isBusy, label='Please wait…'){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isBusy){
+      btn.dataset.label = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spin"></span> ${label}`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.label || btn.innerHTML;
+    }
+  }
+};
+
+/* ============================================================================
+   VALIDATORS
+   ============================================================================ */
+const Validate = {
+  username(v){
+    if (!v) return 'Username is required.';
+    if (v.length < 3) return 'Must be at least 3 characters.';
+    if (v.length > 20) return 'Must be 20 characters or fewer.';
+    if (!/^[a-zA-Z0-9_]+$/.test(v)) return 'Letters, numbers and underscores only.';
+    return null;
+  },
+  dlsUsername(v){
+    if (!v) return 'DLS username is required.';
+    if (v.trim().length < 3) return 'That looks too short.';
+    if (v.trim().length > 40) return 'That looks too long.';
+    return null;
+  },
+  email(v){
+    if (!v) return 'Email is required.';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return 'Enter a valid email address.';
+    return null;
+  },
+  password(v){
+    if (!v) return 'Password is required.';
+    if (v.length < 8) return 'Must be at least 8 characters.';
+    if (!/[A-Za-z]/.test(v)) return 'Must contain at least one letter.';
+    if (!/[0-9]/.test(v)) return 'Must contain at least one number.';
+    return null;
+  },
+  confirm(pw, v){
+    if (!v) return 'Please confirm your password.';
+    if (pw !== v) return 'Passwords do not match.';
+    return null;
+  }
+};
+
+function scorePassword(pw){
+  let s = 0;
+  if (pw.length >= 8) s++;
+  if (pw.length >= 12) s++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
+  if (/[0-9]/.test(pw) && /[^A-Za-z0-9]/.test(pw)) s++;
+  return Math.min(s, 4);
+}
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   ERROR MESSAGING
+   ============================================================================ */
+function friendlyError(rawMessage){
+  const m = String(rawMessage || '').toLowerCase();
+  if (m.includes('already registered') || m.includes('already exists'))
+    return 'An account with this email already exists. Try signing in instead.';
+  if (m.includes('invalid email')) return 'That email address is not valid.';
+  if (m.includes('password')) return 'Password is too weak or does not meet requirements.';
+  if (m.includes('rate limit') || m.includes('too many'))
+    return 'Too many attempts. Wait a minute and try again.';
+  if (m.includes('failed to fetch') || m.includes('network'))
+    return 'Network error. Check your connection and try again.';
+  return rawMessage || 'Something went wrong. Please try again.';
+}
+
+/* ============================================================================
+   NAVBAR (auth-aware)
+   ============================================================================ */
+const Navbar = {
+  async render(){
+    const host = document.getElementById('navActions');
+    if (!host) return;
+
+    /* Check session */
+    let user = null;
+    try {
+      if (Supa.HAS){
+        const { data } = await Supa.client.auth.getSession();
+        user = data?.session?.user || null;
+      } else {
+        const raw = localStorage.getItem('dls_demo_session');
+        if (raw){ const s = JSON.parse(raw); user = s?.user || null; }
+      }
+    } catch(e){ warn('session check:', e); }
+
+    if (user){
+      /* Logged in — show avatar pill linking to profile */
+      const name = user.user_metadata?.username || user.email?.split('@')[0] || 'Player';
+      host.innerHTML = `
+        <div class="nav-user" onclick="location.href='${CONFIG.PROFILE_PAGE}'">
+          <div class="avatar">${UI.escape(UI.initials(name))}</div>
+          <span class="name">${UI.escape(name)}</span>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="location.href='${CONFIG.DASHBOARD_PAGE}'">Dashboard</button>
+      `;
+    } else {
+      /* Anonymous — show sign in + get started */
+      host.innerHTML = `
+        <button class="btn btn-outline btn-sm" onclick="location.href='${CONFIG.LOGIN_PAGE}'">Sign In</button>
+        <button class="btn btn-primary btn-sm" onclick="location.href='#signup'">Get Started</button>
+      `;
+    }
+  }
+};
+
+/* ============================================================================
+   SIGNUP
+   ============================================================================ */
+const Signup = {
+
+  async init(){
+    log('Signup page ready');
+
+    await Navbar.render();
+
+    /* If already signed in, offer a jump */
+    try {
+      let user = null;
+      if (Supa.HAS){
+        const { data } = await Supa.client.auth.getSession();
+        user = data?.session?.user || null;
+      } else {
+        const raw = localStorage.getItem('dls_demo_session');
+        if (raw){ const s = JSON.parse(raw); user = s?.user || null; }
+      }
+      if (user){
+        const name = user.user_metadata?.username || user.email?.split('@')[0] || 'player';
+        UI.alertHtml('formAlert',
+          `You're already signed in as <b>${UI.escape(name)}</b>.
+           <button type="button" class="btn btn-primary"
+                   onclick="location.href='${CONFIG.DASHBOARD_PAGE}'">
+             Go to dashboard
+           </button>`,
+          'info');
+      }
+    } catch(e){ warn('session check:', e); }
+
+    /* Wire live error clearing */
+    ['username','dlsUsername','email','password','confirm'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => UI.fieldError(id, null));
+    });
+    document.getElementById('terms').addEventListener('change', () => UI.fieldError('terms', null));
+
+    /* Password strength */
+    document.getElementById('password').addEventListener('input', (e) => {
+      const s = scorePassword(e.target.value);
+      document.getElementById('pwStrength').className = 'strength' + (s ? ' s' + s : '');
+    });
+
+    /* Submit */
+    document.getElementById('signupForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.submit();
+    });
+  },
+
+  togglePw(id, btn){
+    const input = document.getElementById(id);
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btn.textContent = showing ? 'SHOW' : 'HIDE';
+  },
+
+  scrollTo(section){
+    /* The landing sections arrive in a later update. For now, gentle toast. */
+    const el = document.getElementById(section);
+    if (el){ el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    UI.toast('That section is coming soon.', 'info');
+  },
+
+  async submit(){
+    UI.clearErrors('signupForm');
+    UI.alert('formAlert', '');
+
+    const username = document.getElementById('username').value.trim();
+    const dls      = document.getElementById('dlsUsername').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirm').value;
+    const terms    = document.getElementById('terms').checked;
+
+    let ok = true;
+    const checks = [
+      ['username',    Validate.username(username)],
+      ['dlsUsername', Validate.dlsUsername(dls)],
+      ['email',       Validate.email(email)],
+      ['password',    Validate.password(password)],
+      ['confirm',     Validate.confirm(password, confirm)]
+    ];
+    checks.forEach(([id, msg]) => { if (msg){ UI.fieldError(id, msg); ok = false; } });
+
+    if (!terms){
+      UI.fieldError('terms', 'You must accept the terms to continue.');
+      ok = false;
+    }
+    if (!ok){
+      UI.toast('Please fix the highlighted fields.', 'err');
+      return;
+    }
+
+    UI.busy('submitBtn', true, 'Creating account…');
+
+    let result;
+    try {
+      result = await this.callSignup({ email, password, username, dlsUsername: dls });
+    } catch(e){
+      err('Signup threw:', e);
+      result = { error: { message: friendlyError(e.message) } };
+    } finally {
+      UI.busy('submitBtn', false);
+    }
+
+    if (result.error){
+      const message = friendlyError(result.error.message);
+
+      if (/already exists|already registered/i.test(message)){
+        UI.alertHtml('formAlert',
+          `${UI.escape(message)}
+           <button type="button" class="btn btn-primary"
+                   onclick="location.href='${CONFIG.LOGIN_PAGE}'">
+             Go to sign in
+           </button>`,
+          'warn');
+      } else {
+        UI.alert('formAlert', UI.escape(message), 'warn');
+      }
+      UI.toast(message, 'err');
+      return;
+    }
+
+    log('Signup complete');
+    this.showSuccess(result.data, email);
+  },
+
+  async callSignup({ email, password, username, dlsUsername }){
+    /* Demo mode */
+    if (!Supa.HAS){
+      log('Demo signup for', email);
+      await new Promise(r => setTimeout(r, 700));
+
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase()))
+        return { error: { message: 'An account with this email already exists.' } };
+      if (users.some(u => u.username.toLowerCase() === username.toLowerCase()))
+        return { error: { message: 'That username is already taken.' } };
+
+      const user = {
+        id: 'demo_' + Math.random().toString(36).slice(2, 11),
+        email, username, dls_username: dlsUsername,
+        balance: 0, in_escrow: 0,
+        matches_played: 0, matches_won: 0,
+        kyc_status: 'pending', trust_score: 100,
+        role: 'player', is_admin: false,
+        created_at: new Date().toISOString()
+      };
+      users.push(user);
+      localStorage.setItem('dls_demo_users', JSON.stringify(users));
+      localStorage.setItem('dls_demo_session', JSON.stringify({
+        user, access_token: 'demo-token'
+      }));
+      return { data: { user, needsEmailConfirm: false }, error: null };
+    }
+
+    /* Live Supabase */
+    try {
+      const redirectTo = window.location.origin + '/dashboard.html';
+
+      const { data, error } = await Supa.client.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: { username, dls_username: dlsUsername }
+        }
+      });
+
+      if (error) return { error };
+
+      /* Supabase obfuscates "email already registered" as empty identities */
+      if (data?.user && Array.isArray(data.user.identities) && data.user.identities.length === 0){
+        return { error: { message: 'An account with this email already exists. Try signing in instead.' } };
+      }
+
+      if (data.session && data.user){
+        return { data: { user: data.user, needsEmailConfirm: false }, error: null };
+      }
+      return { data: { user: data.user, needsEmailConfirm: true, email }, error: null };
+    } catch(e){
+      return { error: { message: friendlyError(e.message) } };
+    }
+  },
+
+  showSuccess(data, email){
+    const overlay = document.getElementById('successOverlay');
+    const title   = document.getElementById('successTitle');
+    const body    = document.getElementById('successBody');
+    const hint    = document.getElementById('successHint');
+    const btn     = document.getElementById('successBtn');
+
+    if (data.needsEmailConfirm){
+      title.textContent = 'Almost there!';
+      body.innerHTML = `We sent a confirmation link to <b>${UI.escape(email || '')}</b>.`;
+      hint.textContent = 'Click the link, then come back and sign in.';
+      btn.textContent = 'Back to sign in';
+      btn.onclick = () => { location.href = CONFIG.LOGIN_PAGE; };
+      overlay.classList.add('show');
+      overlay.setAttribute('aria-hidden', 'false');
+      return;
+    }
+
+    const name = data.user?.user_metadata?.username || data.user?.email?.split('@')[0] || 'player';
+    title.textContent = 'Account created!';
+    body.innerHTML = `Welcome to DLS Stake, <b>${UI.escape(name)}</b>.`;
+    hint.innerHTML = `Redirecting in <span class="countdown" id="cd">3</span> s…`;
+    btn.onclick = () => { location.href = CONFIG.DASHBOARD_PAGE; };
+
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    let n = 3;
+    const cd = document.getElementById('cd');
+    const iv = setInterval(() => {
+      n--;
+      if (cd) cd.textContent = n;
+      if (n <= 0){
+        clearInterval(iv);
+        window.location.href = CONFIG.DASHBOARD_PAGE;
+      }
+    }, 1000);
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Index boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Signup (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Signup (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Signup.init(); }
+  catch(e){ err('Signup init failed:', e); UI.toast('Failed to load page.', 'err'); }
+})();
+
+window.DLS = {
+  version: 'index-2.0.0',
+  async debug(){
+    console.log('======== DLS Signup v2 ========');
+    console.log('Supabase URL:', CONFIG.SUPABASE_URL);
+    console.log('Has Supabase:', Supa.HAS);
+    if (Supa.HAS){
+      const { data } = await Supa.client.auth.getSession();
+      console.log('Session:', data?.session || 'none');
+    }
+    console.log('localStorage dls_stake_auth:', localStorage.getItem('dls_stake_auth'));
+    console.log('===============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    console.log('[DLS] Reset complete. Reloading…');
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
