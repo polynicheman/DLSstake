@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Create a challenge — DLS Stake</title>
+<meta name="description" content="Challenge a specific Dream League Soccer player. Pick your opponent and stake." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+.wrap{width:100%;max-width:1100px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:860px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+.page-head{margin-bottom:26px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
+
+.grid{display:grid;gap:22px;grid-template-columns:1fr}
+@media(min-width:980px){.grid{grid-template-columns:1.3fr 1fr;align-items:start}}
+
+/* PANEL */
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px}
+.panel + .panel{margin-top:18px}
+.panel h2{font-size:1rem;font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
+.panel-section{margin-bottom:26px}
+.panel-section:last-child{margin-bottom:0}
+.section-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-label .num{width:22px;height:22px;border-radius:7px;background:rgba(0,217,126,.12);border:1px solid rgba(0,217,126,.28);display:grid;place-items:center;font-size:.7rem;font-weight:900;color:var(--primary);font-family:var(--ff-mono)}
+
+/* INFO STRIP */
+.info-strip{display:grid;gap:14px;grid-template-columns:1fr 1fr;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:22px}
+.info-cell .k{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.info-cell .v{font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.info-cell .v.primary{color:var(--primary)}
+.info-cell .v.mono{font-family:var(--ff-mono);font-size:.92rem}
+
+/* FIELD */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.label{font-size:.82rem;font-weight:700;color:var(--text-2);display:flex;justify-content:space-between;align-items:baseline}
+.label .hint{font-size:.74rem;font-weight:600;color:var(--muted-2)}
+
+.input{width:100%;padding:14px 16px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input::placeholder{color:var(--muted-2)}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.15)}
+
+.amount-input{display:flex;align-items:center;gap:12px;padding:6px 8px 6px 20px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius);transition:border-color .15s,box-shadow .15s}
+.amount-input:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.amount-input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.15)}
+.amount-input .cur{font-family:var(--ff-mono);font-size:1.3rem;font-weight:900;color:var(--muted)}
+.amount-input input{flex:1;padding:14px 0;font-family:var(--ff-mono);font-size:1.6rem;font-weight:900;letter-spacing:-.03em;background:transparent;border:none;outline:none;color:var(--text);min-width:0}
+.amount-input input::placeholder{color:var(--muted-2)}
+.amount-input .suffix{font-size:.7rem;font-weight:800;letter-spacing:.08em;color:var(--muted);padding:6px 10px;border:1px solid var(--border-2);border-radius:var(--radius-sm);font-family:var(--ff-mono)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:-6px;margin-bottom:22px}
+.chip{padding:8px 14px;border-radius:var(--radius-full);background:var(--surface-2);border:1px solid var(--border);font-size:.82rem;font-weight:700;color:var(--text-2);font-family:var(--ff-mono);transition:.15s;cursor:pointer}
+.chip:hover{border-color:var(--primary);color:var(--text);background:var(--surface-3)}
+.chip.active{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.4);color:var(--primary)}
+
+.err{font-size:.78rem;color:var(--danger);display:none;margin-top:-8px;margin-bottom:12px}
+.err.show{display:block}
+
+/* OPPONENT SEARCH */
+.opp-search-wrap{position:relative}
+.opp-search-wrap .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:1rem}
+.opp-search-wrap .input{padding-left:44px}
+
+.opp-results{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:30;max-height:280px;overflow-y:auto;display:none}
+.opp-results.show{display:block}
+.opp-result-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s}
+.opp-result-item:last-child{border-bottom:none}
+.opp-result-item:hover{background:var(--surface-3)}
+.opp-result-item .avatar{width:36px;height:36px;border-radius:11px;background:linear-gradient(140deg,var(--primary),var(--primary-dark));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.8rem;flex-shrink:0}
+.opp-result-item .info{flex:1;min-width:0}
+.opp-result-item .name{font-size:.88rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opp-result-item .dls{font-family:var(--ff-mono);font-size:.72rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opp-result-empty{padding:16px;text-align:center;font-size:.84rem;color:var(--muted)}
+.opp-result-loading{padding:16px;text-align:center;font-size:.84rem;color:var(--muted)}
+
+/* OPPONENT PREVIEW */
+.opp-preview{display:none;align-items:center;gap:14px;padding:16px 18px;background:rgba(0,217,126,.06);border:1px solid rgba(0,217,126,.28);border-radius:var(--radius);margin-top:14px}
+.opp-preview.show{display:flex}
+.opp-preview .avatar{width:52px;height:52px;border-radius:15px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:1.1rem;flex-shrink:0}
+.opp-preview .info{flex:1;min-width:0}
+.opp-preview .label-sm{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:4px}
+.opp-preview .name{font-size:1rem;font-weight:900;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opp-preview .dls{font-family:var(--ff-mono);font-size:.74rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opp-preview .change{font-size:.74rem;font-weight:800;color:var(--muted);padding:6px 12px;border-radius:var(--radius-full);border:1px solid var(--border-2);background:var(--surface);transition:.15s;cursor:pointer}
+.opp-preview .change:hover{color:var(--text);border-color:var(--muted-2)}
+
+/* FEE BREAKDOWN */
+.breakdown{padding:18px 20px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);margin-top:6px}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:.88rem}
+.bd-row + .bd-row{border-top:1px solid var(--border)}
+.bd-row .k{color:var(--text-2);display:flex;align-items:center;gap:6px}
+.bd-row .v{font-family:var(--ff-mono);font-weight:800;color:var(--text)}
+.bd-row.muted .k{color:var(--muted);font-size:.82rem}
+.bd-row.muted .v{color:var(--muted);font-size:.82rem}
+.bd-row.big{padding-top:14px}
+.bd-row.big .k{font-weight:800;color:var(--text);letter-spacing:.02em}
+.bd-row.big .v{font-size:1.25rem;color:var(--primary)}
+
+.fee-tag{font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);background:rgba(255,176,32,.14);border:1px solid rgba(255,176,32,.3);padding:2px 7px;border-radius:var(--radius-full)}
+
+/* NOTICE */
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.55;margin-bottom:20px}
+.notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.notice .ico{font-size:1rem;line-height:1.3;flex-shrink:0}
+.notice b{font-weight:800}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;letter-spacing:.01em;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 22px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 10px 32px var(--primary-glow)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 26px;font-size:1rem}
+
+/* ASIDE */
+.aside-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;position:sticky;top:calc(var(--nav-h) + 20px)}
+.aside-card + .aside-card{margin-top:18px}
+.aside-card h3{font-size:.92rem;font-weight:800;letter-spacing:-.01em;margin-bottom:14px}
+.aside-list{display:grid;gap:14px}
+.aside-item{display:flex;gap:12px;align-items:flex-start}
+.aside-item .ico{width:36px;height:36px;min-width:36px;border-radius:10px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:.85rem;font-weight:900;color:var(--primary);font-family:var(--ff-mono)}
+.aside-item.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.22);color:#7cb4ff}
+.aside-item.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.22);color:var(--warn)}
+.aside-item .txt{flex:1;min-width:0}
+.aside-item .txt h4{font-size:.85rem;font-weight:800;margin-bottom:2px}
+.aside-item .txt p{font-size:.76rem;color:var(--muted);line-height:1.5}
+
+.mini-stats{display:grid;gap:10px;padding-top:14px;border-top:1px solid var(--border);margin-top:14px}
+.mini-stat{display:flex;justify-content:space-between;align-items:center;font-size:.8rem}
+.mini-stat .k{color:var(--muted)}
+.mini-stat .v{font-family:var(--ff-mono);font-weight:800;color:var(--text-2)}
+.mini-stat .v.primary{color:var(--primary)}
+
+.checklist{display:grid;gap:10px;font-size:.82rem;color:var(--text-2);line-height:1.6;list-style:none}
+.checklist li{display:flex;gap:8px;align-items:flex-start}
+.checklist li::before{content:'✓';color:var(--primary);font-weight:900;flex-shrink:0}
+
+/* SUCCESS OVERLAY */
+#successOverlay{position:fixed;inset:0;z-index:400;background:rgba(7,13,22,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:none;place-items:center;padding:24px}
+#successOverlay.show{display:grid}
+.success-card{max-width:460px;width:100%;background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:40px 30px 34px;text-align:center;box-shadow:var(--shadow-lg);animation:pop .4s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.check-ring{width:72px;height:72px;margin:0 auto 22px;border-radius:50%;background:radial-gradient(circle, rgba(0,217,126,.18), rgba(0,217,126,.04));border:2px solid rgba(0,217,126,.4);display:grid;place-items:center}
+.check-ring svg{width:34px;height:34px}
+.check-ring svg path{stroke:var(--primary);stroke-width:3.5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:check .5s .15s forwards ease-out}
+@keyframes check{to{stroke-dashoffset:0}}
+.success-card h2{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;margin-bottom:10px}
+.success-card p{color:var(--text-2);font-size:.9rem;line-height:1.6;margin-bottom:6px}
+.success-card .code-pill{display:inline-block;font-family:var(--ff-mono);font-size:.9rem;font-weight:800;color:var(--primary);background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.3);padding:6px 12px;border-radius:var(--radius-full);margin-top:10px}
+.success-card .opp-pill{display:inline-block;font-size:.86rem;font-weight:700;color:var(--text);background:var(--surface-2);border:1px solid var(--border-2);padding:6px 12px;border-radius:var(--radius-full);margin-top:8px}
+.success-card .small{font-size:.8rem;color:var(--muted);margin-top:14px}
+.success-card .btn{margin-top:22px}
+.countdown{font-family:var(--ff-mono);font-weight:800;color:var(--primary)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="create-match.html" class="active">Create</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+
+  <div class="page-head">
+    <div class="eyebrow">New Challenge</div>
+    <h1 class="page-title">Challenge a player</h1>
+    <div class="page-sub">Pick your opponent, set the stake. Both stakes lock in escrow when they accept.</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div>
+      <div class="panel">
+        <div class="info-strip">
+          <div class="info-cell">
+            <div class="k">Your balance</div>
+            <div class="v primary mono" id="balanceText">₦0.00</div>
+          </div>
+          <div class="info-cell">
+            <div class="k">Your DLS username</div>
+            <div class="v mono" id="dlsText">—</div>
+          </div>
+        </div>
+
+        <div id="formAlert"></div>
+
+        <form id="stakeForm" novalidate>
+
+          <!-- STEP 1 — OPPONENT -->
+          <div class="panel-section">
+            <div class="section-label"><span class="num">1</span> Choose your opponent</div>
+
+            <div class="field">
+              <label class="label" for="oppSearch">
+                <span>Opponent username</span>
+                <span class="hint">They must have a DLS Stake account</span>
+              </label>
+              <div class="opp-search-wrap">
+                <span class="search-icon">🔍</span>
+                <input class="input" type="text" id="oppSearch" placeholder="e.g. nathi_msibi"
+                       autocomplete="off" autocapitalize="off" spellcheck="false" />
+                <div class="opp-results" id="oppResults"></div>
+              </div>
+              <div class="err" id="oppErr"></div>
+            </div>
+
+            <div class="opp-preview" id="oppPreview">
+              <div class="avatar" id="oppAvatar">?</div>
+              <div class="info">
+                <div class="label-sm">Your opponent</div>
+                <div class="name" id="oppName">—</div>
+                <div class="dls" id="oppDls">—</div>
+              </div>
+              <button type="button" class="change" onclick="Create.clearOpponent()">Change</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 — STAKE -->
+          <div class="panel-section">
+            <div class="section-label"><span class="num">2</span> Set your stake</div>
+
+            <div class="field">
+              <label class="label" for="stakeInput">
+                <span>Stake amount</span>
+                <span class="hint">Min ₦100 · Max ₦500,000</span>
+              </label>
+              <div class="amount-input" id="stakeWrap">
+                <span class="cur">₦</span>
+                <input id="stakeInput" type="number" inputmode="numeric" placeholder="0" min="100" max="500000" step="50" autocomplete="off">
+                <span class="suffix">NGN</span>
+              </div>
+            </div>
+
+            <div class="chips" id="chips">
+              <button type="button" class="chip" data-amt="500">₦500</button>
+              <button type="button" class="chip" data-amt="1000">₦1,000</button>
+              <button type="button" class="chip" data-amt="2000">₦2,000</button>
+              <button type="button" class="chip" data-amt="5000">₦5,000</button>
+              <button type="button" class="chip" data-amt="10000">₦10,000</button>
+              <button type="button" class="chip" data-amt="25000">₦25,000</button>
+            </div>
+
+            <div class="err" id="stakeErr"></div>
+          </div>
+
+          <!-- STEP 3 — FEE BREAKDOWN -->
+          <div class="panel-section">
+            <div class="section-label"><span class="num">3</span> What the winner receives</div>
+
+            <div class="breakdown">
+              <div class="bd-row">
+                <span class="k">You stake</span>
+                <span class="v" id="bdYou">₦0.00</span>
+              </div>
+              <div class="bd-row">
+                <span class="k">Opponent stakes</span>
+                <span class="v" id="bdOpp">₦0.00</span>
+              </div>
+              <div class="bd-row">
+                <span class="k">Total pot</span>
+                <span class="v" id="bdPot">₦0.00</span>
+              </div>
+              <div class="bd-row muted">
+                <span class="k">Platform fee <span class="fee-tag">4%</span></span>
+                <span class="v" id="bdFee">−₦0.00</span>
+              </div>
+              <div class="bd-row big">
+                <span class="k">Winner receives</span>
+                <span class="v" id="bdWinner">₦0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="notice info" style="margin-top:22px">
+            <span class="ico">ℹ</span>
+            <div>
+              When you submit, <b id="noticeLock">₦0.00</b> is locked in escrow.
+              If your opponent <b>declines</b> or doesn't respond within <b>30 minutes</b>, your stake is refunded automatically.
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block" id="submitBtn">
+            Send challenge
+          </button>
+          <button type="button" class="btn btn-ghost btn-block" style="margin-top:10px" onclick="location.href='lobby.html'">
+            Cancel
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- ASIDE -->
+    <aside>
+      <div class="aside-card">
+        <h3>How it works</h3>
+        <div class="aside-list">
+          <div class="aside-item">
+            <div class="ico">1</div>
+            <div class="txt">
+              <h4>You pick your opponent</h4>
+              <p>Search by username — they must already have a DLS Stake account.</p>
+            </div>
+          </div>
+          <div class="aside-item blue">
+            <div class="ico">2</div>
+            <div class="txt">
+              <h4>They accept</h4>
+              <p>Both stakes lock in escrow the moment they accept.</p>
+            </div>
+          </div>
+          <div class="aside-item warn">
+            <div class="ico">3</div>
+            <div class="txt">
+              <h4>You play for 5 minutes</h4>
+              <p>Add each other in DLS, play one Friend Match. Timer runs for 5 min.</p>
+            </div>
+          </div>
+          <div class="aside-item">
+            <div class="ico">4</div>
+            <div class="txt">
+              <h4>Upload the result</h4>
+              <p>After 5 minutes, both players have a short window to upload the final score.</p>
+            </div>
+          </div>
+          <div class="aside-item">
+            <div class="ico">5</div>
+            <div class="txt">
+              <h4>Winner gets paid</h4>
+              <p>Pot minus the 4% platform fee goes to the winner's balance.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini-stats">
+          <div class="mini-stat"><span class="k">Your balance</span><span class="v primary" id="asideBalance">₦0.00</span></div>
+          <div class="mini-stat"><span class="k">In escrow</span><span class="v" id="asideEscrow">₦0.00</span></div>
+          <div class="mini-stat"><span class="k">Platform fee</span><span class="v">4%</span></div>
+          <div class="mini-stat"><span class="k">Draw refund</span><span class="v primary">100%</span></div>
+        </div>
+      </div>
+
+      <div class="aside-card">
+        <h3>Before you send</h3>
+        <ul class="checklist">
+          <li>Your DLS username must be set in your profile.</li>
+          <li>Your balance must be at least the stake amount.</li>
+          <li>Stake locks in escrow until the match settles or the invite expires.</li>
+          <li>If the opponent declines or the invite expires in 30 min → full refund.</li>
+          <li>Winner receives pot minus 4% platform fee.</li>
+          <li>Match runs 5 minutes; then a short submission window opens.</li>
+        </ul>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="lobby.html">Lobby</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="profile.html">Profile</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<!-- SUCCESS OVERLAY -->
+<div id="successOverlay">
+  <div class="success-card">
+    <div class="check-ring">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg>
+    </div>
+    <h2>Challenge sent!</h2>
+    <p>Waiting for your opponent to accept.</p>
+    <div class="opp-pill" id="successOpp">@opponent</div>
+    <div><div class="code-pill" id="successCode">DLS-XXXXXX</div></div>
+    <p class="small">Redirecting to the lobby in <span class="countdown" id="countdown">3</span> s…</p>
+    <button class="btn btn-primary btn-block" onclick="Create.goLobby()">Go to lobby now</button>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  LOBBY_PAGE:        'lobby.html',
+  CURRENCY:          '₦',
+  MIN_STAKE:         100,
+  MAX_STAKE:         500000,
+  PLATFORM_FEE_PCT:  4,
+  INVITE_TTL_MIN:    30,
+  MATCH_DURATION_MIN: 5,
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); },
+  alert(containerId, message, type='info'){
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    if (!message){ el.innerHTML = ''; return; }
+    const icon = type === 'warn' ? '⚠' : type === 'ok' ? '✓' : 'ℹ';
+    el.innerHTML = `<div class="notice ${type}"><span class="ico">${icon}</span><div>${message}</div></div>`;
+  },
+  busy(btnId, isBusy, label='Please wait…'){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    if (isBusy){
+      btn.dataset.label = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spin"></span> ${label}`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.label || btn.innerHTML;
+    }
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  opponent: null,
+  busy: false,
+  searchTimer: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
+      catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   OPPONENT SEARCH
+   ============================================================================ */
+const Search = {
+  async byUsername(q, limit = 8){
+    if (!q || q.length < 2) return [];
+
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users
+        .filter(u =>
+          u.id !== State.session.user.id &&
+          u.username.toLowerCase().startsWith(q.toLowerCase())
+        )
+        .slice(0, limit)
+        .map(u => ({ id: u.id, username: u.username, dls_username: u.dls_username }));
+    }
+
+    try {
+      const { data, error } = await Supa.client
+        .from('profiles')
+        .select('id, username, dls_username, frozen')
+        .ilike('username', q + '%')
+        .neq('id', State.session.user.id)
+        .limit(limit);
+      if (error){ warn('search error:', error.message); return []; }
+      return (data || []).filter(u => !u.frozen);
+    } catch(e){
+      err('Search threw:', e);
+      return [];
+    }
+  }
+};
+
+/* ============================================================================
+   CREATE
+   ============================================================================ */
+const Create = {
+
+  async init(){
+    log('Create init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id);
+    this.renderHeader();
+    this.wireForm();
+
+    const dls = State.profile?.dls_username;
+    if (!dls || dls === 'UNSET'){
+      UI.alert('formAlert',
+        'Your <b>Dream League Soccer username</b> is not set. Set it in your profile before creating a challenge.',
+        'warn');
+    }
+
+    log('Create page ready');
+  },
+
+  renderHeader(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const username = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+
+    const na = $('#navAvatar'); if (na) na.textContent = UI.initials(username);
+    const nn = $('#navName');   if (nn) nn.textContent = username;
+
+    const balance = Number(p?.balance || 0);
+    const escrow  = Number(p?.in_escrow || 0);
+    const dls     = p?.dls_username || '—';
+
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('balanceText', UI.money(balance));
+    set('dlsText', dls);
+    set('asideBalance', UI.money(balance));
+    set('asideEscrow',  UI.money(escrow));
+  },
+
+  wireForm(){
+    const search = $('#oppSearch');
+
+    search.addEventListener('input', () => {
+      clearTimeout(State.searchTimer);
+      const q = search.value.trim();
+      $('#oppErr').classList.remove('show');
+
+      if (State.opponent && q !== State.opponent.username){
+        State.opponent = null;
+        $('#oppPreview').classList.remove('show');
+      }
+
+      if (q.length < 2){
+        $('#oppResults').classList.remove('show');
+        return;
+      }
+
+      $('#oppResults').classList.add('show');
+      $('#oppResults').innerHTML = '<div class="opp-result-loading">Searching…</div>';
+
+      State.searchTimer = setTimeout(async () => {
+        const results = await Search.byUsername(q);
+        this.renderResults(results);
+      }, 220);
+    });
+
+    search.addEventListener('blur', () => {
+      setTimeout(()=>$('#oppResults').classList.remove('show'), 180);
+    });
+
+    search.addEventListener('focus', () => {
+      if (search.value.trim().length >= 2 && !State.opponent){
+        search.dispatchEvent(new Event('input'));
+      }
+    });
+
+    const input = $('#stakeInput');
+    input.addEventListener('input', () => {
+      $('#stakeWrap').classList.remove('invalid');
+      $('#stakeErr').classList.remove('show');
+      $$('.chip').forEach(c => {
+        c.classList.toggle('active', Number(c.dataset.amt) === Number(input.value));
+      });
+      this.updateBreakdown();
+    });
+
+    $$('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        input.value = chip.dataset.amt;
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+    });
+
+    $('#stakeForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.submit();
+    });
+
+    this.updateBreakdown();
+  },
+
+  renderResults(results){
+    const box = $('#oppResults');
+    if (!results.length){
+      box.innerHTML = '<div class="opp-result-empty">No player found with that username</div>';
+      return;
+    }
+    box.innerHTML = results.map(u => `
+      <div class="opp-result-item" onmousedown="Create.pickOpponent('${u.id}')">
+        <div class="avatar">${UI.escape(UI.initials(u.username))}</div>
+        <div class="info">
+          <div class="name">${UI.escape(u.username)}</div>
+          <div class="dls">${UI.escape(u.dls_username || '—')}</div>
+        </div>
+      </div>`).join('');
+  },
+
+  async pickOpponent(id){
+    let user = null;
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      const u = users.find(x => x.id === id);
+      if (u) user = { id: u.id, username: u.username, dls_username: u.dls_username };
+    } else {
+      const { data } = await Supa.client
+        .from('profiles').select('id, username, dls_username, frozen')
+        .eq('id', id).maybeSingle();
+      user = data || null;
+    }
+
+    if (!user){ UI.toast('Could not load that player.', 'err'); return; }
+    if (user.frozen){ UI.toast('That account is frozen.', 'err'); return; }
+
+    State.opponent = user;
+    $('#oppSearch').value = user.username;
+    $('#oppResults').classList.remove('show');
+    $('#oppErr').classList.remove('show');
+
+    $('#oppAvatar').textContent = UI.initials(user.username);
+    $('#oppName').textContent   = user.username;
+    $('#oppDls').textContent    = user.dls_username || '—';
+    $('#oppPreview').classList.add('show');
+  },
+
+  clearOpponent(){
+    State.opponent = null;
+    $('#oppSearch').value = '';
+    $('#oppPreview').classList.remove('show');
+    $('#oppSearch').focus();
+  },
+
+  updateBreakdown(){
+    const raw = Number($('#stakeInput').value || 0);
+    const v = Number.isFinite(raw) && raw > 0 ? raw : 0;
+    const pot = v * 2;
+    const fee = pot * (CONFIG.PLATFORM_FEE_PCT / 100);
+    const winner = pot - fee;
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('bdYou',     UI.money(v));
+    set('bdOpp',     UI.money(v));
+    set('bdPot',     UI.money(pot));
+    set('bdFee',     '−' + UI.money(fee));
+    set('bdWinner',  UI.money(winner));
+    set('noticeLock',UI.money(v));
+  },
+
+  validate(){
+    let ok = true;
+
+    if (!State.opponent){
+      $('#oppErr').textContent = 'Pick an opponent from the list.';
+      $('#oppErr').classList.add('show');
+      ok = false;
+    } else if (State.opponent.id === State.session.user.id){
+      $('#oppErr').textContent = 'You cannot challenge yourself.';
+      $('#oppErr').classList.add('show');
+      ok = false;
+    }
+
+    const raw = Number($('#stakeInput').value);
+    const wrap = $('#stakeWrap');
+    const errEl = $('#stakeErr');
+    wrap.classList.remove('invalid');
+    errEl.classList.remove('show');
+
+    const fail = (msg) => {
+      wrap.classList.add('invalid');
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+      ok = false;
+    };
+
+    if (!$('#stakeInput').value){ fail('Enter a stake amount.'); }
+    else if (!Number.isFinite(raw) || raw <= 0){ fail('Enter a valid amount.'); }
+    else if (raw < CONFIG.MIN_STAKE){ fail(`Minimum stake is ${UI.money(CONFIG.MIN_STAKE)}.`); }
+    else if (raw > CONFIG.MAX_STAKE){ fail(`Maximum stake is ${UI.money(CONFIG.MAX_STAKE)}.`); }
+    else {
+      const balance = Number(State.profile?.balance || 0);
+      if (raw > balance) fail(`Insufficient balance. You have ${UI.money(balance)}.`);
+    }
+
+    const dls = State.profile?.dls_username;
+    if (!dls || dls === 'UNSET'){
+      UI.alert('formAlert',
+        'Your <b>Dream League Soccer username</b> is missing. Set it in your profile before posting.',
+        'warn');
+      ok = false;
+    }
+
+    return ok;
+  },
+
+  async submit(){
+    if (State.busy) return;
+    if (!this.validate()) return;
+
+    const stake = Number($('#stakeInput').value);
+    const opponent = State.opponent;
+
+    State.busy = true;
+    UI.alert('formAlert', '');
+    UI.busy('submitBtn', true, 'Sending challenge…');
+
+    let result;
+    try {
+      result = await this.callCreate(opponent.username, stake);
+    } catch(e){
+      err('submit threw:', e);
+      result = { error: { message: 'Unexpected error. Please try again.' } };
+    } finally {
+      UI.busy('submitBtn', false);
+      State.busy = false;
+    }
+
+    if (result.error){
+      const msg = result.error.message || 'Could not create challenge.';
+      UI.alert('formAlert', UI.escape(msg), 'warn');
+      UI.toast(msg, 'err');
+      return;
+    }
+
+    log('Challenge created:', result.data);
+    this.showSuccess(result.data, opponent.username);
+  },
+
+  async callCreate(opponentUsername, stake){
+    if (!Supa.HAS){
+      log('Demo create for', stake, '→', opponentUsername);
+      await new Promise(r => setTimeout(r, 600));
+
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      const me = users.find(x => x.id === State.session.user.id);
+      const opp = users.find(x => x.username.toLowerCase() === opponentUsername.toLowerCase());
+
+      if (!me) return { error: { message: 'Demo user missing.' } };
+      if (!opp) return { error: { message: 'Opponent not found.' } };
+      if (Number(me.balance || 0) < stake) return { error: { message: 'Insufficient balance.' } };
+
+      me.balance   = Number(me.balance || 0) - stake;
+      me.in_escrow = Number(me.in_escrow || 0) + stake;
+      localStorage.setItem('dls_demo_users', JSON.stringify(users));
+
+      const all = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
+      const id  = (crypto.randomUUID ? crypto.randomUUID() : 'm_' + Math.random().toString(36).slice(2, 10));
+      const code = 'DLS-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+
+      all.push({
+        id, match_code: code,
+        creator_id: me.id,
+        creator_username: me.username,
+        creator_dls_username: me.dls_username || 'UNSET',
+        opponent_id: opp.id,
+        opponent_username: opp.username,
+        opponent_dls_username: opp.dls_username || 'UNSET',
+        stake_amount: stake, pot_amount: stake * 2,
+        status: 'pending_invite',
+        created_at: new Date().toISOString(),
+        expires_at: new Date(Date.now() + CONFIG.INVITE_TTL_MIN * 60 * 1000).toISOString()
+      });
+      localStorage.setItem('dls_demo_matches', JSON.stringify(all));
+      State.profile = me;
+
+      return { data: { match_id: id, match_code: code, new_balance: me.balance }, error: null };
+    }
+
+    try {
+      const { data, error } = await Supa.client.rpc('create_match', {
+        p_opponent_username: opponentUsername,
+        p_stake_amount: stake
+      });
+      if (error) return { error };
+      return { data, error: null };
+    } catch(e){
+      return { error: { message: e.message } };
+    }
+  },
+
+  showSuccess(data, opponentUsername){
+    $('#successCode').textContent = data.match_code || 'DLS-XXXXXX';
+    $('#successOpp').textContent  = '@' + opponentUsername;
+    $('#successOverlay').classList.add('show');
+
+    let n = 3;
+    const cd = $('#countdown');
+    const iv = setInterval(() => {
+      n--;
+      if (cd) cd.textContent = n;
+      if (n <= 0){
+        clearInterval(iv);
+        window.location.href = CONFIG.LOBBY_PAGE;
+      }
+    }, 1000);
+  },
+
+  goLobby(){
+    window.location.href = CONFIG.LOBBY_PAGE;
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Create page boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Create Match (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Create Match (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Create.init(); }
+  catch(e){ err('Create init failed:', e); UI.toast('Failed to load page.', 'err'); }
+})();
+
+window.DLS = {
+  version: 'create-match-3.0.0',
+  async debug(){
+    console.log('======== DLS Create Match v3 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Profile:', State.profile);
+    console.log('Opponent:', State.opponent);
+    console.log('Stake input:', $('#stakeInput')?.value);
+    console.log('=====================================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
