@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Welcome to DLS Stake</title>
+<meta name="description" content="Get set up in under a minute — learn how matches work, add your DLS username, and play your first game." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.12), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.08), transparent 60%);}
+.wrap{width:100%;max-width:760px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px;max-width:1200px;margin:0 auto;padding:0 20px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-cta{display:flex;gap:10px;align-items:center}
+.nav-cta .skip{font-size:.82rem;font-weight:700;color:var(--muted);padding:8px 14px;border-radius:var(--radius-full);transition:.15s}
+.nav-cta .skip:hover{color:var(--text);background:var(--surface)}
+
+/* PAGE */
+.page{padding:30px 0 70px;min-height:calc(100dvh - var(--nav-h))}
+
+/* PROGRESS */
+.progress{margin-bottom:26px}
+.progress-bar{position:relative;height:6px;border-radius:3px;background:var(--border);overflow:hidden;margin-bottom:12px}
+.progress-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width .45s cubic-bezier(.4,0,.2,1);box-shadow:0 0 14px var(--primary-glow)}
+.progress-labels{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:.65rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2)}
+.progress-labels span{text-align:center;transition:.2s}
+.progress-labels span.active{color:var(--primary)}
+.progress-labels span.done{color:var(--text-2)}
+
+/* CARD */
+.card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:34px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);animation:slideIn .4s cubic-bezier(.2,.9,.3,1.05)}
+@media(max-width:520px){.card{padding:24px 22px}}
+.card::before{content:'';position:absolute;top:-100px;right:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(0,217,126,.08),transparent 65%);pointer-events:none}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+
+/* STEP HEAD */
+.step-ico{width:70px;height:70px;margin:0 auto 20px;border-radius:22px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-size:2rem;color:#04140c;box-shadow:0 12px 34px var(--primary-glow);position:relative;z-index:1}
+.step-ico.purple{background:linear-gradient(140deg,var(--purple),#6366f1);color:#fff;box-shadow:0 12px 34px rgba(139,92,246,.4)}
+.step-ico.blue{background:linear-gradient(140deg,var(--accent),#1f66c9);color:#fff;box-shadow:0 12px 34px rgba(47,128,237,.4)}
+.step-ico.warn{background:linear-gradient(140deg,var(--warn),#d98a00);color:#1a1000;box-shadow:0 12px 34px rgba(255,176,32,.4)}
+.step-ico.fire{background:linear-gradient(140deg,var(--fire),#d94d1a);color:#fff;box-shadow:0 12px 34px rgba(255,107,53,.4)}
+.step-head{text-align:center;margin-bottom:26px;position:relative;z-index:1}
+.step-head h1{font-size:1.55rem;font-weight:900;letter-spacing:-.035em;line-height:1.15;margin-bottom:10px}
+.step-head p{font-size:.92rem;color:var(--text-2);line-height:1.7;max-width:520px;margin:0 auto}
+.step-head .eyebrow{display:inline-block;font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);padding:4px 12px;border-radius:var(--radius-full);background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.28);margin-bottom:14px}
+
+/* FEATURE LIST */
+.features{display:grid;gap:14px;margin:22px 0;position:relative;z-index:1}
+.feat{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:.2s}
+.feat:hover{border-color:var(--border-2)}
+.feat .ico{width:44px;height:44px;min-width:44px;border-radius:12px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24);display:grid;place-items:center;font-size:1.2rem}
+.feat.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.24)}
+.feat.purple .ico{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.24)}
+.feat.fire .ico{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.24)}
+.feat.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.24)}
+.feat .txt h4{font-size:.94rem;font-weight:800;margin-bottom:4px}
+.feat .txt p{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+/* MATCH FLOW */
+.flow{display:grid;gap:12px;margin:22px 0;position:relative;z-index:1}
+.flow-step{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);position:relative}
+.flow-step .num{position:absolute;top:-10px;left:16px;width:24px;height:24px;border-radius:50%;background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;font-weight:900;font-size:.72rem;display:grid;place-items:center;box-shadow:0 4px 12px var(--primary-glow)}
+.flow-step .body{padding-top:6px}
+.flow-step h4{font-size:.9rem;font-weight:800;margin-bottom:4px}
+.flow-step p{font-size:.82rem;color:var(--muted);line-height:1.6}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;position:relative;z-index:1}
+.field label{font-size:.82rem;font-weight:800;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.74rem;color:var(--muted-2);line-height:1.5}
+.field .hint.good{color:var(--primary)}
+.field .hint.bad{color:var(--danger)}
+.input-wrap{position:relative;display:flex;align-items:center}
+.input-text{width:100%;padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.94rem;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
+.input-text:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-text.valid{border-color:rgba(0,217,126,.5)}
+.input-text::placeholder{color:var(--muted-2)}
+.input-wrap .valid-mark{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--primary);font-weight:900;font-size:1rem;pointer-events:none}
+
+/* ACCOUNT TYPE CARDS */
+.type-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0;position:relative;z-index:1}
+@media(max-width:520px){.type-row{grid-template-columns:1fr}}
+.type-opt{position:relative;padding:20px 18px;border-radius:var(--radius);border:2px solid var(--border-2);background:var(--bg-2);cursor:pointer;transition:.18s;text-align:left}
+.type-opt:hover{border-color:var(--muted-2);transform:translateY(-2px)}
+.type-opt.active{border-color:var(--primary);background:linear-gradient(180deg,rgba(0,217,126,.1),rgba(0,217,126,.03));box-shadow:0 0 0 4px var(--primary-glow)}
+.type-opt.active.demo{border-color:var(--accent);background:linear-gradient(180deg,rgba(47,128,237,.1),rgba(47,128,237,.03));box-shadow:0 0 0 4px rgba(47,128,237,.2)}
+.type-opt .ico{font-size:1.9rem;margin-bottom:10px;display:block}
+.type-opt .title{font-size:1rem;font-weight:900;margin-bottom:5px}
+.type-opt .sub{font-size:.76rem;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.type-opt .tags{display:flex;gap:6px;flex-wrap:wrap}
+.type-opt .tag{font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);background:var(--surface-3);color:var(--muted);border:1px solid var(--border)}
+.type-opt.active .tag{background:rgba(0,217,126,.14);color:var(--primary);border-color:rgba(0,217,126,.3)}
+.type-opt.active.demo .tag{background:rgba(47,128,237,.14);color:#7cb4ff;border-color:rgba(47,128,237,.3)}
+.type-opt .radio{position:absolute;top:18px;right:18px;width:20px;height:20px;border-radius:50%;border:2px solid var(--border-2);display:grid;place-items:center;transition:.15s}
+.type-opt.active .radio{border-color:var(--primary);background:var(--primary)}
+.type-opt.active.demo .radio{border-color:var(--accent);background:var(--accent)}
+.type-opt.active .radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#04140c}
+.type-opt.active.demo .radio::after{background:#fff}
+
+/* SUMMARY */
+.summary{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin:22px 0;position:relative;z-index:1}
+.summary h4{font-size:.88rem;font-weight:900;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.summary .row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid rgba(30,48,72,.5);font-size:.86rem}
+.summary .row:last-child{border-bottom:none;padding-bottom:0}
+.summary .row .k{color:var(--muted);font-weight:600}
+.summary .row .v{font-family:var(--ff-mono);font-weight:800;color:var(--text-2);text-align:right;word-break:break-word}
+.summary .row .v.green{color:var(--primary)}
+.summary .row .v.blue{color:#7cb4ff}
+
+/* NOTICE */
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.84rem;line-height:1.65;margin:16px 0;position:relative;z-index:1}
+.notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.notice .ico{font-size:1.05rem;line-height:1.35;flex-shrink:0}
+.notice b{font-weight:800;color:inherit}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 24px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap;text-decoration:none;position:relative;z-index:1}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 22px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 10px 32px var(--primary-glow)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 28px;font-size:1rem}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* NAV BUTTONS */
+.nav-buttons{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;position:relative;z-index:1}
+.nav-buttons .btn{flex:1;min-width:140px}
+.nav-buttons .btn-outline{flex:0 0 auto;min-width:auto}
+
+/* ERR */
+.err{font-size:.82rem;color:var(--danger);display:none;margin-bottom:16px;padding:12px 14px;border-radius:var(--radius-sm);background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28);line-height:1.55;position:relative;z-index:1}
+.err.show{display:block}
+.err .strong{display:block;font-weight:800;margin-bottom:2px;color:#ff97a4}
+
+/* CONFETTI CANVAS */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:300}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* FOOTER */
+footer{text-align:center;font-size:.78rem;color:var(--muted-2);padding:26px 20px 32px;position:relative;z-index:1}
+footer a{color:var(--muted);border-bottom:1px solid var(--border-2)}
+footer a:hover{color:var(--text)}
+
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-cta">
+      <button class="skip" onclick="Onboarding.skip()">Skip intro</button>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <!-- PROGRESS -->
+  <div class="progress" id="progress">
+    <div class="progress-bar"><i id="progressFill" style="width:25%"></i></div>
+    <div class="progress-labels" id="progressLabels">
+      <span class="active">Welcome</span>
+      <span>How it works</span>
+      <span>Your DLS name</span>
+      <span>Pick your mode</span>
+    </div>
+  </div>
+
+  <div id="body"></div>
+
+  <footer>
+    <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+    <div style="margin-top:6px">
+      <a href="terms.html">Terms</a> ·
+      <a href="terms.html?tab=privacy">Privacy</a> ·
+      <a href="support.html">Support</a>
+    </div>
+  </footer>
+</main>
+
+<canvas id="confetti"></canvas>
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  DASHBOARD_PAGE:    'dashboard.html',
+  KYC_PAGE:          'kyc.html',
+  LOBBY_PAGE:        'lobby.html',
+  SUPPORT_PAGE:      'support.html',
+  TOTAL_STEPS:       4,
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  step: 1,
+  dlsUsername: '',
+  accountType: 'real',
+  busy: false,
+  finishing: false
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  },
+  async saveProfile(id, patch){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      const u = users.find(x => x.id === id);
+      if (u){ Object.assign(u, patch); localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
+      return { error: null };
+    }
+    try {
+      const { error } = await Supa.client.from('profiles').update(patch).eq('id', id);
+      return { error };
+    } catch(e){ return { error: e }; }
+  }
+};
+
+/* ============================================================================
+   ONBOARDING
+   ============================================================================ */
+const Onboarding = {
+
+  async init(){
+    log('Onboarding init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 700);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id) || {};
+
+    /* If they've already onboarded, don't make them do it again */
+    if (State.profile.onboarded_at){
+      log('Already onboarded — skipping');
+      location.replace(CONFIG.DASHBOARD_PAGE);
+      return;
+    }
+
+    /* Seed from profile if they already set some of these */
+    State.dlsUsername = State.profile.dls_username || '';
+    State.accountType = State.profile.account_type === 'demo' ? 'demo' : 'real';
+
+    this.render();
+  },
+
+  /* ── Step navigation ─────────────────────────────────────── */
+  go(step){
+    if (step < 1 || step > CONFIG.TOTAL_STEPS) return;
+    State.step = step;
+    this.updateProgress();
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  next(){
+    /* Validate current step before moving on */
+    if (State.step === 3){
+      const problem = this.validateDls(State.dlsUsername);
+      if (problem){
+        UI.toast(problem, 'err');
+        const el = document.getElementById('f_dls');
+        el?.classList.add('invalid');
+        el?.focus();
+        return;
+      }
+    }
+    if (State.step >= CONFIG.TOTAL_STEPS){ this.finish(); return; }
+    this.go(State.step + 1);
+  },
+
+  back(){ this.go(State.step - 1); },
+
+  updateProgress(){
+    const pct = (State.step / CONFIG.TOTAL_STEPS) * 100;
+    const fill = $('#progressFill');
+    if (fill) fill.style.width = pct + '%';
+
+    $$('#progressLabels span').forEach((el, i) => {
+      const n = i + 1;
+      el.classList.toggle('active', n === State.step);
+      el.classList.toggle('done', n < State.step);
+    });
+  },
+
+  /* ── Render ───────────────────────────────────────────────── */
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.step === 1) body.innerHTML = this.stepWelcome();
+    else if (State.step === 2) body.innerHTML = this.stepHow();
+    else if (State.step === 3) body.innerHTML = this.stepDls();
+    else body.innerHTML = this.stepMode();
+
+    this.wire();
+  },
+
+  /* ── Step 1: Welcome ─────────────────────────────────────── */
+  stepWelcome(){
+    return `
+      <div class="card">
+        <div class="step-ico">👋</div>
+        <div class="step-head">
+          <span class="eyebrow">Welcome</span>
+          <h1>You're in. Let's get you set up.</h1>
+          <p>This takes about a minute. We'll walk you through how matches work, capture your DLS username, and help you choose between real money and free demo play.</p>
+        </div>
+
+        <div class="features">
+          <div class="feat">
+            <div class="ico">⚽</div>
+            <div class="txt">
+              <h4>Play real Dream League Soccer matches</h4>
+              <p>Challenge anyone, stake on the result, and let the app settle the pot — no arguments, no chasing.</p>
+            </div>
+          </div>
+          <div class="feat blue">
+            <div class="ico">🔒</div>
+            <div class="txt">
+              <h4>Verified results, automatically</h4>
+              <p>Both players upload a final-score screenshot. Our pipeline compares them and pays out within minutes.</p>
+            </div>
+          </div>
+          <div class="feat purple">
+            <div class="ico">🎮</div>
+            <div class="txt">
+              <h4>Practice first if you want</h4>
+              <p>Your demo wallet comes preloaded with ₦10,000 of free practice money. No risk while you learn the ropes.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice info">
+          <span class="ico">🇳🇬</span>
+          <div>Real-money play is <b>18+</b> and requires identity verification before you can withdraw. You can always play in demo mode without verifying.</div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-primary btn-lg" onclick="Onboarding.next()">Let's go →</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Step 2: How it works ────────────────────────────────── */
+  stepHow(){
+    return `
+      <div class="card">
+        <div class="step-ico blue">🎯</div>
+        <div class="step-head">
+          <span class="eyebrow">How it works</span>
+          <h1>A match in five steps</h1>
+          <p>Once you've seen this flow once, it becomes second nature. Everything happens inside the app.</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-step">
+            <span class="num">1</span>
+            <div class="body">
+              <h4>Create or accept a challenge</h4>
+              <p>Pick a stake amount, or accept someone else's from the lobby. Both stakes go into escrow — nobody touches them until the match settles.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <span class="num">2</span>
+            <div class="body">
+              <h4>Play a Friend Match in DLS</h4>
+              <p>Add your opponent in Dream League Soccer and play a Friend Match. A 5-minute timer runs while you play.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <span class="num">3</span>
+            <div class="body">
+              <h4>Upload your final score</h4>
+              <p>When the match ends, a 5-minute submission window opens. Both players upload a screenshot of the final score and enter their goals.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <span class="num">4</span>
+            <div class="body">
+              <h4>Automatic verification</h4>
+              <p>Our pipeline compares both screenshots — the scores must mirror each other, and the file metadata must look legit. If they match, it settles instantly.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <span class="num">5</span>
+            <div class="body">
+              <h4>Get paid</h4>
+              <p>Winner takes the pot, minus a 4% platform fee. Draws refund both stakes with no fee. Money lands in your wallet immediately.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice warn">
+          <span class="ico">⚖️</span>
+          <div>If something goes wrong, you have <b>48 hours</b> from settlement to file a dispute. A human reviewer looks at both screenshots and settles it within 24 hours.</div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="Onboarding.back()">← Back</button>
+          <button class="btn btn-primary btn-lg" onclick="Onboarding.next()">Got it →</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Step 3: DLS username ────────────────────────────────── */
+  stepDls(){
+    return `
+      <div class="card">
+        <div class="step-ico warn">🪪</div>
+        <div class="step-head">
+          <span class="eyebrow">One-time setup</span>
+          <h1>What's your DLS username?</h1>
+          <p>This is the name that shows inside Dream League Soccer. We use it to verify your match screenshots — if it doesn't match what's on the screen, your result can't be confirmed.</p>
+        </div>
+
+        <div class="err" id="formErr"></div>
+
+        <div class="field">
+          <label for="f_dls">DLS username <span class="req">*</span></label>
+          <div class="input-wrap">
+            <input class="input-text" id="f_dls" type="text" maxlength="24"
+                   placeholder="e.g. kunle_dls"
+                   value="${UI.escape(State.dlsUsername)}"
+                   autocomplete="off" spellcheck="false" autocapitalize="off">
+            <span class="valid-mark hidden" id="dlsOk">✓</span>
+          </div>
+          <div class="hint" id="dlsHint">3–24 characters · letters, numbers, and underscores</div>
+        </div>
+
+        <div class="notice info">
+          <span class="ico">🔍</span>
+          <div>
+            <b>Exact match required.</b> If you play under a different in-game name than the one you enter here, your screenshots won't verify. You can change this any time from your profile, but not while you have an active match.
+          </div>
+        </div>
+
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="Onboarding.back()">← Back</button>
+          <button class="btn btn-primary btn-lg" id="dlsNextBtn" onclick="Onboarding.next()">Continue →</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Step 4: Mode ────────────────────────────────────────── */
+  stepMode(){
+    return `
+      <div class="card">
+        <div class="step-ico purple">🎮</div>
+        <div class="step-head">
+          <span class="eyebrow">Almost done</span>
+          <h1>How do you want to start?</h1>
+          <p>You can switch between these any time. This just decides where the app opens first.</p>
+        </div>
+
+        <div class="type-row">
+          <button class="type-opt ${State.accountType === 'real' ? 'active' : ''}" data-type="real" onclick="Onboarding.setType('real')">
+            <span class="radio"></span>
+            <span class="ico">💰</span>
+            <div class="title">Real money</div>
+            <div class="sub">Deposit when you're ready. Withdraw to any Nigerian bank account.</div>
+            <div class="tags">
+              <span class="tag">Full access</span>
+              <span class="tag">KYC needed</span>
+            </div>
+          </button>
+
+          <button class="type-opt demo ${State.accountType === 'demo' ? 'active' : ''}" data-type="demo" onclick="Onboarding.setType('demo')">
+            <span class="radio"></span>
+            <span class="ico">🎮</span>
+            <div class="title">Demo only</div>
+            <div class="sub">₦10,000 of free practice money. No risk, no KYC required to start.</div>
+            <div class="tags">
+              <span class="tag">Risk-free</span>
+              <span class="tag">No deposit</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="summary">
+          <h4><span>📋</span> Here's what we'll set up for you</h4>
+          <div class="row">
+            <span class="k">Username</span>
+            <span class="v">${UI.escape(State.profile.username || '—')}</span>
+          </div>
+          <div class="row">
+            <span class="k">DLS username</span>
+            <span class="v green">${UI.escape(State.dlsUsername || '—')}</span>
+          </div>
+          <div class="row">
+            <span class="k">Default wallet</span>
+            <span class="v ${State.accountType === 'demo' ? 'blue' : 'green'}">
+              ${State.accountType === 'demo' ? '🎮 Demo wallet' : '💰 Real wallet'}
+            </span>
+          </div>
+          <div class="row">
+            <span class="k">Starting balance</span>
+            <span class="v">${State.accountType === 'demo' ? '₦10,000 (free demo)' : '₦0.00 — deposit any time'}</span>
+          </div>
+        </div>
+
+        ${State.accountType === 'demo' ? `
+          <div class="notice ok">
+            <span class="ico">🎉</span>
+            <div>Nice choice. Your demo wallet will be funded with <b>₦10,000 free practice money</b> the moment you finish. Try the lobby and play a friendly match — no pressure.</div>
+          </div>
+        ` : `
+          <div class="notice info">
+            <span class="ico">💡</span>
+            <div>You'll still get the <b>₦10,000 demo balance</b> to practise with — it's separate from your real wallet. Deposit whenever you're ready to play for real.</div>
+          </div>
+        `}
+
+        <div class="nav-buttons">
+          <button class="btn btn-outline" onclick="Onboarding.back()">← Back</button>
+          <button class="btn btn-primary btn-lg" id="finishBtn" onclick="Onboarding.finish()">
+            Finish setup →
+          </button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Wiring ───────────────────────────────────────────────── */
+  wire(){
+    const dls = $('#f_dls');
+    if (dls){
+      dls.addEventListener('input', () => {
+        State.dlsUsername = dls.value.trim();
+        dls.classList.remove('invalid');
+        const hint = $('#dlsHint');
+        const okMark = $('#dlsOk');
+        hint.className = 'hint';
+
+        if (!State.dlsUsername){
+          hint.textContent = '3–24 characters · letters, numbers, and underscores';
+          okMark?.classList.add('hidden');
+          dls.classList.remove('valid');
+          return;
+        }
+
+        const problem = this.validateDls(State.dlsUsername);
+        if (problem){
+          hint.textContent = problem;
+          hint.classList.add('bad');
+          dls.classList.add('invalid');
+          dls.classList.remove('valid');
+          okMark?.classList.add('hidden');
+        } else {
+          hint.textContent = 'Looks good.';
+          hint.classList.add('good');
+          dls.classList.add('valid');
+          okMark?.classList.remove('hidden');
+        }
+      });
+      dls.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter'){ e.preventDefault(); this.next(); }
+      });
+    }
+  },
+
+  validateDls(v){
+    if (!v) return 'Enter your DLS username.';
+    if (v.length < 3) return 'Must be at least 3 characters.';
+    if (v.length > 24) return 'Must be at most 24 characters.';
+    if (!/^[A-Za-z0-9_]+$/.test(v)) return 'Letters, numbers, and underscores only.';
+    return null;
+  },
+
+  setType(type){
+    State.accountType = type;
+    $$('.type-opt').forEach(el => el.classList.toggle('active', el.dataset.type === type));
+    /* Re-render just the summary + notice */
+    const current = $('#body');
+    if (current) current.innerHTML = this.stepMode();
+    this.wire();
+  },
+
+  /* ── Finish ──────────────────────────────────────────────── */
+  async finish(){
+    if (State.busy || State.finishing) return;
+
+    const problem = this.validateDls(State.dlsUsername);
+    if (problem){
+      this.go(3);
+      UI.toast(problem, 'err');
+      return;
+    }
+
+    State.busy = true;
+    const btn = $('#finishBtn');
+    const orig = btn?.innerHTML || '';
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Setting you up…'; }
+
+    try {
+      const patch = {
+        dls_username: State.dlsUsername.trim(),
+        account_type: State.accountType,
+        onboarded_at: new Date().toISOString()
+      };
+
+      const { error } = await Auth.saveProfile(State.session.user.id, patch);
+      if (error) throw error;
+
+      State.finishing = true;
+      this.renderDone();
+      this.fireConfetti();
+
+      UI.toast('You\'re all set. Welcome to DLS Stake!', 'ok', 5000);
+
+      /* Short pause so the user sees the confirmation */
+      setTimeout(() => {
+        location.href = CONFIG.DASHBOARD_PAGE;
+      }, 2400);
+
+    } catch(e){
+      err('finish:', e);
+      State.busy = false;
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
+      UI.toast(e.message || 'Could not save your setup. Try again.', 'err');
+    }
+  },
+
+  /* ── Done screen ─────────────────────────────────────────── */
+  renderDone(){
+    const body = $('#body');
+    if (!body) return;
+
+    /* Hide progress — the journey's over */
+    const prog = $('#progress');
+    if (prog) prog.style.display = 'none';
+
+    body.innerHTML = `
+      <div class="card" style="text-align:center">
+        <div class="step-ico" style="animation:pop .55s cubic-bezier(.2,.9,.3,1.4)">✓</div>
+        <div class="step-head">
+          <span class="eyebrow" style="background:rgba(0,217,126,.14);border-color:rgba(0,217,126,.35);color:var(--primary)">Setup complete</span>
+          <h1>You're ready to play</h1>
+          <p>
+            Welcome to DLS Stake, <strong style="color:var(--text)">${UI.escape(State.profile.username || 'player')}</strong>.
+            ${State.accountType === 'demo'
+              ? 'Your demo wallet is funded. Jump into the lobby and try a friendly match.'
+              : 'Your real wallet is ready when you are. Deposit whenever you want to play for real.'}
+          </p>
+        </div>
+
+        <div class="summary" style="text-align:left">
+          <h4><span>🎯</span> What to do next</h4>
+          <div class="row">
+            <span class="k">Try a match</span>
+            <span class="v" style="color:var(--primary)">Open the lobby</span>
+          </div>
+          <div class="row">
+            <span class="k">Add funds</span>
+            <span class="v" style="color:#7cb4ff">Deposit from your wallet</span>
+          </div>
+          <div class="row">
+            <span class="k">Climb the ranks</span>
+            <span class="v" style="color:#c4b5fd">Play leaderboard matches</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:22px;justify-content:center;flex-wrap:wrap">
+          <a class="btn btn-primary btn-lg" href="${CONFIG.DASHBOARD_PAGE}">Go to dashboard</a>
+          <a class="btn btn-ghost" href="${CONFIG.LOBBY_PAGE}">Open the lobby</a>
+        </div>
+
+        <p style="font-size:.76rem;color:var(--muted-2);margin-top:22px;line-height:1.6">
+          Redirecting you automatically in a moment…
+        </p>
+      </div>
+    `;
+  },
+
+  skip(){
+    /* They can bail out — but we still need their DLS username for the app to work. */
+    if (State.profile.onboarded_at){
+      location.href = CONFIG.DASHBOARD_PAGE;
+      return;
+    }
+
+    const confirm = window.confirm(
+      "Skip the intro?\n\nYou'll still need to set your DLS username before your first match. " +
+      "You can find it any time in your profile settings."
+    );
+    if (!confirm) return;
+
+    /* Save minimal state so we don't show the intro again */
+    Auth.saveProfile(State.session.user.id, {
+      onboarded_at: new Date().toISOString(),
+      account_type: State.profile.account_type || 'real'
+    }).then(() => {
+      UI.toast('Intro skipped. You can set your DLS username in your profile.', 'info', 5000);
+      setTimeout(() => location.href = CONFIG.DASHBOARD_PAGE, 800);
+    });
+  },
+
+  /* ── Confetti ────────────────────────────────────────────── */
+  fireConfetti(){
+    const canvas = $('#confetti');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    function resize(){
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const colors = ['#00d97e','#5ce0ff','#8b5cf6','#ffb020','#ffffff'];
+    const particles = [];
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+
+    for (let i = 0; i < 140; i++){
+      particles.push({
+        x: W / 2 + (Math.random() - .5) * 240,
+        y: H / 2 - 120,
+        vx: (Math.random() - .5) * 14,
+        vy: Math.random() * -14 - 4,
+        size: Math.random() * 7 + 4,
+        color: colors[(Math.random() * colors.length) | 0],
+        rot: Math.random() * Math.PI * 2,
+        vr: (Math.random() - .5) * .32,
+        life: 0,
+        ttl: 150 + Math.random() * 60
+      });
+    }
+
+    let raf;
+    function tick(){
+      ctx.clearRect(0, 0, W, H);
+      let alive = 0;
+
+      particles.forEach(p => {
+        p.life++;
+        if (p.life > p.ttl) return;
+        alive++;
+
+        p.vy += 0.42;
+        p.vx *= 0.995;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - p.life / p.ttl);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      });
+
+      if (alive > 0) raf = requestAnimationFrame(tick);
+      else ctx.clearRect(0, 0, W, H);
+    }
+
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(tick);
+
+    /* Clean up after ~4s */
+    setTimeout(() => {
+      cancelAnimationFrame(raf);
+      ctx.clearRect(0, 0, W, H);
+    }, 4200);
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Onboarding boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Onboarding (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Onboarding (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Onboarding.init(); }
+  catch(e){ err('Onboarding init failed:', e); UI.toast('Failed to load onboarding.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'onboarding-1.0.0',
+  debug(){
+    console.log('======== DLS Onboarding v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Step:', State.step, '/', CONFIG.TOTAL_STEPS);
+    console.log('DLS username:', State.dlsUsername || '(not set)');
+    console.log('Account type:', State.accountType);
+    console.log('Onboarded before:', State.profile?.onboarded_at || 'never');
+    console.log('===================================');
+  },
+  reset(){
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    location.href = 'login.html';
+  }
+};
+</script>
+</body>
+</html>
