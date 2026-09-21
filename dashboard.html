@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#070d16" />
 <title>Dashboard — DLS Stake</title>
-<meta name="description" content="Your DLS Stake dashboard — balance, escrow, active matches, wallet, and quick actions." />
+<meta name="description" content="Your DLS Stake dashboard — balance, escrow, active matches, wallet, tournaments, and quick actions." />
 
 <style>
 :root{
@@ -14,11 +14,13 @@
   --border:#1e3048; --border-2:#27405f;
   --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
   --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
-  --warn:#ffb020; --purple:#8b5cf6;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --gold:#ffd700; --silver:#c0c8d6; --bronze:#cd7f32;
   --text:#e6eef8; --text-2:#b8c9dc;
   --muted:#7b90a8; --muted-2:#556b85;
   --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
   --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
   --shadow-lg:0 20px 60px rgba(0,0,0,.6);
   --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
   --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
@@ -34,29 +36,55 @@ ul{list-style:none}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
   radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
   radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
-  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
-.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
 
 /* NAV */
 .nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
 .nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
-.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
 .brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
 .brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
 .brand-text span{color:var(--primary)}
-.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links{display:none;gap:20px;font-size:.84rem;font-weight:600;color:var(--muted);align-items:center}
 .nav-links a:hover{color:var(--text)}
 .nav-links a.active{color:var(--primary)}
-@media(min-width:860px){.nav-links{display:flex}}
-.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+@media(min-width:1024px){.nav-links{display:flex}}
+
+.menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:1.1rem;transition:.15s;flex-shrink:0}
+.menu-btn:hover{background:var(--surface-2)}
+@media(min-width:1024px){.menu-btn{display:none}}
+
+/* DRAWER */
+.drawer-back{position:fixed;inset:0;background:rgba(4,8,14,.7);backdrop-filter:blur(6px);z-index:200;display:none}
+.drawer-back.show{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);background:linear-gradient(180deg,var(--surface),var(--bg-2));border-left:1px solid var(--border);z-index:201;padding:22px;overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.drawer.show{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.drawer-head .brand-text{font-size:1rem}
+.drawer-close{width:32px;height:32px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);display:grid;place-items:center;font-size:1rem}
+.drawer-close:hover{color:var(--text);background:var(--surface-3)}
+.drawer-section{margin-bottom:22px}
+.drawer-section h4{font-size:.66rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2);margin-bottom:10px;padding-left:6px}
+.drawer-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:var(--text-2);font-size:.9rem;font-weight:600;transition:.15s;position:relative}
+.drawer-link:hover{background:var(--surface-2);color:var(--text)}
+.drawer-link.active{background:rgba(0,217,126,.08);color:var(--primary);font-weight:800}
+.drawer-link .dico{width:24px;text-align:center;font-size:1rem}
+.drawer-link .d-badge{margin-left:auto;font-family:var(--ff-mono);font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:var(--radius-full);background:var(--danger);color:#fff}
+.drawer-link .d-badge.soft{background:var(--surface-3);color:var(--muted)}
+
+/* NAV USER */
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0}
 .nav-user:hover{background:var(--surface-2)}
 .nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
 .nav-user .name{font-size:.82rem;font-weight:700}
+.nav-user .nav-badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--danger);color:#fff;font-size:.6rem;font-weight:900;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
 @media(max-width:520px){.nav-user .name{display:none}}
 
 /* DASHBOARD */
 .dash{padding:36px 0 80px}
-.hero{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.hero{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
 .hero-id{display:flex;align-items:center;gap:18px}
 .hero-avatar{width:64px;height:64px;border-radius:18px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:1.4rem;box-shadow:0 8px 22px rgba(0,217,126,.18)}
 .hero-name{font-size:1.5rem;font-weight:900;letter-spacing:-.03em;margin-bottom:2px}
@@ -68,11 +96,30 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .badge-blue{background:rgba(47,128,237,.15);color:#7cb4ff;border:1px solid rgba(47,128,237,.3)}
 .badge-danger{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
 .badge-purple{background:rgba(139,92,246,.15);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
+.badge-gold{background:rgba(255,215,0,.14);color:var(--gold);border:1px solid rgba(255,215,0,.3)}
 .badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
+/* ALERTS */
+.alerts{display:grid;gap:10px;margin-bottom:22px}
+.alert{display:flex;gap:14px;align-items:center;padding:14px 18px;border-radius:var(--radius);transition:.15s;flex-wrap:wrap;cursor:pointer;text-decoration:none;color:inherit}
+.alert:hover{transform:translateX(2px)}
+.alert.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3)}
+.alert.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.3)}
+.alert.danger{background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.3)}
+.alert.success{background:rgba(0,217,126,.08);border:1px solid rgba(0,217,126,.3)}
+.alert .ico{font-size:1.3rem;line-height:1;flex-shrink:0}
+.alert .txt{flex:1;min-width:200px}
+.alert .txt h4{font-size:.88rem;font-weight:800;margin-bottom:3px}
+.alert.warn .txt h4{color:#ffd08a}
+.alert.info .txt h4{color:#9cc4ff}
+.alert.danger .txt h4{color:#ff97a4}
+.alert.success .txt h4{color:#6ee7b0}
+.alert .txt p{font-size:.78rem;color:var(--text-2);line-height:1.5}
+.alert .arrow{font-size:1.1rem;color:var(--muted);flex-shrink:0}
+
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none;text-decoration:none}
 .btn:active{transform:translateY(1px) scale(.99)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
@@ -83,57 +130,90 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
 .btn-purple{background:linear-gradient(180deg,#8b5cf6,#6d3ee0);color:#fff;box-shadow:0 6px 20px rgba(139,92,246,.28)}
 .btn-purple:hover:not(:disabled){filter:brightness(1.08)}
+.btn-gold{background:linear-gradient(180deg,var(--gold),#c9a800);color:#1a1000;box-shadow:0 6px 20px rgba(255,215,0,.3)}
+.btn-gold:hover:not(:disabled){filter:brightness(1.06)}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-danger:hover:not(:disabled){background:var(--danger-dark)}
 .btn-block{width:100%}
 .btn-sm{padding:8px 15px;font-size:.82rem}
 .btn-xs{padding:6px 12px;font-size:.76rem}
 
+/* WALLET TOGGLE */
+.wallet-toggle{display:inline-flex;gap:4px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);padding:4px;margin-bottom:14px}
+.wallet-toggle button{padding:9px 18px;border-radius:var(--radius-full);font-size:.82rem;font-weight:800;color:var(--muted);transition:.15s;cursor:pointer}
+.wallet-toggle button:hover{color:var(--text-2)}
+.wallet-toggle button.active{background:var(--surface-3);color:var(--text);box-shadow:var(--shadow-sm)}
+.wallet-toggle button.active.demo{background:linear-gradient(180deg,rgba(47,128,237,.16),rgba(47,128,237,.08));color:#7cb4ff}
+
 /* STATS */
-.stat-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr);margin-bottom:24px}
+.stat-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:22px}
 @media(min-width:820px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
 .stat{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .18s,transform .18s;position:relative;overflow:hidden}
 .stat:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.stat.hero{background:linear-gradient(180deg,rgba(0,217,126,.10),var(--bg-2));border-color:rgba(0,217,126,.32)}
+.stat.hero.demo{background:linear-gradient(180deg,rgba(47,128,237,.12),var(--bg-2));border-color:rgba(47,128,237,.32)}
+.stat.hero::after{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,217,126,.16),transparent 65%);pointer-events:none}
+.stat.hero.demo::after{background:radial-gradient(circle,rgba(47,128,237,.18),transparent 65%)}
 .stat .k{font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .stat .k .ico{width:16px;height:16px;border-radius:5px;display:grid;place-items:center;font-size:.7rem;background:rgba(0,217,126,.1);color:var(--primary)}
-.stat .v{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.stat .k .ico.blue{background:rgba(47,128,237,.1);color:#7cb4ff}
+.stat .v{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.1;font-family:var(--ff-mono)}
 .stat .v.primary{color:var(--primary)}
-.stat .v.mono{font-family:var(--ff-mono)}
-.stat .v.mono-sm{font-family:var(--ff-mono);font-size:1.35rem}
+.stat .v.blue{color:#7cb4ff}
+.stat .v.warn{color:var(--warn)}
+.stat .v.gold{color:var(--gold)}
+.stat .v.purple{color:#c4b5fd}
+.stat .v.mono-sm{font-size:1.35rem}
 .stat .sub{font-size:.74rem;color:var(--muted-2);margin-top:6px}
+
+/* PRIMARY ACTIONS GRID */
+.actions-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:26px}
+@media(min-width:720px){.actions-grid{grid-template-columns:repeat(4,1fr)}}
+.action-tile-big{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:20px 18px;border-radius:var(--radius-lg);border:1px solid var(--border);background:linear-gradient(180deg,var(--surface-2),var(--bg-2));cursor:pointer;transition:.18s;overflow:hidden;min-height:150px;text-decoration:none;color:inherit}
+.action-tile-big:hover{transform:translateY(-3px);border-color:var(--border-2);box-shadow:var(--shadow-sm)}
+.action-tile-big::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;pointer-events:none;opacity:.5}
+.action-tile-big.green::after{background:radial-gradient(circle,rgba(0,217,126,.15),transparent 65%)}
+.action-tile-big.blue::after{background:radial-gradient(circle,rgba(47,128,237,.15),transparent 65%)}
+.action-tile-big.gold::after{background:radial-gradient(circle,rgba(255,215,0,.15),transparent 65%)}
+.action-tile-big.purple::after{background:radial-gradient(circle,rgba(139,92,246,.15),transparent 65%)}
+.action-ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:1.35rem;position:relative;z-index:1}
+.action-tile-big.green .action-ico{background:rgba(0,217,126,.14);border:1px solid rgba(0,217,126,.3);color:var(--primary)}
+.action-tile-big.blue .action-ico{background:rgba(47,128,237,.14);border:1px solid rgba(47,128,237,.3);color:#7cb4ff}
+.action-tile-big.gold .action-ico{background:rgba(255,215,0,.14);border:1px solid rgba(255,215,0,.3);color:var(--gold)}
+.action-tile-big.purple .action-ico{background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);color:#c4b5fd}
+.action-tile-big h3{font-size:1rem;font-weight:900;letter-spacing:-.02em;position:relative;z-index:1;line-height:1.25}
+.action-tile-big p{font-size:.74rem;color:var(--muted);line-height:1.5;position:relative;z-index:1}
+.action-tile-big .arrow{margin-top:auto;font-size:.76rem;font-weight:800;color:var(--muted-2);position:relative;z-index:1;display:flex;align-items:center;gap:5px}
 
 /* LAYOUT */
 .grid-2{display:grid;gap:18px;grid-template-columns:1fr}
 @media(min-width:900px){.grid-2{grid-template-columns:1.35fr 1fr}}
 .panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
 .panel + .panel{margin-top:18px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
-.panel-head h2{font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.panel-head h2{font-size:1.05rem;font-weight:800;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.panel-head h2 .ico{font-size:1.15rem}
 .panel-head .link{font-size:.78rem;font-weight:700;color:var(--primary)}
 .panel-head .link:hover{text-decoration:underline}
 .panel-head .count-pill{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3);padding:2px 9px;border-radius:var(--radius-full)}
 
-/* ACTIONS */
+/* ACTIONS (SMALL) */
 .action-list{display:grid;gap:12px}
-.action-tile{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:left;width:100%;transition:transform .15s,border-color .15s,background .15s;cursor:pointer}
+.action-tile{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:left;width:100%;transition:transform .15s,border-color .15s,background .15s;cursor:pointer;text-decoration:none;color:inherit}
 .action-tile:hover{transform:translateY(-2px);border-color:var(--primary);background:var(--surface-3)}
-.action-tile.admin:hover{border-color:var(--purple)}
 .action-tile .ico{width:42px;height:42px;min-width:42px;border-radius:12px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:1.15rem}
-.action-tile.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.24)}
-.action-tile.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.24)}
-.action-tile.admin .ico{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.24)}
 .action-tile .txt{flex:1;min-width:0}
 .action-tile .txt h3{font-size:.94rem;font-weight:800;margin-bottom:2px}
 .action-tile .txt p{font-size:.78rem;color:var(--muted);line-height:1.4}
 .action-tile .chev{color:var(--muted-2);font-size:1.1rem;transition:transform .15s}
-.action-tile:hover .chev{transform:translateX(3px);color:var(--primary)}
-.action-tile.admin:hover .chev{color:var(--purple)}
 
 /* ACTIVE MATCHES */
 .match-list{display:grid;gap:10px}
 .match-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s,transform .15s}
 .match-item:hover{border-color:var(--border-2);transform:translateY(-1px)}
 .match-item.urgent{border-color:rgba(255,176,32,.4)}
+.match-item.playing{border-color:rgba(0,217,126,.45);background:linear-gradient(180deg, rgba(0,217,126,.04), var(--surface-2))}
+.match-item.verifying{border-color:rgba(47,128,237,.45);background:linear-gradient(180deg, rgba(47,128,237,.04), var(--surface-2))}
 .match-item.invite{border-color:rgba(255,176,32,.45);background:linear-gradient(180deg, rgba(255,176,32,.04), var(--surface-2))}
 .match-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
 .match-code{font-family:var(--ff-mono);font-size:.72rem;color:var(--muted)}
@@ -145,6 +225,46 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .match-hint{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
 .match-hint.play{color:var(--accent)}
 @media(max-width:640px){.match-item{grid-template-columns:1fr}.match-side{align-items:flex-start;text-align:left}}
+
+/* LIVE TIMER (playing matches) */
+.match-timer{margin-top:10px}
+.match-timer-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:10px}
+.match-timer-head .lbl{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.match-timer-head .time{font-family:var(--ff-mono);font-size:1.35rem;font-weight:900;letter-spacing:-.02em;color:var(--primary);line-height:1}
+.match-timer.warn .match-timer-head .time{color:var(--warn)}
+.match-timer.danger .match-timer-head .time{color:var(--danger);animation:timerPulse 1s ease-in-out infinite}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.match-timer-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden;position:relative}
+.match-timer-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width 1s linear, background .3s}
+.match-timer.warn .match-timer-bar i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
+.match-timer.danger .match-timer-bar i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
+
+/* VERIFICATION PREVIEW (verifying matches) */
+.verify-panel{margin-top:12px;padding:14px 16px;background:rgba(47,128,237,.05);border:1px solid rgba(47,128,237,.25);border-radius:var(--radius-sm)}
+.verify-title{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7cb4ff;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.verify-steps{display:grid;gap:8px}
+.verify-step{display:flex;gap:10px;align-items:flex-start;font-size:.76rem;line-height:1.5}
+.verify-step .dot{width:18px;height:18px;min-width:18px;border-radius:50%;background:var(--surface-3);border:1px solid var(--border-2);display:grid;place-items:center;font-size:.6rem;font-weight:900;color:var(--muted);margin-top:1px}
+.verify-step .txt{color:var(--text-2);min-width:0}
+.verify-step .txt b{color:var(--text);font-weight:800}
+.verify-step .txt .hl{color:#7cb4ff;font-weight:800}
+.verify-step .txt .hl-loss{color:var(--danger);font-weight:800}
+.verify-step .txt .hl-draw{color:var(--warn);font-weight:800}
+
+/* INFO STRIP (rules summary above active matches) */
+.rules-strip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(47,128,237,.06);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius);margin-bottom:16px;font-size:.82rem;line-height:1.55;color:#9cc4ff}
+.rules-strip .ico{font-size:1.05rem;line-height:1.3;flex-shrink:0}
+.rules-strip b{color:#bfd9ff;font-weight:800}
+.rules-strip .em{color:#ffd08a;font-weight:800}
+.rules-strip .em-bad{color:#ff97a4;font-weight:800}
+
+/* VERDICT CHIPS (recent matches) */
+.verdict{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);margin-left:8px}
+.verdict.verified{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.verdict.name-mismatch{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.verdict.low-score{background:rgba(255,107,53,.14);color:var(--fire);border:1px solid rgba(255,107,53,.3)}
+.verdict.both-mismatch{background:rgba(255,176,32,.14);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
+.verdict.arbitration{background:rgba(139,92,246,.14);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
 
 /* HISTORY */
 .history-list{display:grid;gap:0}
@@ -164,6 +284,38 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .h-amt.pos{color:var(--primary)}
 .h-amt.neg{color:var(--danger)}
 .h-amt.neu{color:var(--muted)}
+
+/* TOURNAMENT MINI */
+.tour-mini{padding:14px 16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:10px;transition:.15s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.tour-mini:last-child{margin-bottom:0}
+.tour-mini:hover{border-color:var(--gold);transform:translateX(2px)}
+.tour-mini .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.tour-mini h4{font-size:.86rem;font-weight:900;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tour-mini .tag{font-size:.58rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0}
+.tour-mini .tag.open{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.tour-mini .tag.live{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.tour-mini .meta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
+.tour-mini .prize{color:var(--gold);font-weight:900}
+
+/* ACHIEVEMENTS MINI */
+.ach-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ach-mini{flex:1;min-width:80px;padding:14px 12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:center;transition:.15s;cursor:pointer;text-decoration:none;color:inherit}
+.ach-mini:hover{border-color:var(--gold);transform:translateY(-2px)}
+.ach-mini .ico{font-size:1.5rem;margin-bottom:6px;display:block}
+.ach-mini .n{font-size:.7rem;font-weight:800;line-height:1.3;margin-bottom:3px}
+.ach-mini .s{font-size:.62rem;color:var(--muted);font-family:var(--ff-mono)}
+
+/* NOTIFICATIONS */
+.notif-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;text-decoration:none;color:inherit}
+.notif-row:last-child{border-bottom:none}
+.notif-row:hover{padding-left:6px}
+.notif-row.unread::before{content:'';display:block;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-top:8px;flex-shrink:0;box-shadow:0 0 8px var(--primary-glow)}
+.notif-row.read{opacity:.7}
+.notif-row .n-ico{font-size:1.1rem;line-height:1.3;flex-shrink:0}
+.notif-row .n-body{flex:1;min-width:0}
+.notif-row .n-body h4{font-size:.84rem;font-weight:800;margin-bottom:3px;line-height:1.4}
+.notif-row .n-body p{font-size:.74rem;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.notif-row .n-time{font-size:.68rem;color:var(--muted-2);font-family:var(--ff-mono);flex-shrink:0;margin-left:8px}
 
 /* EMPTY */
 .empty{padding:30px 20px;text-align:center;background:var(--surface-2);border:1px dashed var(--border-2);border-radius:var(--radius)}
@@ -202,6 +354,28 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .callout .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
 .callout button{color:inherit;font-weight:800;font-size:.78rem;text-decoration:underline}
 
+/* QUICK LINKS */
+.links-section{margin-top:32px}
+.section-title{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.section-title .line{flex:1;height:1px;background:var(--border)}
+.links-grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:640px){.links-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:960px){.links-grid{grid-template-columns:repeat(4,1fr)}}
+.link-tile{display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:.15s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
+.link-tile:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.link-tile .l-ico{width:40px;height:40px;min-width:40px;border-radius:12px;background:var(--surface-3);display:grid;place-items:center;font-size:1.1rem;transition:.15s}
+.link-tile.primary .l-ico{background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24)}
+.link-tile.blue    .l-ico{background:rgba(47,128,237,.1);border:1px solid rgba(47,128,237,.24)}
+.link-tile.gold    .l-ico{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.24)}
+.link-tile.purple  .l-ico{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.24)}
+.link-tile.fire    .l-ico{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.24)}
+.link-tile.warn    .l-ico{background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.24)}
+.link-tile .l-txt{flex:1;min-width:0}
+.link-tile .l-txt h4{font-size:.86rem;font-weight:800;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-tile .l-txt p{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.link-tile .arrow{color:var(--muted-2);font-size:.9rem;flex-shrink:0}
+.link-tile .count-pill{position:absolute;top:10px;right:10px;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:var(--radius-full);background:var(--danger);color:#fff}
+
 /* LOADING */
 .loading{padding:56px 22px;text-align:center;color:var(--muted);font-size:.9rem}
 .spin{width:20px;height:20px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}
@@ -214,7 +388,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .foot-links a:hover{color:var(--text)}
 
 /* TOASTS */
-#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
 .toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
 .toast.out{animation:toastOut .22s forwards}
 .toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
@@ -237,23 +411,76 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <div class="nav-links">
       <a href="dashboard.html" class="active">Dashboard</a>
       <a href="lobby.html">Lobby</a>
-      <a href="create-match.html">Create</a>
+      <a href="discover.html">Discover</a>
+      <a href="tournament.html">Tournaments</a>
+      <a href="history.html">History</a>
+      <a href="analytics.html">Analytics</a>
+      <a href="leaderboard.html">Leaderboard</a>
       <a href="wallet.html">Wallet</a>
-      <a href="profile.html">Profile</a>
     </div>
-    <div class="nav-user" onclick="location.href='profile.html'">
-      <div class="avatar" id="navAvatar">?</div>
-      <span class="name" id="navName">…</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="nav-user" onclick="location.href='profile.html'">
+        <div class="avatar" id="navAvatar">?</div>
+        <span class="name" id="navName">…</span>
+        <span class="nav-badge hidden" id="navNotifBadge">0</span>
+      </div>
+      <button class="menu-btn" onclick="Drawer.open()" aria-label="Open menu">☰</button>
     </div>
   </div>
 </nav>
+
+<div class="drawer-back" id="drawerBack" onclick="Drawer.close()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="brand-text">DLS<span>Stake</span></div>
+    <button class="drawer-close" onclick="Drawer.close()">✕</button>
+  </div>
+
+  <div class="drawer-section">
+    <h4>Play</h4>
+    <a class="drawer-link" href="dashboard.html"><span class="dico">🏠</span> Dashboard</a>
+    <a class="drawer-link" href="lobby.html"><span class="dico">🎯</span> Lobby</a>
+    <a class="drawer-link" href="create-match.html"><span class="dico">⚔️</span> Create a match</a>
+    <a class="drawer-link" href="discover.html"><span class="dico">🔍</span> Discover players</a>
+    <a class="drawer-link" href="tournament.html"><span class="dico">🏆</span> Tournaments</a>
+  </div>
+
+  <div class="drawer-section">
+    <h4>My activity</h4>
+    <a class="drawer-link" href="history.html"><span class="dico">📜</span> Match history</a>
+    <a class="drawer-link" href="analytics.html"><span class="dico">📈</span> Analytics</a>
+    <a class="drawer-link" href="achievements.html"><span class="dico">🏅</span> Achievements</a>
+    <a class="drawer-link" href="leaderboard.html"><span class="dico">📊</span> Leaderboard</a>
+  </div>
+
+  <div class="drawer-section">
+    <h4>Money</h4>
+    <a class="drawer-link" href="wallet.html"><span class="dico">💰</span> Wallet</a>
+    <a class="drawer-link" href="bank-accounts.html"><span class="dico">🏦</span> Bank accounts</a>
+    <a class="drawer-link" href="referral.html"><span class="dico">🎁</span> Refer &amp; earn</a>
+  </div>
+
+  <div class="drawer-section">
+    <h4>Account</h4>
+    <a class="drawer-link" href="profile.html"><span class="dico">👤</span> Profile</a>
+    <a class="drawer-link" href="kyc.html"><span class="dico">🪪</span> Verify identity</a>
+    <a class="drawer-link" href="settings.html"><span class="dico">⚙️</span> Settings</a>
+    <a class="drawer-link" href="notifications.html"><span class="dico">🔔</span> Notifications <span class="d-badge hidden" id="drawerNotifBadge">0</span></a>
+  </div>
+
+  <div class="drawer-section">
+    <h4>Help</h4>
+    <a class="drawer-link" href="support.html"><span class="dico">💬</span> Help &amp; support</a>
+    <a class="drawer-link" href="terms.html"><span class="dico">📋</span> Legal</a>
+    <a class="drawer-link" href="admin.html" id="drawerAdminLink" style="display:none"><span class="dico">⚙️</span> Admin console</a>
+  </div>
+</aside>
 
 <main class="wrap dash" id="app">
   <div id="loading" class="loading"><span class="spin"></span> Loading dashboard…</div>
 
   <div id="content" style="display:none">
 
-    <!-- HERO -->
     <div class="hero">
       <div class="hero-id">
         <div class="hero-avatar" id="heroAvatar">?</div>
@@ -269,15 +496,48 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
       </div>
     </div>
 
-    <!-- STATS -->
+    <div class="alerts" id="alertsStrip"></div>
+
+    <div class="actions-grid">
+      <a class="action-tile-big green" href="create-match.html">
+        <div class="action-ico">⚔️</div>
+        <h3>Create a match</h3>
+        <p>Challenge anyone at a stake you pick.</p>
+        <div class="arrow">Start now →</div>
+      </a>
+      <a class="action-tile-big blue" href="lobby.html">
+        <div class="action-ico">🎯</div>
+        <h3>Open lobby</h3>
+        <p>Browse open challenges and accept one.</p>
+        <div class="arrow">Enter lobby →</div>
+      </a>
+      <a class="action-tile-big gold" href="tournament.html">
+        <div class="action-ico">🏆</div>
+        <h3>Tournaments</h3>
+        <p>Multi-player brackets with bigger prizes.</p>
+        <div class="arrow">See brackets →</div>
+      </a>
+      <a class="action-tile-big purple" href="discover.html">
+        <div class="action-ico">🔍</div>
+        <h3>Discover players</h3>
+        <p>Find new opponents by stats and form.</p>
+        <div class="arrow">Browse players →</div>
+      </a>
+    </div>
+
+    <div class="wallet-toggle" id="walletToggle">
+      <button class="active" data-wallet="real" onclick="Dashboard.setWallet('real')">💰 Real</button>
+      <button class="demo" data-wallet="demo" onclick="Dashboard.setWallet('demo')">🎮 Demo</button>
+    </div>
+
     <div class="stat-grid">
-      <div class="stat">
-        <div class="k"><span class="ico">₦</span> Balance</div>
-        <div class="v primary mono" id="statBalance">₦0.00</div>
-        <div class="sub">Available to stake</div>
+      <div class="stat hero" id="statBalanceCard">
+        <div class="k"><span class="ico" id="statBalanceIco">₦</span> <span id="statBalanceLabel">Balance</span></div>
+        <div class="v primary" id="statBalance">₦0.00</div>
+        <div class="sub" id="statBalanceSub">Available to stake</div>
       </div>
       <div class="stat">
-        <div class="k"><span class="ico">🔒</span> In Escrow</div>
+        <div class="k"><span class="ico">🔒</span> In escrow</div>
         <div class="v mono-sm" id="statEscrow">₦0.00</div>
         <div class="sub">Locked in active matches</div>
       </div>
@@ -287,96 +547,62 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
         <div class="sub" id="statWon">0 wins</div>
       </div>
       <div class="stat">
-        <div class="k"><span class="ico">★</span> Win Rate</div>
+        <div class="k"><span class="ico">★</span> Win rate</div>
         <div class="v" id="statWinRate">—</div>
         <div class="sub">All-time average</div>
       </div>
     </div>
 
-    <!-- TWO COLUMN -->
     <div class="grid-2">
 
-      <!-- LEFT -->
       <section>
 
-        <!-- INVITATIONS -->
         <div class="panel" id="invitesPanel" style="display:none">
           <div class="panel-head">
-            <h2>Invitations</h2>
+            <h2><span class="ico">📨</span> Invitations</h2>
             <span class="count-pill" id="invitesCount">0</span>
           </div>
           <div id="invitesList" class="match-list"></div>
         </div>
 
-        <!-- ACTIVE MATCHES -->
         <div class="panel">
           <div class="panel-head">
-            <h2>Active matches</h2>
+            <h2><span class="ico">⚔️</span> Active matches</h2>
             <span class="count-pill" id="activeCount">0</span>
           </div>
+
+          <div class="rules-strip">
+            <span class="ico">🛡️</span>
+            <div>
+              <b>Screenshot verification.</b> Both screenshots must show at least one of the two players' usernames
+              (the other can just be "DLS"). If your name doesn't appear on your own screenshot, or your score is lower, the
+              <span class="em-bad">opponent takes the pot</span>. If <span class="em">neither</span> name matches,
+              the match is declared a <span class="em">draw</span> and both stakes are refunded.
+            </div>
+          </div>
+
           <div id="activeList" class="match-list"></div>
         </div>
 
-        <!-- QUICK ACTIONS -->
-        <div class="panel">
-          <div class="panel-head"><h2>Quick actions</h2></div>
-          <div class="action-list">
-            <button class="action-tile" onclick="location.href='lobby.html'">
-              <div class="ico">🎯</div>
-              <div class="txt">
-                <h3>Match lobby</h3>
-                <p>Browse invitations and your matches.</p>
-              </div>
-              <div class="chev">→</div>
-            </button>
-            <button class="action-tile blue" onclick="location.href='create-match.html'">
-              <div class="ico">⚡</div>
-              <div class="txt">
-                <h3>Challenge a player</h3>
-                <p>Pick an opponent and post a stake.</p>
-              </div>
-              <div class="chev">→</div>
-            </button>
-            <button class="action-tile warn" onclick="location.href='wallet.html'">
-              <div class="ico">＋</div>
-              <div class="txt">
-                <h3>Deposit funds</h3>
-                <p>Top up with Paystack — card or bank transfer.</p>
-              </div>
-              <div class="chev">→</div>
-            </button>
-            <button class="action-tile" onclick="location.href='wallet.html'">
-              <div class="ico">↗</div>
-              <div class="txt">
-                <h3>Withdraw</h3>
-                <p>Send your balance to a Nigerian bank account.</p>
-              </div>
-              <div class="chev">→</div>
-            </button>
-            <button class="action-tile admin" id="adminTile" style="display:none" onclick="location.href='admin.html'">
-              <div class="ico">⚙️</div>
-              <div class="txt">
-                <h3>Admin console</h3>
-                <p>KYC review, disputes, withdrawals, revenue.</p>
-              </div>
-              <div class="chev">→</div>
-            </button>
-          </div>
-        </div>
-
-        <!-- RECENT MATCHES -->
         <div class="panel">
           <div class="panel-head">
-            <h2>Recent matches</h2>
-            <a class="link" href="lobby.html">View all →</a>
+            <h2><span class="ico">🏆</span> Tournaments</h2>
+            <a class="link" href="tournament.html">See all →</a>
+          </div>
+          <div id="tournamentsList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2><span class="ico">📜</span> Recent matches</h2>
+            <a class="link" href="history.html">View all →</a>
           </div>
           <div id="recentList" class="history-list"></div>
         </div>
 
-        <!-- TRANSACTIONS -->
         <div class="panel">
           <div class="panel-head">
-            <h2>Recent transactions</h2>
+            <h2><span class="ico">💳</span> Recent transactions</h2>
             <a class="link" href="wallet.html">Wallet →</a>
           </div>
           <div id="txList" class="history-list"></div>
@@ -384,20 +610,42 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 
       </section>
 
-      <!-- RIGHT -->
       <section>
 
-        <!-- ACCOUNT -->
         <div class="panel">
           <div class="panel-head">
-            <h2>Account</h2>
+            <h2><span class="ico">🔔</span> Notifications</h2>
+            <a class="link" href="notifications.html">All →</a>
+          </div>
+          <div id="notifsList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2><span class="ico">🏅</span> Achievements</h2>
+            <a class="link" href="achievements.html">All →</a>
+          </div>
+          <div id="achievementsList"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2><span class="ico">📊</span> Leaderboard</h2>
+            <a class="link" href="leaderboard.html">Full board →</a>
+          </div>
+          <div id="leaderboardRank"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2><span class="ico">👤</span> Account</h2>
             <span class="badge badge-blue"><i></i> <span id="authBadgeText">Connected</span></span>
           </div>
 
           <div class="detail-list">
             <div class="detail-row"><span class="label">Username</span><span class="value text" id="dUsername">—</span></div>
             <div class="detail-row"><span class="label">Email</span><span class="value text" id="dEmail">—</span></div>
-            <div class="detail-row"><span class="label">DLS Username</span><span class="value" id="dDls">—</span></div>
+            <div class="detail-row"><span class="label">DLS username</span><span class="value" id="dDls">—</span></div>
             <div class="detail-row"><span class="label">Role</span><span class="value text" id="dRole">Player</span></div>
             <div class="detail-row"><span class="label">KYC</span><span class="value text" id="dKyc">Pending</span></div>
             <div class="detail-row"><span class="label">Member since</span><span class="value text" id="dJoined">—</span></div>
@@ -422,6 +670,17 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             </div>
           </div>
 
+          <div class="callout info" id="bankBanner" style="display:none">
+            <span class="ico">🏦</span>
+            <div>
+              <b>No payout account saved.</b><br />
+              Add a Nigerian bank account so withdrawals have somewhere to go.
+              <div class="actions">
+                <button onclick="location.href='bank-accounts.html'">Add account →</button>
+              </div>
+            </div>
+          </div>
+
           <div class="callout admin" id="adminCallout" style="display:none">
             <span class="ico">⚙️</span>
             <div>
@@ -433,48 +692,63 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             </div>
           </div>
 
-          <div class="callout info" id="pendingDepositCallout" style="display:none">
-            <span class="ico">⏳</span>
-            <div id="pendingDepositBody"></div>
-          </div>
-
-          <div class="callout warn" id="pendingWithdrawalCallout" style="display:none">
-            <span class="ico">⏳</span>
-            <div id="pendingWithdrawalBody"></div>
-          </div>
-
-          <div style="display:flex;gap:10px;margin-top:20px">
+          <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-block" onclick="location.href='profile.html'">Profile</button>
+            <button class="btn btn-outline btn-block" onclick="location.href='settings.html'">Settings</button>
             <button class="btn btn-danger btn-block" onclick="Auth.signOut()">Sign out</button>
           </div>
         </div>
 
-        <!-- WALLET SNAPSHOT -->
         <div class="panel">
-          <div class="panel-head"><h2>Wallet summary</h2></div>
+          <div class="panel-head">
+            <h2><span class="ico">💰</span> Wallet summary</h2>
+            <a class="link" href="wallet.html">Open →</a>
+          </div>
           <div class="detail-list">
             <div class="detail-row"><span class="label">Total deposited</span><span class="value" id="wTotalDep">₦0.00</span></div>
             <div class="detail-row"><span class="label">Total withdrawn</span><span class="value" id="wTotalWd">₦0.00</span></div>
             <div class="detail-row"><span class="label">Pending deposits</span><span class="value" id="wPendDep">0</span></div>
             <div class="detail-row"><span class="label">Pending withdrawals</span><span class="value" id="wPendWd">0</span></div>
           </div>
-          <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="location.href='wallet.html'">
-            Open wallet
-          </button>
         </div>
 
       </section>
+    </div>
+
+    <div class="links-section">
+      <div class="section-title">
+        <span>Everything else</span>
+        <span class="line"></span>
+      </div>
+
+      <div class="links-grid">
+        <a class="link-tile primary" href="history.html"><div class="l-ico">📜</div><div class="l-txt"><h4>Match history</h4><p>Every match you've played</p></div><span class="arrow">›</span></a>
+        <a class="link-tile purple" href="analytics.html"><div class="l-ico">📈</div><div class="l-txt"><h4>Analytics</h4><p>Your numbers, decomposed</p></div><span class="arrow">›</span></a>
+        <a class="link-tile gold" href="achievements.html"><div class="l-ico">🏅</div><div class="l-txt"><h4>Achievements</h4><p>Badges and milestones</p></div><span class="arrow">›</span></a>
+        <a class="link-tile primary" href="leaderboard.html"><div class="l-ico">📊</div><div class="l-txt"><h4>Leaderboard</h4><p>Top players ranked</p></div><span class="arrow">›</span></a>
+        <a class="link-tile primary" href="wallet.html"><div class="l-ico">💰</div><div class="l-txt"><h4>Wallet</h4><p>Deposit, withdraw, transactions</p></div><span class="arrow">›</span></a>
+        <a class="link-tile blue" href="bank-accounts.html"><div class="l-ico">🏦</div><div class="l-txt"><h4>Bank accounts</h4><p>Saved payout accounts</p></div><span class="arrow">›</span></a>
+        <a class="link-tile purple" href="referral.html"><div class="l-ico">🎁</div><div class="l-txt"><h4>Refer &amp; earn</h4><p>Invite friends, earn bonuses</p></div><span class="arrow">›</span></a>
+        <a class="link-tile warn" href="kyc.html" id="kycLinkTile"><div class="l-ico">🪪</div><div class="l-txt"><h4>Verify identity</h4><p>Unlock real-money withdrawals</p></div><span class="arrow">›</span></a>
+        <a class="link-tile primary" href="notifications.html"><div class="l-ico">🔔</div><div class="l-txt"><h4>Notifications</h4><p>Match invites and updates</p></div><span class="arrow">›</span></a>
+        <a class="link-tile purple" href="discover.html"><div class="l-ico">🔍</div><div class="l-txt"><h4>Discover</h4><p>Find new opponents</p></div><span class="arrow">›</span></a>
+        <a class="link-tile blue" href="profile.html"><div class="l-ico">👤</div><div class="l-txt"><h4>Your profile</h4><p>Stats, settings, preferences</p></div><span class="arrow">›</span></a>
+        <a class="link-tile blue" href="settings.html"><div class="l-ico">⚙️</div><div class="l-txt"><h4>Settings</h4><p>Notifications, security, privacy</p></div><span class="arrow">›</span></a>
+        <a class="link-tile primary" href="support.html"><div class="l-ico">💬</div><div class="l-txt"><h4>Help &amp; support</h4><p>FAQ and contact us</p></div><span class="arrow">›</span></a>
+        <a class="link-tile blue" href="terms.html"><div class="l-ico">📋</div><div class="l-txt"><h4>Legal</h4><p>Terms, privacy, and policies</p></div><span class="arrow">›</span></a>
+        <a class="link-tile warn" href="dispute.html"><div class="l-ico">⚖️</div><div class="l-txt"><h4>File a dispute</h4><p>Report a match result</p></div><span class="arrow">›</span></a>
+        <a class="link-tile fire" href="tournament.html"><div class="l-ico">🏆</div><div class="l-txt"><h4>Tournaments</h4><p>Bracket competitions</p></div><span class="arrow">›</span></a>
+      </div>
     </div>
 
     <footer>
       <div class="foot-inner">
         <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
         <div class="foot-links">
-          <a href="dashboard.html">Dashboard</a>
-          <a href="lobby.html">Lobby</a>
-          <a href="create-match.html">Create</a>
-          <a href="wallet.html">Wallet</a>
-          <a href="profile.html">Profile</a>
+          <a href="support.html">Support</a>
+          <a href="terms.html">Legal</a>
+          <a href="settings.html">Settings</a>
+          <a href="notifications.html">Notifications</a>
         </div>
       </div>
     </footer>
@@ -493,11 +767,15 @@ const CONFIG = {
   SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
   LOGIN_PAGE:        'login.html',
+  ONBOARDING_PAGE:   'onboarding.html',
   CURRENCY:          '₦',
+  MATCH_DURATION_SEC: 300,
+  SUBMIT_WINDOW_SEC:  300,
   DEBUG:             true
 };
 
 const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
 const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
 const warn = (...a) => console.warn('[DLS]', ...a);
 const err  = (...a) => console.error('[DLS]', ...a);
@@ -514,6 +792,7 @@ const UI = {
   escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
   initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
   money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2}); },
+  moneyShort(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:0,maximumFractionDigits:0}); },
   dateShort(iso){ if(!iso) return '—'; try { return new Date(iso).toLocaleDateString('en-NG',{year:'numeric',month:'short',day:'numeric'}); } catch { return '—'; } },
   timeAgo(iso){
     if (!iso) return '';
@@ -521,7 +800,15 @@ const UI = {
     if (s < 60) return 'just now';
     if (s < 3600) return Math.floor(s/60)+'m ago';
     if (s < 86400) return Math.floor(s/3600)+'h ago';
-    return Math.floor(s/86400)+'d ago';
+    if (s < 604800) return Math.floor(s/86400)+'d ago';
+    try { return new Date(iso).toLocaleDateString('en-NG',{day:'2-digit',month:'short'}); }
+    catch { return '—'; }
+  },
+  clock(secs){
+    const s = Math.max(0, Math.floor(secs));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
   },
   until(iso){
     if (!iso) return null;
@@ -555,12 +842,72 @@ const Supa = (() => {
 })();
 
 /* ============================================================================
+   ACHIEVEMENT CATALOG
+   ============================================================================ */
+const ACH_CATALOG = {
+  play_1:{icon:'👶',title:'First Steps'}, play_10:{icon:'🏃',title:'Getting Started'},
+  play_50:{icon:'💪',title:'Regular'}, play_200:{icon:'🎖️',title:'Veteran'},
+  play_500:{icon:'👑',title:'Legend'},
+  win_1:{icon:'🩸',title:'First Blood'}, win_25:{icon:'🏆',title:"Winner's Circle"},
+  win_100:{icon:'🥇',title:'Champion'}, win_250:{icon:'💎',title:'Elite'},
+  streak_3:{icon:'🎩',title:'Hat Trick'}, streak_5:{icon:'🔥',title:'On Fire'},
+  streak_10:{icon:'⚡',title:'Unstoppable'}, streak_20:{icon:'🌟',title:'Invincible'},
+  stake_10k:{icon:'💰',title:'Big Spender'}, stake_50k:{icon:'🐋',title:'Whale Watch'},
+  win_25k:{icon:'🎰',title:'Big Win'}, profit_50k:{icon:'📈',title:'Profit Maker'},
+  profit_100k:{icon:'💯',title:'Six Figures'},
+  opps_5:{icon:'🤝',title:'Friendly'}, opps_20:{icon:'🌐',title:'Well Connected'},
+  refer_1:{icon:'📣',title:'Recruiter'}, refer_10:{icon:'🎖️',title:'Ambassador'},
+  perfect:{icon:'✨',title:'Perfect Match'}, clean_10:{icon:'🧤',title:'Clean Sheet King'},
+  comeback:{icon:'🔄',title:'Comeback King'}, night_win:{icon:'🌙',title:'Night Owl'}
+};
+
+/* ============================================================================
+   VERIFICATION VERDICTS
+   Maps a verification_verdict string from the DB to a friendly label.
+   ============================================================================ */
+const VERDICT_MAP = {
+  matched:           { cls:'verified',     label:'✓ Names matched' },
+  clean:             { cls:'verified',     label:'✓ Verified' },
+  name_mismatch:     { cls:'name-mismatch',label:'✕ Name mismatch' },
+  screenshot_missing_name: { cls:'name-mismatch', label:'✕ No name found' },
+  low_score:         { cls:'low-score',    label:'↓ Low score' },
+  both_mismatch:     { cls:'both-mismatch',label:'≈ Both mismatched' },
+  both_name_missing: { cls:'both-mismatch',label:'≈ No names found' },
+  conflict:          { cls:'arbitration',  label:'⚖ In arbitration' },
+  metadata_dispute:  { cls:'arbitration',  label:'⚖ Under review' },
+  arbitration:       { cls:'arbitration',  label:'⚖ Arbitration' },
+  pending:           { cls:'arbitration',  label:'⏳ Verifying' }
+};
+
+const VERDICT_RULES = {
+  matched:           'Both usernames appeared on their screenshots and scores matched.',
+  name_mismatch:     'Uploader\'s username was not on their own screenshot — opponent awarded the pot.',
+  screenshot_missing_name: 'No recognizable player name was found in the uploader\'s screenshot — opponent awarded the pot.',
+  low_score:         'Uploader claimed a lower score than the opponent — opponent awarded the pot.',
+  both_mismatch:     'Neither side\'s username matched their screenshot — settled as a draw.',
+  both_name_missing: 'Neither screenshot showed a recognizable username — settled as a draw.',
+  conflict:          'Screenshots contradicted each other and are under human review.',
+  metadata_dispute:  'Suspicious metadata detected — under review.',
+  arbitration:       'Under human review.'
+};
+
+/* ============================================================================
    STATE
    ============================================================================ */
 const State = {
   session: null,
   data: null,
+  extra: {
+    tournaments: [],
+    achievements: [],
+    notifications: [],
+    unreadCount: 0,
+    rank: null
+  },
   loading: true,
+  walletView: 'real',
+  activeEndsAt: {},
+  transitioning: {},
   _poll: null,
   _ticker: null
 };
@@ -588,6 +935,22 @@ const Auth = {
 };
 
 /* ============================================================================
+   DRAWER
+   ============================================================================ */
+const Drawer = {
+  open(){
+    $('#drawerBack')?.classList.add('show');
+    $('#drawer')?.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  },
+  close(){
+    $('#drawerBack')?.classList.remove('show');
+    $('#drawer')?.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+};
+
+/* ============================================================================
    DASHBOARD
    ============================================================================ */
 const Dashboard = {
@@ -603,7 +966,6 @@ const Dashboard = {
       return;
     }
 
-    /* Deposit return */
     const params = new URLSearchParams(location.search);
     if (params.get('deposit') === '1'){
       UI.toast('Payment received. Balance updating shortly.', 'ok');
@@ -613,7 +975,6 @@ const Dashboard = {
 
     await this.reload();
 
-    /* Focus + timer refresh */
     window.addEventListener('focus', () => Dashboard.reload(true));
     State._poll   = setInterval(() => Dashboard.reload(true), 30000);
     State._ticker = setInterval(() => Dashboard.tick(), 1000);
@@ -621,14 +982,22 @@ const Dashboard = {
 
   async reload(silent){
     try {
+      const uid = State.session.user.id;
+
       if (!Supa.HAS){
         const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
         const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
-        const uid = State.session.user.id;
         const u = users.find(x => x.id === uid);
         const mine = matches.filter(m => m.creator_id === uid || m.opponent_id === uid);
         State.data = {
-          profile: u || {},
+          profile: {
+            ...(u || {}),
+            demo_balance: Number(u?.demo_balance ?? 10000),
+            demo_in_escrow: Number(u?.demo_in_escrow ?? 0),
+            demo_played: Number(u?.demo_played ?? 0),
+            demo_won: Number(u?.demo_won ?? 0),
+            demo_win_streak: Number(u?.demo_win_streak ?? 0)
+          },
           recent: mine.filter(m => ['settled','cancelled','disputed'].includes(m.status)),
           active: mine.filter(m => ['accepted','awaiting_submission','verifying'].includes(m.status)),
           invites_received: mine.filter(m => m.status === 'pending_invite' && m.opponent_id === uid),
@@ -642,10 +1011,22 @@ const Dashboard = {
         if (error){
           warn('summary error:', error.message);
           if (!silent) UI.toast('Could not load dashboard: ' + error.message, 'err');
-          return;
+          try {
+            const { data: p } = await Supa.client.from('profiles').select('*').eq('id', uid).maybeSingle();
+            State.data = { profile: p || {}, recent: [], active: [], invites_received: [], transactions: [], stats: {} };
+          } catch(e){ State.data = null; }
+        } else {
+          State.data = data;
         }
-        State.data = data;
       }
+
+      if (State.data?.profile){
+        State.walletView = State.data.profile.account_type === 'demo' ? 'demo' : 'real';
+      }
+
+      this.prepareDeadlines();
+
+      await this.loadExtras(uid);
 
       State.loading = false;
       this.render();
@@ -655,10 +1036,150 @@ const Dashboard = {
     }
   },
 
+  prepareDeadlines(){
+    const active = State.data?.active || [];
+    const now = Date.now();
+
+    active.forEach(m => {
+      if (m.status !== 'accepted') return;
+      if (State.activeEndsAt[m.id]) return;
+
+      let ends = m.match_ends_at ? new Date(m.match_ends_at).getTime() : null;
+      if (!ends && m.updated_at) ends = new Date(m.updated_at).getTime() + CONFIG.MATCH_DURATION_SEC * 1000;
+      if (!ends) ends = now + CONFIG.MATCH_DURATION_SEC * 1000;
+
+      State.activeEndsAt[m.id] = ends;
+    });
+
+    const activeIds = new Set(active.map(m => m.id));
+    Object.keys(State.activeEndsAt).forEach(id => {
+      if (!activeIds.has(id)) delete State.activeEndsAt[id];
+    });
+  },
+
+  async loadExtras(uid){
+    try {
+      if (!Supa.HAS){
+        const now = Date.now();
+        State.extra.tournaments = [
+          { id:'t-open-8', name:'Friday Night Cup', status:'open', entry_fee:2000, max_players:8, starts_at:new Date(now+6*3600*1000).toISOString(), participants:[1,2,3,4,5] },
+          { id:'t-open-16', name:'Weekend Champions', status:'open', entry_fee:5000, max_players:16, starts_at:new Date(now+28*3600*1000).toISOString(), participants:[1,2,3,4,5,6,7,8,9] },
+          { id:'t-live-8', name:'Blitz Bracket #47', status:'live', entry_fee:3000, max_players:8, starts_at:new Date(now-1*3600*1000).toISOString(), participants:[1,2,3,4,5,6,7,8] }
+        ];
+      } else {
+        const { data, error } = await Supa.client
+          .from('tournaments')
+          .select('id, name, status, entry_fee, max_players, starts_at, tournament_participants(user_id)')
+          .in('status', ['open', 'live'])
+          .order('starts_at', { ascending:true })
+          .limit(3);
+        if (!error) State.extra.tournaments = data || [];
+      }
+    } catch(e){ warn('tournaments:', e.message); State.extra.tournaments = []; }
+
+    try {
+      if (!Supa.HAS){
+        const now = Date.now();
+        State.extra.achievements = [
+          { achievement_id:'play_50', claimed_at:new Date(now-2*864e5).toISOString() },
+          { achievement_id:'win_25',  claimed_at:new Date(now-5*864e5).toISOString() },
+          { achievement_id:'streak_5',claimed_at:new Date(now-8*864e5).toISOString() },
+          { achievement_id:'play_10', claimed_at:new Date(now-12*864e5).toISOString() }
+        ];
+      } else {
+        const { data, error } = await Supa.client
+          .from('achievement_claims')
+          .select('achievement_id, claimed_at')
+          .eq('user_id', uid)
+          .order('claimed_at', { ascending:false })
+          .limit(4);
+        if (!error) State.extra.achievements = data || [];
+      }
+    } catch(e){ State.extra.achievements = []; }
+
+    try {
+      if (!Supa.HAS){
+        const now = Date.now();
+        const m = (n) => new Date(now - n * 60000).toISOString();
+        State.extra.notifications = [
+          { id:'n1', type:'invite', title:'New match challenge', body:'ChidiThunder challenged you. Pot ₦5,000.', link:'lobby.html', read_at:null, created_at:m(2) },
+          { id:'n2', type:'result', title:'You won your match', body:'KunleStrikes 2 – 3 You. ₦4,800 credited.', link:'history.html', read_at:null, created_at:m(38) },
+          { id:'n3', type:'payout', title:'Withdrawal approved', body:'₦15,000 to GTBank ****4821.', link:'wallet.html', read_at:m(120), created_at:m(120) },
+          { id:'n4', type:'kyc',   title:'KYC received', body:'Your documents are under review.', link:'kyc.html', read_at:m(300), created_at:m(300) }
+        ];
+        State.extra.unreadCount = State.extra.notifications.filter(n => !n.read_at).length;
+      } else {
+        const [nRes, cRes] = await Promise.all([
+          Supa.client.from('notifications').select('*').eq('user_id', uid).order('created_at', {ascending:false}).limit(4),
+          Supa.client.from('notifications').select('id', { count:'exact', head:true }).eq('user_id', uid).is('read_at', null)
+        ]);
+        State.extra.notifications = nRes.data || [];
+        State.extra.unreadCount = cRes.count || 0;
+      }
+    } catch(e){ State.extra.notifications = []; State.extra.unreadCount = 0; }
+
+    try {
+      if (!Supa.HAS){
+        State.extra.rank = { position:12, total:4208 };
+      } else {
+        const { data, error } = await Supa.client.rpc('get_user_rank', { p_user_id: uid, p_wallet:'real' });
+        State.extra.rank = error ? null : data;
+      }
+    } catch(e){ State.extra.rank = null; }
+  },
+
   async refresh(){
     UI.toast('Refreshing…', 'info', 1400);
     await this.reload();
     UI.toast('Updated.', 'ok', 1400);
+  },
+
+  setWallet(type){
+    State.walletView = type;
+    if (Supa.HAS && State.session?.user){
+      Supa.client.rpc('set_account_type', { p_type: type }).catch(() => {});
+    }
+    this.render();
+  },
+
+  alerts(){
+    const d = State.data || {};
+    const p = d.profile || {};
+    const out = [];
+
+    const kyc = p.kyc_status || 'pending';
+    if (kyc === 'unverified' || !p.kyc_status){
+      out.push({ type:'warn', ico:'🪪', title:'Verify your identity',
+        body:'You need KYC to withdraw real money. Takes about 3 minutes.',
+        link:'kyc.html' });
+    } else if (kyc === 'rejected'){
+      out.push({ type:'danger', ico:'✕', title:'KYC needs attention',
+        body:'There was an issue with your documents. Resubmit to unlock withdrawals.',
+        link:'kyc.html' });
+    }
+
+    if (!p.has_bank_account && kyc === 'verified'){
+      out.push({ type:'warn', ico:'🏦', title:'Add a payout account',
+        body:'Save a bank account so withdrawals have somewhere to go.',
+        link:'bank-accounts.html' });
+    }
+
+    if (State.extra.unreadCount > 0){
+      out.push({ type:'info', ico:'🔔',
+        title:`${State.extra.unreadCount} unread notification${State.extra.unreadCount === 1 ? '' : 's'}`,
+        body:'Check what happened while you were away.',
+        link:'notifications.html' });
+    }
+
+    const openT = State.extra.tournaments.filter(t => t.status === 'open').length;
+    if (openT > 0 && out.length < 3){
+      out.push({ type:'success', ico:'🏆',
+        title:`${openT} tournament${openT === 1 ? '' : 's'} open for registration`,
+        body:'Brackets are filling up. Claim your slot before kickoff.',
+        link:'tournament.html' });
+    }
+
+    return out.slice(0, 3);
   },
 
   render(){
@@ -671,6 +1192,7 @@ const Dashboard = {
 
     const p = d.profile || {};
     const stats = d.stats || {};
+    const isDemo = State.walletView === 'demo';
 
     const username = p.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
     const dls      = p.dls_username || '—';
@@ -680,17 +1202,28 @@ const Dashboard = {
     const frozen   = Boolean(p.frozen);
     const isAdmin  = Boolean(p.is_admin);
     const role     = p.role || 'player';
-    const balance  = Number(p.balance || 0);
-    const escrow   = Number(p.in_escrow || 0);
-    const played   = Number(p.matches_played || 0);
-    const won      = Number(p.matches_won || 0);
     const joined   = p.created_at || u.created_at;
 
-    /* Nav */
     const na = $('#navAvatar'); if (na) na.textContent = UI.initials(username);
     const nn = $('#navName');   if (nn) nn.textContent = username;
 
-    /* Hero */
+    const nb = $('#navNotifBadge');
+    if (nb){
+      if (State.extra.unreadCount > 0){
+        nb.textContent = State.extra.unreadCount > 9 ? '9+' : String(State.extra.unreadCount);
+        nb.classList.remove('hidden');
+      } else nb.classList.add('hidden');
+    }
+    const db = $('#drawerNotifBadge');
+    if (db){
+      if (State.extra.unreadCount > 0){
+        db.textContent = State.extra.unreadCount;
+        db.classList.remove('hidden');
+      } else db.classList.add('hidden');
+    }
+    const da = $('#drawerAdminLink');
+    if (da) da.style.display = isAdmin ? 'flex' : 'none';
+
     const ha = $('#heroAvatar'); if (ha) ha.textContent = UI.initials(username);
     const hn = $('#heroName');   if (hn) hn.textContent = username;
     const hm = $('#heroMeta');   if (hm) hm.textContent = email;
@@ -699,34 +1232,78 @@ const Dashboard = {
     if (hb){
       const kycBadge = kyc === 'verified'
         ? '<span class="badge badge-live"><i></i> KYC Verified</span>'
-        : `<span class="badge badge-warn"><i></i> KYC ${kyc.charAt(0).toUpperCase()+kyc.slice(1)}</span>`;
+        : kyc === 'pending'
+          ? '<span class="badge badge-warn"><i></i> KYC Pending</span>'
+          : `<span class="badge badge-warn"><i></i> KYC ${kyc.charAt(0).toUpperCase()+kyc.slice(1)}</span>`;
       const frozenBadge = frozen ? '<span class="badge badge-danger"><i></i> Frozen</span>' : '';
       const adminBadge = isAdmin ? `<span class="badge badge-purple"><i></i> ${role === 'super_admin' ? 'Super Admin' : 'Admin'}</span>` : '';
-      const modeBadge = Supa.HAS
-        ? '<span class="badge badge-blue"><i></i> Supabase</span>'
-        : '<span class="badge badge-blue"><i></i> Demo</span>';
-      hb.innerHTML = kycBadge + adminBadge + frozenBadge + modeBadge;
+      const walletBadge = isDemo
+        ? '<span class="badge badge-blue"><i></i> 🎮 Demo mode</span>'
+        : '<span class="badge badge-live"><i></i> 💰 Real mode</span>';
+      hb.innerHTML = walletBadge + kycBadge + adminBadge + frozenBadge;
     }
 
-    /* Stats */
+    $$('#walletToggle button').forEach(b => {
+      const active = b.dataset.wallet === State.walletView;
+      b.classList.toggle('active', active);
+      if (b.dataset.wallet === 'demo') b.classList.toggle('demo', active);
+    });
+
+    const alerts = this.alerts();
+    const as = $('#alertsStrip');
+    if (as){
+      as.innerHTML = alerts.length ? alerts.map(a => `
+        <a class="alert ${a.type}" href="${a.link}">
+          <span class="ico">${a.ico}</span>
+          <div class="txt"><h4>${UI.escape(a.title)}</h4><p>${UI.escape(a.body)}</p></div>
+          <span class="arrow">→</span>
+        </a>
+      `).join('') : '';
+    }
+
+    const realBal  = Number(p.balance || 0);
+    const realEsc  = Number(p.in_escrow || 0);
+    const demoBal  = Number(p.demo_balance ?? 0);
+    const demoEsc  = Number(p.demo_in_escrow ?? 0);
+
+    const shownBal = isDemo ? demoBal : realBal;
+    const shownEsc = isDemo ? demoEsc : realEsc;
+
+    const played = Number(isDemo ? (p.demo_played || 0) : (p.matches_played || 0));
+    const won    = Number(isDemo ? (p.demo_won || 0)    : (p.matches_won || 0));
+
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    set('statBalance', UI.money(balance));
-    set('statEscrow',  UI.money(escrow));
+
+    const balanceCard = $('#statBalanceCard');
+    if (balanceCard) balanceCard.classList.toggle('demo', isDemo);
+
+    const balanceIco = $('#statBalanceIco');
+    if (balanceIco) balanceIco.classList.toggle('blue', isDemo);
+
+    const balanceLabel = $('#statBalanceLabel');
+    if (balanceLabel) balanceLabel.textContent = isDemo ? 'Demo balance' : 'Balance';
+
+    const balanceEl = $('#statBalance');
+    if (balanceEl){
+      balanceEl.textContent = UI.money(shownBal);
+      balanceEl.className = 'v ' + (isDemo ? 'blue' : 'primary');
+    }
+
+    const balanceSub = $('#statBalanceSub');
+    if (balanceSub) balanceSub.textContent = isDemo ? 'Free practice money' : 'Available to stake';
+
+    set('statEscrow',  UI.money(shownEsc));
     set('statPlayed',  played);
     set('statWon',     `${won} win${won === 1 ? '' : 's'}`);
     set('statWinRate', played > 0 ? Math.round((won/played)*100) + '%' : '—');
 
-    /* Account */
     set('dUsername', username);
     set('dEmail',    email);
     set('dDls',      dls);
-    set('dRole',     isAdmin
-      ? (role === 'super_admin' ? 'Super Admin' : role.charAt(0).toUpperCase()+role.slice(1))
-      : 'Player');
+    set('dRole',     isAdmin ? (role === 'super_admin' ? 'Super Admin' : role.charAt(0).toUpperCase()+role.slice(1)) : 'Player');
     set('dKyc',      kyc.charAt(0).toUpperCase() + kyc.slice(1));
     set('dJoined',   UI.dateShort(joined));
 
-    /* Trust */
     const tv = $('#trustVal'), tb = $('#trustBar');
     if (tv && tb){
       tv.textContent = String(trust);
@@ -736,47 +1313,22 @@ const Dashboard = {
       tb.innerHTML = `<i style="width:${Math.min(100,trust)}%"></i>`;
     }
 
-    /* Admin UI */
-    const adminTile = $('#adminTile'); if (adminTile) adminTile.style.display = isAdmin ? 'flex' : 'none';
-    const adminCallout = $('#adminCallout'); if (adminCallout) adminCallout.style.display = isAdmin ? 'flex' : 'none';
+    const kb = $('#kycBanner');
+    if (kb) kb.style.display = kyc === 'verified' ? 'none' : 'flex';
 
-    /* Auth badge */
+    const bb = $('#bankBanner');
+    if (bb) bb.style.display = (kyc === 'verified' && !p.has_bank_account) ? 'flex' : 'none';
+
+    const ac = $('#adminCallout');
+    if (ac) ac.style.display = isAdmin ? 'flex' : 'none';
+
     const ab = $('#authBadgeText'); if (ab) ab.textContent = Supa.HAS ? 'Supabase' : 'Demo';
 
-    /* KYC banner */
-    const kb = $('#kycBanner'); if (kb) kb.style.display = kyc === 'verified' ? 'none' : 'flex';
-
-    /* Pending deposits */
-    const pd = d.pending_deposits || [];
-    const pdc = $('#pendingDepositCallout');
-    if (pdc){
-      if (pd.length){
-        pdc.style.display = 'flex';
-        const tot = pd.reduce((s,x) => s + Number(x.amount || 0), 0);
-        $('#pendingDepositBody').innerHTML =
-          `<b>${UI.money(tot)} deposit pending.</b><br />Awaiting Paystack confirmation. Balances update in seconds.`;
-      } else pdc.style.display = 'none';
-    }
-
-    /* Pending withdrawals */
-    const pw = d.pending_withdrawals || [];
-    const pwc = $('#pendingWithdrawalCallout');
-    if (pwc){
-      if (pw.length){
-        pwc.style.display = 'flex';
-        const tot = pw.reduce((s,x) => s + Number(x.amount || 0), 0);
-        $('#pendingWithdrawalBody').innerHTML =
-          `<b>${UI.money(tot)} withdrawal pending.</b><br />Processed within 24 hours.`;
-      } else pwc.style.display = 'none';
-    }
-
-    /* Wallet summary */
     set('wTotalDep',  UI.money(stats.total_deposited || 0));
     set('wTotalWd',   UI.money(stats.total_withdrawn || 0));
     set('wPendDep',   stats.pending_deposits_count || 0);
     set('wPendWd',    stats.pending_withdrawals_count || 0);
 
-    /* Invites */
     const invites = d.invites_received || [];
     const invitesPanel = $('#invitesPanel');
     if (invitesPanel){
@@ -784,26 +1336,24 @@ const Dashboard = {
         invitesPanel.style.display = 'block';
         $('#invitesCount').textContent = invites.length;
         $('#invitesList').innerHTML = invites.map(m => this.inviteCard(m, u.id)).join('');
-      } else {
-        invitesPanel.style.display = 'none';
-      }
+      } else invitesPanel.style.display = 'none';
     }
 
-    /* Active matches */
     this.renderActive(d.active || [], u.id);
-
-    /* Recent */
     this.renderRecent(d.recent || [], u.id);
-
-    /* Transactions */
     this.renderTransactions(d.transactions || []);
+    this.renderTournaments(State.extra.tournaments);
+    this.renderAchievements(State.extra.achievements);
+    this.renderNotifications(State.extra.notifications);
+    this.renderRank(State.extra.rank);
+
+    this.tick();
   },
 
   inviteCard(m, uid){
     const from = m.creator_username || 'Player';
     const fromDls = m.creator_dls_username || '—';
     const pot = Number(m.pot_amount || m.stake_amount * 2);
-    const winner = pot * 0.96;
     const until = UI.until(m.expires_at);
     const cdId = 'inv-' + m.id;
     return `
@@ -811,18 +1361,72 @@ const Dashboard = {
         <div>
           <div class="match-top">
             <span class="badge badge-warn">● New invite</span>
-            <span class="match-code">${UI.escape(m.match_code)}</span>
+            <span class="match-code">${UI.escape(m.match_code || '')}</span>
           </div>
           <div class="match-players">
-            <span>${UI.escape(from)} <span class="muted" style="font-weight:500;color:var(--muted)">wants to challenge you</span></span>
+            <span>${UI.escape(from)} <span style="font-weight:500;color:var(--muted)">wants to challenge you</span></span>
           </div>
           <div style="font-family:var(--ff-mono);font-size:.72rem;color:var(--muted);margin-top:4px">${UI.escape(fromDls)}</div>
           ${until ? `<div style="font-size:.74rem;color:var(--warn);margin-top:8px">Expires in <b id="${cdId}" style="font-family:var(--ff-mono)">${until.text}</b></div>` : ''}
         </div>
         <div class="match-side">
-          <div class="match-pot">${UI.money(winner)}</div>
-          <div style="font-size:.68rem;color:var(--muted-2);font-family:var(--ff-mono)">Pot ${UI.money(pot)}</div>
+          <div class="match-pot">${UI.money(pot)}</div>
           <button class="btn btn-primary btn-xs" onclick="location.href='lobby.html'">Open lobby →</button>
+        </div>
+      </div>`;
+  },
+
+  /* Build the verification steps UI for matches in 'verifying' state */
+  verificationStepsHtml(m, uid){
+    const isCreator = m.creator_id === uid;
+    const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
+    const oppDls = isCreator ? m.opponent_dls_username : m.creator_dls_username;
+    const myScore  = isCreator ? m.creator_score  : m.opponent_score;
+    const oppScore = isCreator ? m.opponent_score : m.creator_score;
+
+    const myName = myDls || 'you';
+    const oppName = oppDls || 'opponent';
+
+    return `
+      <div class="verify-panel">
+        <div class="verify-title"><span>🛡️</span> Screenshot verification in progress</div>
+        <div class="verify-steps">
+          <div class="verify-step">
+            <span class="dot">1</span>
+            <div class="txt">
+              Your screenshot must show the username <b>${UI.escape(myName)}</b> —
+              the other player's name can just say "DLS". Otherwise the opponent takes the pot.
+            </div>
+          </div>
+          <div class="verify-step">
+            <span class="dot">2</span>
+            Opponent's screenshot must show <b>${UI.escape(oppName)}</b>.
+            Same rule applies to them.
+          </div>
+          <div class="verify-step">
+            <span class="dot">3</span>
+            <div class="txt">
+              Scores are compared next. Whoever's screenshot shows the
+              <span class="hl">higher score</span> wins the pot.
+              A lower-than-claimed score means the <span class="hl-loss">opponent takes the pot</span>.
+            </div>
+          </div>
+          <div class="verify-step">
+            <span class="dot">4</span>
+            <div class="txt">
+              If <b>neither</b> name appears on either screenshot, the match settles as a
+              <span class="hl-draw">draw</span> and both stakes are refunded.
+            </div>
+          </div>
+          ${myScore != null && oppScore != null ? `
+            <div class="verify-step" style="border-top:1px solid rgba(47,128,237,.2);padding-top:8px;margin-top:4px">
+              <span class="dot" style="background:rgba(47,128,237,.15);border-color:rgba(47,128,237,.4);color:#7cb4ff">i</span>
+              <div class="txt">
+                Currently submitted — you: <b>${myScore}</b>, opponent: <b>${oppScore}</b>.
+                Verdict is usually issued within a few seconds.
+              </div>
+            </div>
+          ` : ''}
         </div>
       </div>`;
   },
@@ -851,48 +1455,66 @@ const Dashboard = {
       const me       = isCreator ? creator  : opponent;
 
       const statusLabel = {
-        accepted:            '● In match',
-        awaiting_submission: 'Awaiting result',
-        verifying:           'Awaiting opponent'
+        accepted:            '● Playing',
+        awaiting_submission: '⏱ Submit result',
+        verifying:           '🛡️ Verifying'
       }[m.status] || m.status;
 
       const statusCls = {
-        accepted:            'badge-blue',
+        accepted:            'badge-live',
         awaiting_submission: 'badge-warn',
-        verifying:           'badge-warn'
+        verifying:           'badge-blue'
       }[m.status] || 'badge-blue';
 
-      let urgent = false;
-      let hint = '';
-      let cdId = 'match-cd-' + m.id;
-      if (m.status === 'accepted' && m.match_ends_at){
-        urgent = true;
-        const u = UI.until(m.match_ends_at);
-        hint = `Match ends in <b id="${cdId}" style="font-family:var(--ff-mono)">${u ? u.text : '5:00'}</b>`;
+      let timerHtml = '';
+
+      if (m.status === 'accepted'){
+        const timerId = 'timer-' + m.id;
+        const barId = 'timerbar-' + m.id;
+        timerHtml = `
+          <div class="match-timer" id="${timerId}">
+            <div class="match-timer-head">
+              <span class="lbl">Match in progress</span>
+              <span class="time" id="${timerId}-time">05:00</span>
+            </div>
+            <div class="match-timer-bar" id="${barId}"><i style="width:100%"></i></div>
+          </div>`;
       } else if (m.status === 'awaiting_submission' && m.submission_started_at){
-        const deadline = new Date(new Date(m.submission_started_at).getTime() + 5*60*1000).toISOString();
-        const u = UI.until(deadline);
-        hint = `Submit in <b id="${cdId}" style="font-family:var(--ff-mono)">${u ? u.text : '—'}</b>`;
+        const timerId = 'timer-' + m.id;
+        const barId = 'timerbar-' + m.id;
+        timerHtml = `
+          <div class="match-timer warn" id="${timerId}">
+            <div class="match-timer-head">
+              <span class="lbl">Upload your screenshot</span>
+              <span class="time" id="${timerId}-time">05:00</span>
+            </div>
+            <div class="match-timer-bar" id="${barId}"><i style="width:100%"></i></div>
+          </div>`;
       } else if (m.status === 'verifying'){
-        hint = 'Waiting for opponent';
+        timerHtml = this.verificationStepsHtml(m, uid);
       }
 
+      const cls = m.status === 'accepted'
+        ? 'playing'
+        : m.status === 'awaiting_submission' ? 'urgent'
+        : m.status === 'verifying' ? 'verifying' : '';
+
       return `
-        <div class="match-item ${urgent ? 'urgent' : ''}">
+        <div class="match-item ${cls}">
           <div>
             <div class="match-top">
               <span class="badge ${statusCls}">${statusLabel}</span>
-              <span class="match-code">${UI.escape(m.match_code)}</span>
+              <span class="match-code">${UI.escape(m.match_code || '')}</span>
             </div>
             <div class="match-players">
               <span>${UI.escape(me)}${isCreator ? ' <span class="you">You</span>' : ''}</span>
               <span class="vs">vs</span>
               <span>${UI.escape(other)}${!isCreator ? ' <span class="you">You</span>' : ''}</span>
             </div>
-            ${hint ? `<div class="match-hint" style="margin-top:8px">${hint}</div>` : ''}
+            ${timerHtml}
           </div>
           <div class="match-side">
-            <div class="match-pot">${UI.money(m.pot_amount || m.stake_amount)}</div>
+            <div class="match-pot">${UI.money(m.pot_amount || m.stake_amount || 0)}</div>
             <button class="btn btn-primary btn-xs" onclick="location.href='match.html?id=${m.id}'">Open →</button>
           </div>
         </div>`;
@@ -911,18 +1533,25 @@ const Dashboard = {
       return;
     }
 
-    container.innerHTML = list.map(m => {
+    container.innerHTML = list.slice(0, 5).map(m => {
       const isWinner = m.winner_id === uid;
       const isDraw   = m.status === 'settled' && !m.winner_id;
       const isCancel = m.status === 'cancelled';
       const isDisp   = m.status === 'disputed';
 
       let cls = 'draw', icon = '≈', label = 'Draw', amt = '', amtCls = 'neu';
-      if (isDraw){ cls='draw'; icon='≈'; label='Draw — refund'; amt = UI.money(m.stake_amount); amtCls='neu'; }
-      if (isWinner){ cls='win'; icon='★'; label='Won'; amt = '+'+UI.money(m.pot_amount); amtCls='pos'; }
-      if (m.status === 'settled' && m.winner_id && !isWinner){ cls='lose'; icon='✕'; label='Lost'; amt = '−'+UI.money(m.stake_amount); amtCls='neg'; }
-      if (isCancel){ cls='draw'; icon='↩'; label='Cancelled'; amt = UI.money(m.stake_amount); amtCls='neu'; }
-      if (isDisp){ cls='draw'; icon='⚖'; label='Disputed'; amt = UI.money(m.pot_amount); amtCls='neu'; }
+      if (isDraw){ cls='draw'; icon='≈'; label='Draw — refund'; amt = UI.moneyShort(m.stake_amount || 0); }
+      if (isWinner){ cls='win'; icon='★'; label='Won'; amt = '+'+UI.moneyShort(m.pot_amount || 0); amtCls='pos'; }
+      if (m.status === 'settled' && m.winner_id && !isWinner){ cls='lose'; icon='✕'; label='Lost'; amt = '−'+UI.moneyShort(m.stake_amount || 0); amtCls='neg'; }
+      if (isCancel){ cls='draw'; icon='↩'; label='Cancelled'; amt = UI.moneyShort(m.stake_amount || 0); }
+      if (isDisp){ cls='draw'; icon='⚖'; label='Disputed'; amt = UI.moneyShort(m.pot_amount || 0); }
+
+      /* Verification verdict chip */
+      const verdictKey = m.verification_verdict || (m.status === 'settled' ? 'matched' : null);
+      const verdict = verdictKey ? VERDICT_MAP[verdictKey] : null;
+      const verdictHtml = verdict
+        ? `<span class="verdict ${verdict.cls}" title="${UI.escape(VERDICT_RULES[verdictKey] || '')}">${UI.escape(verdict.label)}</span>`
+        : '';
 
       const opp = m.creator_id === uid ? m.opponent_username : m.creator_username;
 
@@ -930,7 +1559,7 @@ const Dashboard = {
         <div class="h-item">
           <div class="h-ico ${cls}">${icon}</div>
           <div class="h-txt">
-            <h4>${label} · ${UI.escape(m.match_code)}${opp ? ' vs ' + UI.escape(opp) : ''}</h4>
+            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}</h4>
             <p>${UI.timeAgo(m.settled_at || m.created_at)}</p>
           </div>
           <div class="h-amt ${amtCls}">${amt}</div>
@@ -951,13 +1580,13 @@ const Dashboard = {
       return;
     }
 
-    container.innerHTML = list.map(t => {
+    container.innerHTML = list.slice(0, 5).map(t => {
       let cls = 'tx', icon = '•', sign = '', amtCls = 'neu';
       if (t.type === 'deposit'){ cls='dep'; icon='↓'; sign='+'; amtCls='pos'; }
       else if (t.type === 'withdrawal'){ cls='wd'; icon='↑'; sign='−'; amtCls='neg'; }
-      else if (t.type === 'stake_lock'){ cls='tx'; icon='🔒'; amtCls='neu'; }
+      else if (t.type === 'stake_lock'){ cls='tx'; icon='🔒'; }
       else if (t.type === 'stake_release'){ cls='win'; icon='★'; sign='+'; amtCls='pos'; }
-      else if (t.type === 'refund'){ cls='draw'; icon='↩'; amtCls='neu'; }
+      else if (t.type === 'refund'){ cls='draw'; icon='↩'; }
       else if (t.type === 'fee'){ cls='wd'; icon='⚙'; sign='−'; amtCls='neg'; }
 
       return `
@@ -967,17 +1596,119 @@ const Dashboard = {
             <h4>${UI.escape(t.note || t.type)}</h4>
             <p>${UI.timeAgo(t.created_at)}</p>
           </div>
-          <div class="h-amt ${amtCls}">${sign}${UI.money(Math.abs(Number(t.amount||0)))}</div>
+          <div class="h-amt ${amtCls}">${sign}${UI.moneyShort(Math.abs(Number(t.amount||0)))}</div>
         </div>`;
     }).join('');
   },
 
-  /* Live countdown ticker */
+  renderTournaments(list){
+    const container = $('#tournamentsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🏆</div><p>No tournaments open right now.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(t => {
+      const n = (t.participants || t.tournament_participants || []).length;
+      const slots = t.max_players - n;
+      const prize = Math.round(n * Number(t.entry_fee || 0) * 0.9);
+      const tag = t.status === 'open' ? 'Open' : 'Live';
+      return `
+        <a class="tour-mini" href="tournament.html?id=${UI.escape(t.id)}">
+          <div class="head">
+            <h4>${UI.escape(t.name)}</h4>
+            <span class="tag ${t.status}">${tag}</span>
+          </div>
+          <div class="meta">
+            <span>${slots > 0 ? slots + ' slots left' : 'Full'} · ${UI.moneyShort(t.entry_fee)} entry</span>
+            <span class="prize">${UI.moneyShort(prize)}</span>
+          </div>
+        </a>
+      `;
+    }).join('');
+  },
+
+  renderAchievements(list){
+    const container = $('#achievementsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🎖️</div><p>No badges yet — play matches to unlock them.</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div class="ach-preview">
+        ${list.map(a => {
+          const meta = ACH_CATALOG[a.achievement_id] || { icon:'🏅', title:a.achievement_id };
+          return `
+            <a class="ach-mini" href="achievements.html">
+              <span class="ico">${meta.icon}</span>
+              <div class="n">${UI.escape(meta.title)}</div>
+              <div class="s">${UI.timeAgo(a.claimed_at)}</div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+      <div style="font-size:.74rem;color:var(--muted);text-align:center;padding:4px 0">
+        You've claimed ${list.length} badge${list.length === 1 ? '' : 's'}. Keep going.
+      </div>
+    `;
+  },
+
+  renderNotifications(list){
+    const container = $('#notifsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📭</div><p>You're all caught up.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(n => {
+      const isUnread = !n.read_at;
+      return `
+        <a class="notif-row ${isUnread ? 'unread' : 'read'}" href="${UI.escape(n.link || 'notifications.html')}">
+          <span class="n-ico">${this.notifIcon(n.type)}</span>
+          <div class="n-body">
+            <h4>${UI.escape(n.title || 'Notification')}</h4>
+            <p>${UI.escape(n.body || '')}</p>
+          </div>
+          <span class="n-time">${UI.timeAgo(n.created_at)}</span>
+        </a>
+      `;
+    }).join('');
+  },
+
+  notifIcon(type){
+    if (type === 'invite' || type === 'challenge') return '⚔️';
+    if (type === 'result') return '🏆';
+    if (type === 'payout' || type === 'deposit' || type === 'withdrawal') return '💰';
+    if (type === 'kyc') return '🪪';
+    if (type === 'dispute') return '⚖️';
+    return '🔔';
+  },
+
+  renderRank(rank){
+    const container = $('#leaderboardRank');
+    if (!container) return;
+    if (!rank){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📊</div><p>Play a few more matches to enter the leaderboard.</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div style="text-align:center;padding:16px 8px">
+        <div style="font-family:var(--ff-mono);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--gold);line-height:1">
+          #${Number(rank.position || 0)}
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:6px;font-family:var(--ff-mono)">
+          out of ${Number(rank.total || 0).toLocaleString()} players
+        </div>
+        <a class="btn btn-ghost btn-sm" href="leaderboard.html" style="margin-top:12px">View leaderboard</a>
+      </div>
+    `;
+  },
+
   tick(){
     const d = State.data;
     if (!d) return;
 
-    /* Invitation countdowns */
     (d.invites_received || []).forEach(m => {
       const el = document.getElementById('inv-' + m.id);
       if (!el) return;
@@ -985,20 +1716,84 @@ const Dashboard = {
       el.textContent = u ? u.text : '—';
     });
 
-    /* Active match countdowns */
     (d.active || []).forEach(m => {
-      const el = document.getElementById('match-cd-' + m.id);
-      if (!el) return;
+      if (m.status === 'accepted'){
+        const timeEl = document.getElementById('timer-' + m.id + '-time');
+        const wrapEl = document.getElementById('timer-' + m.id);
+        const barEl  = document.getElementById('timerbar-' + m.id);
+        if (!timeEl || !wrapEl) return;
 
-      if (m.status === 'accepted' && m.match_ends_at){
-        const u = UI.until(m.match_ends_at);
-        el.textContent = u ? u.text : '0:00';
-      } else if (m.status === 'awaiting_submission' && m.submission_started_at){
-        const deadline = new Date(new Date(m.submission_started_at).getTime() + 5*60*1000).toISOString();
-        const u = UI.until(deadline);
-        el.textContent = u ? u.text : '0:00';
+        const endsAt = State.activeEndsAt[m.id];
+        if (!endsAt) return;
+
+        const remaining = Math.max(0, Math.floor((endsAt - Date.now()) / 1000));
+        timeEl.textContent = UI.clock(remaining);
+
+        const total = CONFIG.MATCH_DURATION_SEC;
+        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
+        if (barEl){
+          const i = barEl.querySelector('i');
+          if (i) i.style.width = pct + '%';
+        }
+
+        wrapEl.classList.remove('warn','danger');
+        if (remaining <= 30) wrapEl.classList.add('danger');
+        else if (remaining <= 60) wrapEl.classList.add('warn');
+
+        if (remaining <= 0 && !State.transitioning[m.id]){
+          State.transitioning[m.id] = true;
+          this.autoStartSubmission(m.id);
+        }
+      }
+      else if (m.status === 'awaiting_submission' && m.submission_started_at){
+        const timeEl = document.getElementById('timer-' + m.id + '-time');
+        const wrapEl = document.getElementById('timer-' + m.id);
+        const barEl  = document.getElementById('timerbar-' + m.id);
+        if (!timeEl || !wrapEl) return;
+
+        const deadline = new Date(m.submission_started_at).getTime() + CONFIG.SUBMIT_WINDOW_SEC * 1000;
+        const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+        timeEl.textContent = UI.clock(remaining);
+
+        const total = CONFIG.SUBMIT_WINDOW_SEC;
+        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
+        if (barEl){
+          const i = barEl.querySelector('i');
+          if (i) i.style.width = pct + '%';
+        }
+
+        wrapEl.classList.remove('warn','danger');
+        if (remaining <= 30) wrapEl.classList.add('danger');
+        else if (remaining <= 60) wrapEl.classList.add('warn');
       }
     });
+  },
+
+  async autoStartSubmission(matchId){
+    log('Timer hit zero for', matchId, '— transitioning to submission phase');
+
+    try {
+      if (!Supa.HAS){
+        const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
+        const match = matches.find(x => x.id === matchId);
+        if (match && match.status === 'accepted'){
+          match.status = 'awaiting_submission';
+          match.submission_started_at = new Date().toISOString();
+          localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
+        }
+      } else {
+        const { error } = await Supa.client.rpc('start_submission', { p_match_id: matchId });
+        if (error) warn('start_submission error:', error.message);
+      }
+
+      UI.toast('Time! Upload your match screenshot now.', 'info', 6000);
+
+      await this.reload(true);
+    } catch(e){
+      err('autoStartSubmission:', e);
+    } finally {
+      setTimeout(() => { State.transitioning[matchId] = false; }, 15000);
+    }
   }
 };
 
@@ -1021,16 +1816,29 @@ const Dashboard = {
     if (State._poll)   clearInterval(State._poll);
     if (State._ticker) clearInterval(State._ticker);
   });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') Drawer.close();
+  });
 })();
 
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
 window.DLS = {
-  version: 'dashboard-4.0.0',
+  version: 'dashboard-8.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v4 ========');
+    console.log('======== DLS Dashboard v8 ========');
     console.log('Session:', State.session?.user?.email);
+    console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
-    console.log('Active:', State.data?.active?.length);
+    console.log('Active matches:', State.data?.active?.length);
+    console.log('Active deadlines:', State.activeEndsAt);
     console.log('Invites:', State.data?.invites_received?.length);
+    console.log('Tournaments:', State.extra.tournaments.length);
+    console.log('Achievements:', State.extra.achievements.length);
+    console.log('Notifications:', State.extra.notifications.length, '·', State.extra.unreadCount, 'unread');
+    console.log('Rank:', State.extra.rank);
     console.log('==================================');
   },
   async reset(){
@@ -1038,6 +1846,12 @@ window.DLS = {
     localStorage.removeItem('dls_stake_auth');
     localStorage.removeItem('dls_demo_users');
     localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    localStorage.removeItem('dls_demo_notifs');
+    localStorage.removeItem('dls_demo_banks');
+    localStorage.removeItem('dls_demo_claims');
+    localStorage.removeItem('dls_demo_tournaments');
     sessionStorage.clear();
     location.reload();
   }
