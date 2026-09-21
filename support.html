@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Help &amp; Support — DLS Stake</title>
+<meta name="description" content="Get help with DLS Stake — FAQ, common issues, and contact support." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+
+/* HERO */
+.hero{text-align:center;padding:26px 0 34px}
+.hero .eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.hero h1{font-size:clamp(1.8rem,4.6vw,2.4rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:12px}
+.hero p{font-size:.95rem;color:var(--muted);max-width:520px;margin:0 auto 24px;line-height:1.65}
+
+/* SEARCH */
+.search-box{max-width:560px;margin:0 auto;position:relative}
+.search-box input{width:100%;padding:16px 52px 16px 22px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border-2);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+.search-box input::placeholder{color:var(--muted-2)}
+.search-box .ico{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--muted);pointer-events:none}
+
+/* QUICK LINKS */
+.quick-grid{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin:30px 0 34px}
+@media(min-width:640px){.quick-grid{grid-template-columns:repeat(4,1fr)}}
+.quick{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-align:center;cursor:pointer;transition:.18s;display:flex;flex-direction:column;align-items:center;gap:8px;text-decoration:none;color:inherit}
+.quick:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.quick .ico{font-size:1.4rem}
+.quick h4{font-size:.8rem;font-weight:800;line-height:1.3}
+.quick p{font-size:.68rem;color:var(--muted);line-height:1.4}
+
+/* SECTION TITLE */
+.section-title{font-size:1.15rem;font-weight:900;letter-spacing:-.02em;margin:34px 0 16px;display:flex;align-items:center;gap:12px}
+.section-title .line{flex:1;height:1px;background:var(--border)}
+.section-title .count{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;color:var(--muted);padding:3px 9px;border:1px solid var(--border);border-radius:var(--radius-full)}
+
+/* FAQ CATEGORIES */
+.cats{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{padding:9px 16px;border-radius:var(--radius-full);background:var(--surface-2);border:1px solid var(--border);font-size:.8rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.cat:hover{border-color:var(--border-2);color:var(--text-2)}
+.cat.active{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.4);color:var(--primary)}
+.cat .cnt{font-family:var(--ff-mono);font-size:.66rem;padding:1px 6px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border)}
+.cat.active .cnt{background:rgba(0,217,126,.2);border-color:rgba(0,217,126,.4)}
+
+/* FAQ LIST */
+.faq-list{display:grid;gap:10px}
+.faq{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .15s}
+.faq:hover{border-color:var(--border-2)}
+.faq.open{border-color:var(--border-2);background:var(--surface-2)}
+.faq-q{display:flex;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;width:100%;text-align:left}
+.faq-q .tag{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);background:var(--surface-3);color:var(--muted-2);border:1px solid var(--border);white-space:nowrap;flex-shrink:0}
+.faq-q .tag.matches{background:rgba(0,217,126,.12);color:var(--primary);border-color:rgba(0,217,126,.3)}
+.faq-q .tag.wallet{background:rgba(139,92,246,.12);color:#c4b5fd;border-color:rgba(139,92,246,.3)}
+.faq-q .tag.kyc{background:rgba(255,176,32,.12);color:var(--warn);border-color:rgba(255,176,32,.3)}
+.faq-q .tag.disputes{background:rgba(255,107,53,.12);color:var(--fire);border-color:rgba(255,107,53,.3)}
+.faq-q .tag.account{background:rgba(47,128,237,.12);color:#7cb4ff;border-color:rgba(47,128,237,.3)}
+.faq-q .q{flex:1;font-size:.92rem;font-weight:800;color:var(--text);line-height:1.45}
+.faq-q .chev{font-size:.9rem;color:var(--muted);transition:transform .22s;flex-shrink:0}
+.faq.open .faq-q .chev{transform:rotate(180deg);color:var(--primary)}
+.faq-a{padding:0 20px 20px 20px;font-size:.87rem;line-height:1.7;color:var(--text-2);max-height:0;overflow:hidden;transition:max-height .3s ease}
+.faq.open .faq-a{max-height:800px}
+.faq-a p{margin-bottom:10px}
+.faq-a p:last-child{margin-bottom:0}
+.faq-a b{color:var(--text);font-weight:800}
+.faq-a ul{margin:8px 0 12px 20px}
+.faq-a li{margin-bottom:6px}
+.faq-a code{font-family:var(--ff-mono);font-size:.82em;background:var(--bg-2);border:1px solid var(--border);padding:1px 6px;border-radius:4px;color:var(--primary)}
+.faq-a a{color:var(--primary);font-weight:700;border-bottom:1px solid rgba(0,217,126,.35)}
+.faq-a a:hover{border-color:var(--primary)}
+.faq-a .tip{display:flex;gap:10px;padding:11px 14px;border-radius:var(--radius-sm);font-size:.82rem;line-height:1.6;margin-top:10px}
+.faq-a .tip.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.25);color:#9cc4ff}
+.faq-a .tip.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.25);color:#ffd08a}
+
+/* NO RESULTS */
+.no-results{padding:50px 22px;text-align:center;background:var(--surface);border:1px dashed var(--border-2);border-radius:var(--radius-lg)}
+.no-results .ico{font-size:2.2rem;margin-bottom:14px;opacity:.7}
+.no-results h3{font-size:1rem;font-weight:800;margin-bottom:8px}
+.no-results p{font-size:.85rem;color:var(--muted);max-width:380px;margin:0 auto 16px;line-height:1.6}
+
+/* CONTACT PANEL */
+.contact-panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-top:34px}
+.contact-head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.contact-head .ico{width:46px;height:46px;min-width:46px;border-radius:14px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24);display:grid;place-items:center;font-size:1.25rem}
+.contact-head h2{font-size:1.1rem;font-weight:900;letter-spacing:-.02em}
+.contact-head p{font-size:.78rem;color:var(--muted);margin-top:3px}
+
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label{font-size:.78rem;font-weight:700;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.72rem;color:var(--muted-2);margin-top:-2px}
+.input-text,.input-select,.input-area{width:100%;padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input-text:focus,.input-select:focus,.input-area:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid,.input-select.invalid,.input-area.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-text::placeholder,.input-area::placeholder{color:var(--muted-2)}
+.input-area{min-height:120px;resize:vertical;font-family:inherit;line-height:1.6}
+select.input-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237b90a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+.row-2{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:620px){.row-2{grid-template-columns:1fr 1fr}}
+
+.attach-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg-2);border:1px dashed var(--border-2);border-radius:var(--radius-sm);cursor:pointer;transition:.15s;margin-bottom:16px}
+.attach-row:hover{border-color:var(--primary);background:var(--surface-2)}
+.attach-row input{display:none}
+.attach-row .ico{font-size:1.1rem;color:var(--muted)}
+.attach-row .txt{flex:1;font-size:.82rem;color:var(--muted);min-width:0}
+.attach-row .txt strong{color:var(--text);font-weight:800;display:block;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attach-row .clear{font-size:.7rem;font-weight:800;color:var(--danger);padding:4px 8px;border-radius:var(--radius-sm)}
+.attach-row .clear:hover{background:rgba(255,77,94,.1)}
+
+.err{font-size:.78rem;color:var(--danger);display:none;margin-bottom:14px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28)}
+.err.show{display:block}
+.ok{font-size:.78rem;color:var(--primary);display:none;margin-bottom:14px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(0,217,126,.07);border:1px solid rgba(0,217,126,.28)}
+.ok.show{display:block}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 28px;font-size:1rem}
+.btn-sm{padding:10px 16px;font-size:.82rem}
+
+/* CONTACT CHANNELS */
+.channels{display:grid;gap:12px;grid-template-columns:1fr 1fr;margin-top:22px}
+@media(min-width:640px){.channels{grid-template-columns:repeat(3,1fr)}}
+.channel{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;text-decoration:none;color:inherit;transition:.15s}
+.channel:hover{border-color:var(--border-2);background:var(--surface-3)}
+.channel .ico{font-size:1.5rem;margin-bottom:8px}
+.channel h4{font-size:.84rem;font-weight:800;margin-bottom:4px}
+.channel p{font-size:.7rem;color:var(--muted);line-height:1.4}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="create-match.html">Create</a>
+      <a href="history.html">History</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+
+  <div class="hero">
+    <div class="eyebrow">Help &amp; Support</div>
+    <h1>How can we help?</h1>
+    <p>Search the FAQ for quick answers, or reach out if you need a human. We respond to support tickets within 24 hours.</p>
+
+    <div class="search-box">
+      <input id="search" type="search" placeholder="Search for answers… e.g. withdrawal, dispute, KYC" autocomplete="off">
+      <span class="ico">🔍</span>
+    </div>
+  </div>
+
+  <div class="quick-grid">
+    <a class="quick" href="wallet.html">
+      <div class="ico">💰</div>
+      <h4>Wallet issues</h4>
+      <p>Deposits, withdrawals, and balances</p>
+    </a>
+    <a class="quick" href="kyc.html">
+      <div class="ico">🪪</div>
+      <h4>KYC help</h4>
+      <p>Verify your identity</p>
+    </a>
+    <a class="quick" href="history.html">
+      <div class="ico">🏆</div>
+      <h4>Match problems</h4>
+      <p>Results, disputes, and payouts</p>
+    </a>
+    <a class="quick" href="settings.html">
+      <div class="ico">⚙️</div>
+      <h4>Account settings</h4>
+      <p>Password, notifications, privacy</p>
+    </a>
+  </div>
+
+  <div class="section-title">
+    <span>Frequently asked questions</span>
+    <span class="line"></span>
+    <span class="count" id="faqCount">—</span>
+  </div>
+
+  <div class="cats" id="cats"></div>
+
+  <div id="faqList" class="faq-list"></div>
+
+  <!-- CONTACT FORM -->
+  <div class="contact-panel" id="contact">
+    <div class="contact-head">
+      <div class="ico">✉️</div>
+      <div style="flex:1">
+        <h2>Still need help?</h2>
+        <p>Send us a message and we'll reply by email within 24 hours.</p>
+      </div>
+    </div>
+
+    <div class="err" id="formErr"></div>
+    <div class="ok" id="formOk"></div>
+
+    <div class="row-2">
+      <div class="field">
+        <label>Your name <span class="req">*</span></label>
+        <input class="input-text" id="c_name" type="text" placeholder="Chinedu Okonkwo" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Email <span class="req">*</span></label>
+        <input class="input-text" id="c_email" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label>Category <span class="req">*</span></label>
+        <select class="input-select" id="c_cat">
+          <option value="">Select a category…</option>
+          <option value="matches">Match / Result issue</option>
+          <option value="wallet">Wallet / Payment issue</option>
+          <option value="kyc">KYC / Verification issue</option>
+          <option value="disputes">File a dispute</option>
+          <option value="account">Account / Login issue</option>
+          <option value="bug">Bug report</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Related match code or reference</label>
+        <input class="input-text" id="c_ref" type="text" placeholder="Optional — e.g. DLS-4K9X" style="font-family:var(--ff-mono)">
+        <div class="hint">Speeds up the resolution if you have one</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Subject <span class="req">*</span></label>
+      <input class="input-text" id="c_subject" type="text" maxlength="120" placeholder="Short summary of your issue">
+    </div>
+
+    <div class="field">
+      <label>Describe the issue <span class="req">*</span></label>
+      <textarea class="input-area" id="c_body" maxlength="2000" placeholder="Please include what happened, when it happened, and what you expected to happen."></textarea>
+      <div class="hint"><span id="bodyCount">0</span>/2000</div>
+    </div>
+
+    <label class="attach-row" for="c_file" id="attachRow">
+      <input type="file" id="c_file" accept="image/*,application/pdf" onchange="Support.pickFile(this.files[0])">
+      <span class="ico">📎</span>
+      <span class="txt" id="attachTxt"><strong>Attach a screenshot (optional)</strong>PNG, JPG, or PDF · max 5 MB</span>
+      <span class="clear hidden" id="attachClear" onclick="event.preventDefault(); Support.clearFile()">Remove</span>
+    </label>
+
+    <button class="btn btn-primary btn-lg btn-block" id="submitBtn" onclick="Support.submit()">
+      Send message to support
+    </button>
+
+    <div class="channels">
+      <a class="channel" href="mailto:support@dlsstake.ng">
+        <div class="ico">✉️</div>
+        <h4>Email</h4>
+        <p>support@dlsstake.ng</p>
+      </a>
+      <a class="channel" href="https://wa.me/2348000000000" target="_blank" rel="noopener">
+        <div class="ico">💬</div>
+        <h4>WhatsApp</h4>
+        <p>9am – 9pm WAT</p>
+      </a>
+      <a class="channel" href="history.html">
+        <div class="ico">🏆</div>
+        <h4>Your matches</h4>
+        <p>Open a dispute from history</p>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="kyc.html">Verify ID</a>
+        <a href="settings.html">Settings</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  SUPPORT_TABLE:     'support_tickets',
+  SUPPORT_BUCKET:    'support-attachments',
+  MAX_FILE_MB:       5,
+  DEBUG:             true
+};
+
+const CATEGORIES = [
+  { id:'all',      label:'All',        icon:'📚' },
+  { id:'matches',  label:'Matches',    icon:'⚽' },
+  { id:'wallet',   label:'Wallet',     icon:'💰' },
+  { id:'kyc',      label:'KYC',        icon:'🪪' },
+  { id:'disputes', label:'Disputes',   icon:'⚖️' },
+  { id:'account',  label:'Account',    icon:'🔐' }
+];
+
+const FAQ = [
+  /* ── MATCHES ──────────────────────────────────────────────── */
+  {
+    cat: 'matches',
+    q: 'How do matches work?',
+    a: `
+      <p>Every match follows the same flow:</p>
+      <ul>
+        <li>You create a challenge (or accept one) with a fixed stake — real or demo.</li>
+        <li>Both players' stakes are locked in escrow.</li>
+        <li>You play a <b>Friend Match</b> inside Dream League Soccer.</li>
+        <li>The 5-minute match timer runs, then a 5-minute submission window opens.</li>
+        <li>Both players upload their final-score screenshot and enter the score.</li>
+        <li>Our verification pipeline compares the screenshots and settles the pot.</li>
+      </ul>
+      <p>Winner takes the pot minus a 4% platform fee. Draws refund both stakes with no fee.</p>
+    `
+  },
+  {
+    cat: 'matches',
+    q: 'What happens if my opponent doesn\'t submit a screenshot?',
+    a: `
+      <p>If your opponent doesn't submit within the 5-minute submission window, the match is automatically settled in your favour — provided you submitted your own screenshot and score.</p>
+      <p>If <b>neither</b> side submits, the match is voided and both stakes are refunded in full (no fee).</p>
+      <div class="tip info"><span>ℹ</span><div>The submission window is firm. Upload early — you don't need to wait until the last second.</div></div>
+    `
+  },
+  {
+    cat: 'matches',
+    q: 'What if the screenshot I upload is blurry?',
+    a: `
+      <p>Blurry screenshots are the #1 cause of failed verification. Before uploading:</p>
+      <ul>
+        <li>Make sure the final score is <b>clearly readable</b>.</li>
+        <li>Both DLS usernames should be visible.</li>
+        <li>No crop — take a full screenshot of the post-match screen.</li>
+      </ul>
+      <p>If both sides upload unreadable screenshots, the match goes to arbitration and a human reviewer decides within 24 hours.</p>
+    `
+  },
+  {
+    cat: 'matches',
+    q: 'Can I play with a different DLS username than the one on my profile?',
+    a: `
+      <p>No. The DLS username on your profile is what the verification pipeline checks against your screenshot. If they don't match, verification fails.</p>
+      <p>Update your DLS username on your <a href="profile.html">profile page</a> <b>before</b> accepting a match.</p>
+    `
+  },
+
+  /* ── WALLET ───────────────────────────────────────────────── */
+  {
+    cat: 'wallet',
+    q: 'How long do deposits take?',
+    a: `
+      <p>Deposits via <b>Paystack</b> are credited within seconds of payment confirmation. If your balance hasn't updated after 5 minutes:</p>
+      <ul>
+        <li>Refresh your <a href="wallet.html">wallet page</a>.</li>
+        <li>Check the transaction history — a pending entry means Paystack is still processing.</li>
+        <li>If it's been over 30 minutes, <a href="#contact">contact support</a> with your Paystack reference.</li>
+      </ul>
+    `
+  },
+  {
+    cat: 'wallet',
+    q: 'How long do withdrawals take?',
+    a: `
+      <p>Withdrawals are processed in batches twice a day (12pm and 6pm WAT), Monday–Saturday. Once approved, funds arrive in your bank account within 24 hours.</p>
+      <div class="tip warn"><span>⚠</span><div>You must have a <b>verified KYC</b> before you can withdraw. <a href="kyc.html">Verify now →</a></div></div>
+    `
+  },
+  {
+    cat: 'wallet',
+    q: 'Why is some of my money "in escrow"?',
+    a: `
+      <p>When you accept or create a match, your stake is locked in escrow. This means neither player can withdraw or spend it until the match settles.</p>
+      <p>Once the match resolves:</p>
+      <ul>
+        <li><b>Win</b> — escrow releases the full pot (minus 4% fee) to you.</li>
+        <li><b>Loss</b> — your escrow goes to the winner.</li>
+        <li><b>Draw</b> — your escrow is refunded in full.</li>
+        <li><b>Cancelled</b> — full refund, no fee.</li>
+      </ul>
+    `
+  },
+  {
+    cat: 'wallet',
+    q: 'What is the minimum deposit and withdrawal?',
+    a: `
+      <p>Both minimums are <b>₦500</b>. There's no upper limit on deposits, but withdrawals over ₦500,000 in a single day require manual approval.</p>
+    `
+  },
+
+  /* ── KYC ──────────────────────────────────────────────────── */
+  {
+    cat: 'kyc',
+    q: 'Why do I need to verify my identity?',
+    a: `
+      <p>Nigerian financial regulations require identity verification before we can pay real money out of your account. It's also how we keep scammers out of the platform.</p>
+      <p>You can play and stake without verifying — but withdrawals are paused until KYC is approved.</p>
+    `
+  },
+  {
+    cat: 'kyc',
+    q: 'Which documents can I use for KYC?',
+    a: `
+      <p>Any one of:</p>
+      <ul>
+        <li><b>NIN</b> — National Identification Number</li>
+        <li><b>BVN</b> — Bank Verification Number</li>
+        <li><b>International Passport</b></li>
+        <li><b>Driver's License</b></li>
+        <li><b>Permanent Voter's Card (PVC)</b></li>
+      </ul>
+      <p>You'll also need a selfie holding the document. The full name on your ID must match the name on your bank account.</p>
+    `
+  },
+  {
+    cat: 'kyc',
+    q: 'My KYC was rejected. What do I do?',
+    a: `
+      <p>The rejection message tells you the reason. The most common ones are:</p>
+      <ul>
+        <li><b>Blurry document</b> — retake the photo in good lighting, with no glare.</li>
+        <li><b>Name mismatch</b> — the name on your ID doesn't match your profile or bank account.</li>
+        <li><b>Expired document</b> — make sure your ID is still valid.</li>
+        <li><b>Selfie unclear</b> — your face and the document both need to be visible.</li>
+      </ul>
+      <p>You can resubmit from the <a href="kyc.html">verification page</a> as many times as you need. There's no penalty for retrying.</p>
+    `
+  },
+  {
+    cat: 'kyc',
+    q: 'How long does KYC review take?',
+    a: `
+      <p>Usually under 24 hours. During peak times (weekends, big match nights) it can take up to 48 hours. You'll get a notification the moment the verdict lands.</p>
+    `
+  },
+
+  /* ── DISPUTES ─────────────────────────────────────────────── */
+  {
+    cat: 'disputes',
+    q: 'How do I open a dispute on a match?',
+    a: `
+      <p>If you believe a match was settled incorrectly:</p>
+      <ul>
+        <li>Go to your <a href="history.html">match history</a>.</li>
+        <li>Open the match you want to dispute.</li>
+        <li>Click <b>Report issue</b> at the bottom of the match view.</li>
+        <li>Describe the problem and attach any evidence.</li>
+      </ul>
+      <p>You have <b>48 hours</b> from settlement to file a dispute. After that, results are final.</p>
+    `
+  },
+  {
+    cat: 'disputes',
+    q: 'What happens during arbitration?',
+    a: `
+      <p>Both players' screenshots are preserved and a human reviewer inspects them within 24 hours. They look at:</p>
+      <ul>
+        <li>Whether the scores are readable and consistent</li>
+        <li>The screenshot metadata (capture time, device)</li>
+        <li>Your match history and trust score</li>
+      </ul>
+      <p>Their decision is final. If arbitration finds in your favour, the pot is released to you and any temporary freeze is lifted.</p>
+    `
+  },
+  {
+    cat: 'disputes',
+    q: 'Can I dispute a decision I already lost?',
+    a: `
+      <p>No. Arbitration is a one-shot review — once a verdict is reached, it's final. You cannot appeal the same match twice.</p>
+      <p>If you believe the platform itself made an error, <a href="#contact">contact support</a> separately.</p>
+    `
+  },
+
+  /* ── ACCOUNT ──────────────────────────────────────────────── */
+  {
+    cat: 'account',
+    q: 'How do I change my password?',
+    a: `
+      <p>Go to <a href="settings.html">Settings → Security</a>, enter your current password, then your new one twice. You'll be signed out of all other devices when the change completes.</p>
+    `
+  },
+  {
+    cat: 'account',
+    q: 'I forgot my password — what do I do?',
+    a: `
+      <p>On the <a href="login.html">login page</a>, click <b>Forgot password?</b> and enter your email. You'll get a reset link within a few minutes. Check your spam folder if it doesn't arrive.</p>
+    `
+  },
+  {
+    cat: 'account',
+    q: 'How do I switch between real and demo mode?',
+    a: `
+      <p>Use the wallet switcher at the top of your <a href="wallet.html">wallet</a>, <a href="profile.html">profile</a>, or the leaderboard. Your choice is remembered — the app opens with whichever you last selected.</p>
+      <p>Real money matches use your real wallet. Demo matches use free practice money that can't be withdrawn.</p>
+    `
+  },
+  {
+    cat: 'account',
+    q: 'How do I delete my account?',
+    a: `
+      <p>Go to <a href="settings.html">Settings → Danger zone</a>. You'll need to type <code>DELETE</code> to confirm.</p>
+      <div class="tip warn"><span>⚠</span><div>Before you delete: <b>withdraw any real balance first</b>. Balances that aren't withdrawn are forfeited when the account is removed. Demo balance is discarded with no impact.</div></div>
+    `
+  }
+];
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  query: '',
+  cat: 'all',
+  open: {},           // which FAQs are expanded
+  file: null,
+  submitting: false
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ return null; }
+  }
+};
+
+/* ============================================================================
+   SUPPORT
+   ============================================================================ */
+const Support = {
+
+  async init(){
+    log('Support init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (State.session?.user){
+      State.profile = await Auth.fetchProfile(State.session.user.id);
+      this.prefill();
+    }
+
+    this.renderNav();
+    this.renderCats();
+    this.renderFaq();
+
+    /* Search */
+    const searchEl = $('#search');
+    if (searchEl){
+      searchEl.addEventListener('input', () => {
+        State.query = searchEl.value.trim().toLowerCase();
+        this.renderFaq();
+      });
+    }
+
+    /* Body character counter */
+    const bodyEl = $('#c_body');
+    if (bodyEl){
+      bodyEl.addEventListener('input', () => {
+        const c = $('#bodyCount');
+        if (c) c.textContent = bodyEl.value.length;
+      });
+    }
+
+    /* Deep-link to contact form if URL has #contact */
+    if (location.hash === '#contact'){
+      setTimeout(() => {
+        document.getElementById('contact')?.scrollIntoView({ behavior:'smooth', block:'start' });
+      }, 300);
+    }
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Guest';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  prefill(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const nameEl = $('#c_name');
+    const emailEl = $('#c_email');
+    if (nameEl && !nameEl.value) nameEl.value = p?.username || u?.user_metadata?.username || '';
+    if (emailEl && !emailEl.value) emailEl.value = u?.email || '';
+  },
+
+  renderCats(){
+    const el = $('#cats');
+    if (!el) return;
+    el.innerHTML = CATEGORIES.map(c => {
+      const count = c.id === 'all' ? FAQ.length : FAQ.filter(f => f.cat === c.id).length;
+      return `
+        <button class="cat ${State.cat === c.id ? 'active' : ''}" onclick="Support.setCat('${c.id}')">
+          <span>${c.icon}</span>
+          <span>${c.label}</span>
+          <span class="cnt">${count}</span>
+        </button>`;
+    }).join('');
+  },
+
+  setCat(id){
+    State.cat = id;
+    this.renderCats();
+    this.renderFaq();
+  },
+
+  filtered(){
+    return FAQ.filter(f => {
+      if (State.cat !== 'all' && f.cat !== State.cat) return false;
+      if (State.query){
+        const hay = (f.q + ' ' + f.a).toLowerCase();
+        return hay.includes(State.query);
+      }
+      return true;
+    });
+  },
+
+  renderFaq(){
+    const list = $('#faqList');
+    const countEl = $('#faqCount');
+    if (!list) return;
+
+    const rows = this.filtered();
+    if (countEl) countEl.textContent = rows.length + ' ' + (rows.length === 1 ? 'answer' : 'answers');
+
+    if (!rows.length){
+      list.innerHTML = `
+        <div class="no-results">
+          <div class="ico">🔍</div>
+          <h3>No matches for “${UI.escape(State.query)}”</h3>
+          <p>Try different words, or send us a message below and we'll answer personally.</p>
+          <button class="btn btn-primary btn-sm" onclick="location.hash='#contact'; document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Contact support</button>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = rows.map((f, i) => {
+      const key = f.cat + '::' + f.q;
+      const isOpen = !!State.open[key];
+      const catLabel = CATEGORIES.find(c => c.id === f.cat)?.label || f.cat;
+      return `
+        <div class="faq ${isOpen ? 'open' : ''}" data-key="${UI.escape(key)}">
+          <button class="faq-q" onclick="Support.toggle('${UI.escape(key).replace(/'/g, "\\'")}')">
+            <span class="tag ${f.cat}">${UI.escape(catLabel)}</span>
+            <span class="q">${UI.escape(f.q)}</span>
+            <span class="chev">▾</span>
+          </button>
+          <div class="faq-a">${f.a}</div>
+        </div>`;
+    }).join('');
+  },
+
+  toggle(key){
+    State.open[key] = !State.open[key];
+    this.renderFaq();
+  },
+
+  /* ── File attachment ──────────────────────────────────────── */
+  pickFile(file){
+    if (!file) return;
+    const validType = file.type.startsWith('image/') || file.type === 'application/pdf';
+    if (!validType){ UI.toast('Only images and PDFs are accepted.', 'err'); return; }
+    if (file.size > CONFIG.MAX_FILE_MB * 1024 * 1024){ UI.toast(`File must be under ${CONFIG.MAX_FILE_MB} MB.`, 'err'); return; }
+
+    State.file = file;
+    const txt = $('#attachTxt');
+    if (txt){
+      txt.innerHTML = `<strong>${UI.escape(file.name)}</strong>${(file.size/1024).toFixed(0)} KB · ${file.type.split('/')[1].toUpperCase()}`;
+    }
+    const clear = $('#attachClear');
+    if (clear) clear.classList.remove('hidden');
+    const row = $('#attachRow');
+    if (row) row.style.borderStyle = 'solid';
+  },
+
+  clearFile(){
+    State.file = null;
+    const fileEl = $('#c_file');
+    if (fileEl) fileEl.value = '';
+    const txt = $('#attachTxt');
+    if (txt) txt.innerHTML = `<strong>Attach a screenshot (optional)</strong>PNG, JPG, or PDF · max ${CONFIG.MAX_FILE_MB} MB`;
+    const clear = $('#attachClear');
+    if (clear) clear.classList.add('hidden');
+    const row = $('#attachRow');
+    if (row) row.style.borderStyle = 'dashed';
+  },
+
+  /* ── Submit ───────────────────────────────────────────────── */
+  async submit(){
+    if (State.submitting) return;
+
+    const name    = ($('#c_name')?.value    || '').trim();
+    const email   = ($('#c_email')?.value   || '').trim();
+    const cat     = ($('#c_cat')?.value     || '').trim();
+    const ref     = ($('#c_ref')?.value     || '').trim();
+    const subject = ($('#c_subject')?.value || '').trim();
+    const body    = ($('#c_body')?.value    || '').trim();
+
+    const errEl = $('#formErr'); const okEl = $('#formOk');
+    errEl?.classList.remove('show'); okEl?.classList.remove('show');
+
+    const fail = (m, elId) => {
+      if (errEl){ errEl.textContent = m; errEl.classList.add('show'); errEl.scrollIntoView({behavior:'smooth', block:'center'}); }
+      if (elId){ const el = document.getElementById(elId); el?.classList.add('invalid'); }
+      UI.toast(m, 'err');
+    };
+
+    if (!name) return fail('Enter your name.', 'c_name');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail('Enter a valid email.', 'c_email');
+    if (!cat) return fail('Select a category.', 'c_cat');
+    if (!subject || subject.length < 4) return fail('Enter a subject (at least 4 characters).', 'c_subject');
+    if (!body || body.length < 20) return fail('Please describe the issue in at least 20 characters.', 'c_body');
+
+    State.submitting = true;
+    const btn = $('#submitBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Sending…';
+
+    try {
+      /* Upload attachment first (if any) */
+      let attachmentUrl = null;
+      let attachmentPath = null;
+
+      if (State.file && Supa.HAS && State.session?.user){
+        try {
+          const ext = (State.file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g,'');
+          const path = `${State.session.user.id}/${Date.now()}.${ext}`;
+          const { error: upErr } = await Supa.client.storage
+            .from(CONFIG.SUPPORT_BUCKET)
+            .upload(path, State.file, { upsert:false, contentType: State.file.type, cacheControl:'3600' });
+          if (!upErr){
+            const { data: signed } = await Supa.client.storage
+              .from(CONFIG.SUPPORT_BUCKET)
+              .createSignedUrl(path, 60 * 60 * 24 * 30);
+            attachmentUrl = signed?.signedUrl || null;
+            attachmentPath = path;
+          } else {
+            warn('attachment upload failed:', upErr.message);
+          }
+        } catch(e){ warn('attachment upload threw:', e.message); }
+      }
+
+      const payload = {
+        user_id:  State.session?.user?.id || null,
+        name, email,
+        category: cat,
+        reference: ref || null,
+        subject, body,
+        attachment_url: attachmentUrl,
+        attachment_path: attachmentPath,
+        status: 'open',
+        created_at: new Date().toISOString()
+      };
+
+      if (!Supa.HAS){
+        /* Demo: keep in localStorage */
+        try {
+          const key = 'dls_demo_tickets';
+          const arr = JSON.parse(localStorage.getItem(key) || '[]');
+          arr.unshift({ id: 'demo-' + Date.now(), ...payload });
+          localStorage.setItem(key, JSON.stringify(arr));
+        } catch {}
+      } else {
+        let done = false;
+        /* Prefer an RPC that also emails support */
+        try {
+          const { error: rpcErr } = await Supa.client.rpc('submit_support_ticket', { p_payload: payload });
+          if (!rpcErr) done = true;
+          else warn('submit_support_ticket rpc unavailable:', rpcErr.message);
+        } catch(e){ warn('rpc threw:', e.message); }
+
+        if (!done){
+          const { error: insErr } = await Supa.client.from(CONFIG.SUPPORT_TABLE).insert(payload);
+          if (insErr) throw insErr;
+        }
+      }
+
+      /* Success */
+      btn.innerHTML = '<span class="spin"></span> Sent';
+      if (okEl){
+        okEl.innerHTML = `✓ <b>Ticket received.</b> We'll reply to <b>${UI.escape(email)}</b> within 24 hours. Save your reference: <span style="font-family:var(--ff-mono)">${UI.escape(ref || 'auto-' + Date.now().toString(36).toUpperCase())}</span>`;
+        okEl.classList.add('show');
+      }
+      UI.toast('Message sent. We\'ll be in touch within 24 hours.', 'ok', 6000);
+
+      /* Reset the form but keep name + email */
+      $('#c_cat').value = '';
+      $('#c_ref').value = '';
+      $('#c_subject').value = '';
+      $('#c_body').value = '';
+      const bc = $('#bodyCount'); if (bc) bc.textContent = '0';
+      this.clearFile();
+
+      setTimeout(() => { btn.disabled = false; btn.innerHTML = orig; }, 2200);
+    } catch(e){
+      err('submit:', e);
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      fail(e.message || 'Could not send your message. Please try again.');
+    } finally {
+      State.submitting = false;
+    }
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Support boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Support (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Support (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Support.init(); }
+  catch(e){ err('Support init failed:', e); UI.toast('Failed to load help center.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'support-1.0.0',
+  async debug(){
+    console.log('======== DLS Support v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Category:', State.cat);
+    console.log('Query:', State.query);
+    console.log('FAQ total:', FAQ.length);
+    console.log('FAQ filtered:', Support.filtered().length);
+    console.log('Open items:', Object.keys(State.open).filter(k => State.open[k]).length);
+    console.log('Attachment:', State.file?.name || 'none');
+    console.log('===============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    localStorage.removeItem('dls_demo_notifs');
+    localStorage.removeItem('dls_demo_tickets');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
