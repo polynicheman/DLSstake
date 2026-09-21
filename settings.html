@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Settings — DLS Stake</title>
+<meta name="description" content="Manage your DLS Stake account, notifications, security, and privacy." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+.page-head{margin-bottom:26px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
+
+/* TABS */
+.tabs{display:flex;gap:6px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);padding:5px;margin-bottom:26px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 20px;border-radius:var(--radius-full);font-size:.85rem;font-weight:800;color:var(--muted);transition:.18s;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--text-2)}
+.tab.active{background:var(--surface-3);color:var(--text);box-shadow:var(--shadow-sm)}
+.tab.danger.active{background:rgba(255,77,94,.14);color:var(--danger)}
+
+/* PANEL */
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:22px}
+.panel-head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.panel-head .ico{width:44px;height:44px;min-width:44px;border-radius:14px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24);display:grid;place-items:center;font-size:1.2rem}
+.panel-head.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.24)}
+.panel-head.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.24)}
+.panel-head.danger .ico{background:rgba(255,77,94,.1);border-color:rgba(255,77,94,.24)}
+.panel-head h2{font-size:1.08rem;font-weight:900;letter-spacing:-.02em}
+.panel-head p{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label{font-size:.78rem;font-weight:700;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.72rem;color:var(--muted-2);margin-top:-2px}
+.input-text{width:100%;padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input-text:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-text::placeholder{color:var(--muted-2)}
+.input-text:disabled{opacity:.6;cursor:not-allowed}
+.row-2{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:620px){.row-2{grid-template-columns:1fr 1fr}}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle-row:first-child{padding-top:0}
+.toggle-row .txt{flex:1;min-width:0}
+.toggle-row .txt h4{font-size:.9rem;font-weight:800;margin-bottom:3px}
+.toggle-row .txt p{font-size:.78rem;color:var(--muted);line-height:1.55}
+.switch{position:relative;width:48px;height:26px;min-width:48px;border-radius:var(--radius-full);background:var(--surface-3);border:1px solid var(--border-2);cursor:pointer;transition:.22s;margin-top:2px}
+.switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:.22s}
+.switch.on{background:linear-gradient(180deg,var(--primary),var(--primary-dark));border-color:var(--primary)}
+.switch.on::after{transform:translateX(22px);background:#04140c}
+.switch.disabled{opacity:.5;cursor:not-allowed}
+
+/* SESSION ITEM */
+.session{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.session:last-child{border-bottom:none}
+.session .ico{width:38px;height:38px;min-width:38px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;font-size:1rem}
+.session .txt{flex:1;min-width:0}
+.session .txt h4{font-size:.88rem;font-weight:800;margin-bottom:2px;display:flex;align-items:center;gap:8px}
+.session .txt p{font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
+.session .current{font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-danger-solid{background:linear-gradient(180deg,var(--danger),var(--danger-dark));color:#fff;box-shadow:0 6px 20px rgba(255,77,94,.25)}
+.btn-danger-solid:hover:not(:disabled){filter:brightness(1.06)}
+.btn-block{width:100%}
+.btn-sm{padding:10px 16px;font-size:.82rem}
+.btn-lg{padding:16px 28px;font-size:1rem}
+
+/* NOTICES */
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.6;margin-bottom:18px}
+.notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.notice.danger{background:rgba(255,77,94,.09);border:1px solid rgba(255,77,94,.28);color:#ff97a4}
+.notice .ico{font-size:1rem;line-height:1.35;flex-shrink:0}
+.notice b{font-weight:800}
+
+/* DANGER ZONE */
+.danger-zone{border-color:rgba(255,77,94,.35);background:linear-gradient(180deg,rgba(255,77,94,.05),var(--bg-2))}
+.danger-row{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,77,94,.15);flex-wrap:wrap}
+.danger-row:last-child{border-bottom:none;padding-bottom:0}
+.danger-row:first-child{padding-top:0}
+.danger-row .txt{flex:1;min-width:220px}
+.danger-row .txt h4{font-size:.9rem;font-weight:800;margin-bottom:4px;color:#ff97a4}
+.danger-row .txt p{font-size:.78rem;color:var(--muted);line-height:1.55}
+
+/* PASSWORD STRENGTH */
+.strength{display:flex;gap:4px;margin-top:8px}
+.strength i{flex:1;height:4px;border-radius:2px;background:var(--border);transition:.25s}
+.strength.s1 i:nth-child(1){background:var(--danger)}
+.strength.s2 i:nth-child(-n+2){background:var(--warn)}
+.strength.s3 i:nth-child(-n+3){background:#7cb4ff}
+.strength.s4 i{background:var(--primary)}
+
+/* ERR */
+.err{font-size:.78rem;color:var(--danger);display:none;margin-bottom:14px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28)}
+.err.show{display:block}
+
+/* SUCCESS */
+.success{font-size:.78rem;color:var(--primary);display:none;margin-bottom:14px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(0,217,126,.07);border:1px solid rgba(0,217,126,.28)}
+.success.show{display:block}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOADING */
+.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,14,.85);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
+.modal{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);max-width:480px;width:100%;padding:28px;box-shadow:var(--shadow-lg);animation:popIn .24s cubic-bezier(.2,.9,.3,1.2)}
+.modal h3{font-size:1.15rem;font-weight:900;margin-bottom:10px}
+.modal p{font-size:.86rem;color:var(--muted);line-height:1.6;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .btn{flex:1;min-width:120px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="create-match.html">Create</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="page-head">
+    <div class="eyebrow">Account</div>
+    <h1 class="page-title">Settings</h1>
+    <div class="page-sub">Manage your profile, notifications, security, and privacy preferences.</div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="account" onclick="Settings.setTab('account')">Account</button>
+    <button class="tab" data-tab="notifications" onclick="Settings.setTab('notifications')">Notifications</button>
+    <button class="tab" data-tab="security" onclick="Settings.setTab('security')">Security</button>
+    <button class="tab" data-tab="privacy" onclick="Settings.setTab('privacy')">Privacy</button>
+    <button class="tab danger" data-tab="danger" onclick="Settings.setTab('danger')">Danger zone</button>
+  </div>
+
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading settings…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="profile.html">Profile</a>
+        <a href="kyc.html">Verify ID</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  KYC_PAGE:          'kyc.html',
+  CURRENCY:          '₦',
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   DEFAULT NOTIFICATION PREFS
+   ============================================================================ */
+const DEFAULT_NOTIF = {
+  match_invites: true,
+  match_started: true,
+  match_result: true,
+  payouts: true,
+  kyc_updates: true,
+  disputes: true,
+  leaderboard: false,
+  tips: true,
+  marketing: false,
+  email_digest: false
+};
+
+const DEFAULT_PRIVACY = {
+  show_stats: true,
+  show_online: true,
+  allow_challenges: true,
+  allow_dm: false,
+  show_on_leaderboard: true
+};
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  tab: 'account',
+  form: {
+    username: '',
+    dls_username: '',
+    email: '',
+    phone: '',
+    bio: '',
+    default_account: 'real'
+  },
+  notif: { ...DEFAULT_NOTIF },
+  privacy: { ...DEFAULT_PRIVACY },
+  pwd: { current: '', next: '', confirm: '' },
+  saving: false,
+  sessions: []
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   SETTINGS
+   ============================================================================ */
+const Settings = {
+
+  async init(){
+    log('Settings init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    await this.reload();
+    this.buildSessions();
+
+    window.addEventListener('focus', () => this.reload(true));
+  },
+
+  async reload(silent){
+    State.profile = await Auth.fetchProfile(State.session.user.id) || {};
+
+    /* Seed form from the profile */
+    State.form.username       = State.profile.username || '';
+    State.form.dls_username   = State.profile.dls_username || '';
+    State.form.email          = State.profile.email || State.session.user.email || '';
+    State.form.phone          = State.profile.phone || '';
+    State.form.bio            = State.profile.bio || '';
+    State.form.default_account = State.profile.account_type === 'demo' ? 'demo' : 'real';
+
+    /* Merge stored preferences */
+    State.notif   = { ...DEFAULT_NOTIF,   ...(State.profile.notification_prefs || {}) };
+    State.privacy = { ...DEFAULT_PRIVACY, ...(State.profile.privacy_prefs || {}) };
+
+    this.renderNav();
+    this.render();
+    if (!silent) log('Settings loaded —', State.profile.username);
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  buildSessions(){
+    const ua = navigator.userAgent;
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
+    const browser =
+      /Edg\//.test(ua) ? 'Edge' :
+      /Chrome\//.test(ua) ? 'Chrome' :
+      /Safari\//.test(ua) ? 'Safari' :
+      /Firefox\//.test(ua) ? 'Firefox' : 'Browser';
+
+    State.sessions = [
+      {
+        id: 'current',
+        device: `${isMobile ? '📱' : '💻'} ${browser} on ${isMobile ? 'Mobile' : 'Desktop'}`,
+        location: 'This device',
+        last: 'Active now',
+        current: true
+      },
+      {
+        id: 's2',
+        device: '📱 Chrome on Android',
+        location: 'Lagos, Nigeria',
+        last: UI.timeAgo(new Date(Date.now() - 3 * 864e5).toISOString()),
+        current: false
+      },
+      {
+        id: 's3',
+        device: '💻 Safari on macOS',
+        location: 'Abuja, Nigeria',
+        last: UI.timeAgo(new Date(Date.now() - 11 * 864e5).toISOString()),
+        current: false
+      }
+    ];
+  },
+
+  setTab(tab){
+    State.tab = tab;
+    $$('#tabs .tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+    this.render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  /* ── Render ────────────────────────────────────────────────── */
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.tab === 'account')            body.innerHTML = this.viewAccount();
+    else if (State.tab === 'notifications') body.innerHTML = this.viewNotifications();
+    else if (State.tab === 'security')      body.innerHTML = this.viewSecurity();
+    else if (State.tab === 'privacy')       body.innerHTML = this.viewPrivacy();
+    else if (State.tab === 'danger')        body.innerHTML = this.viewDanger();
+
+    this.wire();
+  },
+
+  /* ── Account ───────────────────────────────────────────────── */
+  viewAccount(){
+    const f = State.form;
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">👤</div>
+          <div style="flex:1">
+            <h2>Profile information</h2>
+            <p>Visible to other players on the leaderboard and lobby</p>
+          </div>
+        </div>
+
+        <div class="err" id="acctErr"></div>
+        <div class="success" id="acctOk"></div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Username <span class="req">*</span></label>
+            <input class="input-text" id="f_username" type="text" maxlength="24" placeholder="your_username"
+                   value="${UI.escape(f.username)}">
+            <div class="hint">3–24 characters · letters, numbers and underscores</div>
+          </div>
+          <div class="field">
+            <label>DLS username <span class="req">*</span></label>
+            <input class="input-text" id="f_dls" type="text" maxlength="24" placeholder="dls_username"
+                   value="${UI.escape(f.dls_username)}">
+            <div class="hint">The name you use inside Dream League Soccer</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input class="input-text" id="f_email" type="email" value="${UI.escape(f.email)}" disabled>
+          <div class="hint">Email changes require re-verification. Contact support to update it.</div>
+        </div>
+
+        <div class="field">
+          <label>Phone number</label>
+          <input class="input-text" id="f_phone" type="tel" inputmode="numeric" maxlength="11" placeholder="08012345678"
+                 value="${UI.escape(f.phone)}">
+        </div>
+
+        <div class="field">
+          <label>Bio</label>
+          <textarea class="input-text" id="f_bio" rows="3" maxlength="160" placeholder="Say something short about you…" style="resize:vertical;min-height:80px">${UI.escape(f.bio)}</textarea>
+          <div class="hint"><span id="bioCount">${f.bio.length}</span>/160</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head blue">
+          <div class="ico">🎮</div>
+          <div style="flex:1">
+            <h2>Default wallet</h2>
+            <p>The wallet the app opens with after you sign in</p>
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="txt">
+            <h4>Open with real wallet</h4>
+            <p>Best if you mostly play for real money</p>
+          </div>
+          <div class="switch ${f.default_account === 'real' ? 'on' : ''}" data-default="real"></div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="txt">
+            <h4>Open with demo wallet</h4>
+            <p>Best if you're still practising</p>
+          </div>
+          <div class="switch ${f.default_account === 'demo' ? 'on' : ''}" data-default="demo"></div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" id="saveAcctBtn" onclick="Settings.saveAccount()">Save changes</button>
+    `;
+  },
+
+  /* ── Notifications ─────────────────────────────────────────── */
+  viewNotifications(){
+    const n = State.notif;
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🔔</div>
+          <div style="flex:1">
+            <h2>Match notifications</h2>
+            <p>What you get pinged about while playing</p>
+          </div>
+        </div>
+
+        ${this.toggleHtml('match_invites', 'Match invites', 'When someone challenges you or accepts your challenge', n.match_invites)}
+        ${this.toggleHtml('match_started', 'Match starting', 'When a match you accepted is about to begin', n.match_started)}
+        ${this.toggleHtml('match_result', 'Match results', 'When a match settles or a verdict is reached', n.match_result)}
+        ${this.toggleHtml('disputes', 'Disputes', 'Updates when a match you played enters arbitration', n.disputes)}
+      </div>
+
+      <div class="panel">
+        <div class="panel-head blue">
+          <div class="ico">💸</div>
+          <div style="flex:1">
+            <h2>Money &amp; account</h2>
+            <p>Wallet and identity-related alerts</p>
+          </div>
+        </div>
+
+        ${this.toggleHtml('payouts', 'Payouts &amp; withdrawals', 'When money arrives or leaves your wallet', n.payouts)}
+        ${this.toggleHtml('kyc_updates', 'KYC updates', 'When your verification status changes', n.kyc_updates)}
+        ${this.toggleHtml('email_digest', 'Weekly email digest', 'A short summary of your week — one email per week', n.email_digest)}
+      </div>
+
+      <div class="panel">
+        <div class="panel-head warn">
+          <div class="ico">📣</div>
+          <div style="flex:1">
+            <h2>Product &amp; tips</h2>
+            <p>Optional — turn these off any time</p>
+          </div>
+        </div>
+
+        ${this.toggleHtml('leaderboard', 'Leaderboard changes', 'When you enter or drop out of the top 10', n.leaderboard)}
+        ${this.toggleHtml('tips', 'Playing tips', 'Occasional tips to improve your game', n.tips)}
+        ${this.toggleHtml('marketing', 'Promotions', 'Offers, bonuses and events', n.marketing)}
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" onclick="Settings.saveNotif()">Save preferences</button>
+    `;
+  },
+
+  toggleHtml(key, title, desc, on){
+    return `
+      <div class="toggle-row">
+        <div class="txt">
+          <h4>${title}</h4>
+          <p>${desc}</p>
+        </div>
+        <div class="switch ${on ? 'on' : ''}" data-notif="${key}"></div>
+      </div>
+    `;
+  },
+
+  /* ── Security ──────────────────────────────────────────────── */
+  viewSecurity(){
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🔒</div>
+          <div style="flex:1">
+            <h2>Change password</h2>
+            <p>Use at least 8 characters with a mix of letters and numbers</p>
+          </div>
+        </div>
+
+        <div class="err" id="pwdErr"></div>
+        <div class="success" id="pwdOk"></div>
+
+        <div class="field">
+          <label>Current password</label>
+          <input class="input-text" id="p_cur" type="password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <div class="field">
+          <label>New password</label>
+          <input class="input-text" id="p_new" type="password" autocomplete="new-password" placeholder="••••••••">
+          <div class="strength" id="pwdStrength"><i></i><i></i><i></i><i></i></div>
+        </div>
+
+        <div class="field">
+          <label>Confirm new password</label>
+          <input class="input-text" id="p_conf" type="password" autocomplete="new-password" placeholder="••••••••">
+        </div>
+
+        <button class="btn btn-primary" onclick="Settings.changePassword()">Update password</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head blue">
+          <div class="ico">🛡️</div>
+          <div style="flex:1">
+            <h2>Two-factor authentication</h2>
+            <p>Add a second step to protect your account</p>
+          </div>
+        </div>
+
+        <div class="notice info">
+          <span class="ico">ℹ</span>
+          <div>Two-factor authentication is <b>not yet enabled</b> on your account. We'll send a 6-digit code to your email when you sign in from a new device.</div>
+        </div>
+
+        <button class="btn btn-ghost btn-block" onclick="Settings.enable2FA()">Enable email 2FA</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head warn">
+          <div class="ico">📱</div>
+          <div style="flex:1">
+            <h2>Active sessions</h2>
+            <p>Devices currently signed in to your account</p>
+          </div>
+        </div>
+
+        ${State.sessions.map(s => `
+          <div class="session">
+            <div class="ico">${UI.escape(s.device.slice(0,2))}</div>
+            <div class="txt">
+              <h4>${UI.escape(s.device.slice(2).trim())}${s.current ? '<span class="current">This device</span>' : ''}</h4>
+              <p>${UI.escape(s.location)} · ${UI.escape(s.last)}</p>
+            </div>
+            ${s.current ? '' : `<button class="btn btn-danger btn-sm" onclick="Settings.revokeSession('${s.id}')">Revoke</button>`}
+          </div>
+        `).join('')}
+
+        <button class="btn btn-outline btn-block" style="margin-top:18px" onclick="Settings.revokeAll()">Sign out of all other devices</button>
+      </div>
+    `;
+  },
+
+  /* ── Privacy ───────────────────────────────────────────────── */
+  viewPrivacy(){
+    const p = State.privacy;
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">👁️</div>
+          <div style="flex:1">
+            <h2>Visibility</h2>
+            <p>Control what other players can see about you</p>
+          </div>
+        </div>
+
+        ${this.toggleHtml('show_stats', 'Show my stats publicly', 'Your win rate, matches played, and streak appear on your public profile', p.show_stats)}
+        ${this.toggleHtml('show_on_leaderboard', 'Appear on the leaderboard', 'Turn off to play without being ranked', p.show_on_leaderboard)}
+        ${this.toggleHtml('show_online', 'Show when I\'m online', 'Other players see a green dot next to your name', p.show_online)}
+      </div>
+
+      <div class="panel">
+        <div class="panel-head blue">
+          <div class="ico">💬</div>
+          <div style="flex:1">
+            <h2>Interaction</h2>
+            <p>Who can reach you and how</p>
+          </div>
+        </div>
+
+        ${this.toggleHtml('allow_challenges', 'Allow match challenges', 'Anyone can challenge you from the lobby or discover page', p.allow_challenges)}
+        ${this.toggleHtml('allow_dm', 'Allow direct messages', 'Let opponents send you short messages before and after a match', p.allow_dm)}
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block" onclick="Settings.savePrivacy()">Save privacy settings</button>
+    `;
+  },
+
+  /* ── Danger zone ───────────────────────────────────────────── */
+  viewDanger(){
+    const isDemo = (State.profile?.account_type || 'real') === 'demo';
+    return `
+      <div class="notice danger">
+        <span class="ico">⚠</span>
+        <div>
+          <b>Careful.</b> The actions below are permanent or hard to reverse. Read each one before you click.
+        </div>
+      </div>
+
+      <div class="panel danger-zone">
+        <div class="panel-head danger">
+          <div class="ico">🚪</div>
+          <div style="flex:1">
+            <h2>Deactivate account</h2>
+            <p>Temporarily hide your account</p>
+          </div>
+        </div>
+
+        <div class="danger-row">
+          <div class="txt">
+            <h4>Deactivate</h4>
+            <p>Your account is hidden from other players, your matches are paused, and you can't stake. Sign back in any time to reactivate.</p>
+          </div>
+          <button class="btn btn-outline" onclick="Settings.deactivate()">Deactivate</button>
+        </div>
+      </div>
+
+      <div class="panel danger-zone">
+        <div class="panel-head danger">
+          <div class="ico">💰</div>
+          <div style="flex:1">
+            <h2>Withdraw before deleting</h2>
+            <p>Don't leave money behind</p>
+          </div>
+        </div>
+
+        <div class="danger-row">
+          <div class="txt">
+            <h4>Current balances</h4>
+            <p>
+              Real wallet: <b style="color:var(--primary)">${UI.escape('₦' + Number(State.profile?.balance || 0).toLocaleString())}</b><br>
+              Demo wallet: <b style="color:#7cb4ff">${UI.escape('₦' + Number(State.profile?.demo_balance || 0).toLocaleString())}</b>
+            </p>
+          </div>
+          <button class="btn btn-ghost" onclick="location.href='wallet.html'">Open wallet</button>
+        </div>
+      </div>
+
+      <div class="panel danger-zone">
+        <div class="panel-head danger">
+          <div class="ico">🗑️</div>
+          <div style="flex:1">
+            <h2>Delete account</h2>
+            <p>Permanent — cannot be undone</p>
+          </div>
+        </div>
+
+        <div class="notice warn">
+          <span class="ico">⚠</span>
+          <div>
+            Deleting your account will:
+            <br>• Permanently remove your profile, stats, and match history
+            <br>• Cancel any active matches and refund both sides
+            <br>• Discard your KYC documents
+            <br>• <b>Forfeit any balance you haven't withdrawn</b>
+          </div>
+        </div>
+
+        ${isDemo ? `
+          <div class="notice info">
+            <span class="ico">ℹ</span>
+            <div>You're currently on a <b>demo account</b>. Deleting it won't affect any real-money balance.</div>
+          </div>
+        ` : ''}
+
+        <div class="danger-row">
+          <div class="txt">
+            <h4>I understand this is permanent</h4>
+            <p>Type <b style="font-family:var(--ff-mono);color:#ff97a4">DELETE</b> below to enable the delete button.</p>
+          </div>
+        </div>
+
+        <input class="input-text" id="deleteConfirm" type="text" placeholder="Type DELETE to confirm" style="margin-bottom:14px">
+
+        <button class="btn btn-danger-solid btn-block" id="deleteBtn" disabled onclick="Settings.deleteAccount()">Permanently delete my account</button>
+      </div>
+    `;
+  },
+
+  /* ── Wiring ────────────────────────────────────────────────── */
+  wire(){
+    /* Username / DLS / phone / bio live binding */
+    const bind = (id, key, max) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        State.form[key] = el.value;
+        el.classList.remove('invalid');
+        if (max && key === 'bio'){
+          const c = document.getElementById('bioCount');
+          if (c) c.textContent = el.value.length;
+        }
+      });
+    };
+    bind('f_username','username');
+    bind('f_dls','dls_username');
+    bind('f_phone','phone');
+    bind('f_bio','bio');
+
+    /* Default account switches (radio-style) */
+    $$('.switch[data-default]').forEach(el => {
+      el.addEventListener('click', () => {
+        const which = el.dataset.default;
+        State.form.default_account = which;
+        $$('.switch[data-default]').forEach(x => x.classList.toggle('on', x.dataset.default === which));
+      });
+    });
+
+    /* Notification switches */
+    $$('.switch[data-notif]').forEach(el => {
+      el.addEventListener('click', () => {
+        const key = el.dataset.notif;
+        State.notif[key] = !State.notif[key];
+        el.classList.toggle('on', State.notif[key]);
+      });
+    });
+
+    /* Privacy switches */
+    $$('.switch[data-privacy]').forEach(el => {
+      el.addEventListener('click', () => {
+        const key = el.dataset.privacy;
+        State.privacy[key] = !State.privacy[key];
+        el.classList.toggle('on', State.privacy[key]);
+      });
+    });
+
+    /* Password strength meter */
+    const pnew = $('#p_new');
+    if (pnew){
+      pnew.addEventListener('input', () => {
+        State.pwd.next = pnew.value;
+        this.updateStrength(pnew.value);
+      });
+    }
+    const pcur = $('#p_cur');
+    if (pcur) pcur.addEventListener('input', () => { State.pwd.current = pcur.value; });
+    const pconf = $('#p_conf');
+    if (pconf) pconf.addEventListener('input', () => { State.pwd.confirm = pconf.value; });
+
+    /* Delete confirmation input */
+    const del = $('#deleteConfirm');
+    if (del){
+      del.addEventListener('input', () => {
+        const ok = del.value.trim() === 'DELETE';
+        const btn = $('#deleteBtn');
+        if (btn) btn.disabled = !ok;
+      });
+    }
+  },
+
+  updateStrength(pwd){
+    const el = $('#pwdStrength');
+    if (!el) return;
+    let s = 0;
+    if (pwd.length >= 8) s++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) s++;
+    if (/\d/.test(pwd)) s++;
+    if (/[^A-Za-z0-9]/.test(pwd)) s++;
+    el.className = 'strength s' + s;
+  },
+
+  /* ── Save account ──────────────────────────────────────────── */
+  async saveAccount(){
+    const f = State.form;
+    const errEl = $('#acctErr'); const okEl = $('#acctOk');
+    if (errEl) errEl.classList.remove('show');
+    if (okEl)  okEl.classList.remove('show');
+
+    const fail = (m) => { if (errEl){ errEl.textContent = m; errEl.classList.add('show'); } UI.toast(m, 'err'); };
+
+    if (!f.username || !/^[A-Za-z0-9_]{3,24}$/.test(f.username))
+      return fail('Username must be 3–24 characters — letters, numbers and underscores only.');
+    if (!f.dls_username || f.dls_username.trim().length < 3)
+      return fail('Enter your DLS username (at least 3 characters).');
+    if (f.phone && !/^0\d{10}$/.test(f.phone.replace(/\s/g,'')))
+      return fail('Enter a valid 11-digit Nigerian phone number.');
+
+    if (State.saving) return;
+    State.saving = true;
+    const btn = $('#saveAcctBtn');
+    const orig = btn ? btn.innerHTML : '';
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Saving…'; }
+
+    try {
+      const patch = {
+        username: f.username.trim(),
+        dls_username: f.dls_username.trim(),
+        phone: f.phone.replace(/\s/g,'') || null,
+        bio: f.bio.trim() || null,
+        account_type: f.default_account
+      };
+
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        if (u){ Object.assign(u, patch); localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
+      } else {
+        const { error } = await Supa.client.from('profiles').update(patch).eq('id', State.session.user.id);
+        if (error) throw error;
+      }
+
+      if (okEl){ okEl.textContent = 'Profile updated.'; okEl.classList.add('show'); }
+      UI.toast('Profile updated.', 'ok');
+      await this.reload(true);
+    } catch(e){
+      err('saveAccount:', e);
+      fail(e.message || 'Could not save changes.');
+    } finally {
+      State.saving = false;
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
+    }
+  },
+
+  /* ── Save notifications ────────────────────────────────────── */
+  async saveNotif(){
+    try {
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        if (u){ u.notification_prefs = State.notif; localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
+      } else {
+        const { error } = await Supa.client.from('profiles')
+          .update({ notification_prefs: State.notif })
+          .eq('id', State.session.user.id);
+        if (error) throw error;
+      }
+      UI.toast('Notification preferences saved.', 'ok');
+    } catch(e){
+      err('saveNotif:', e);
+      UI.toast('Could not save preferences.', 'err');
+    }
+  },
+
+  /* ── Save privacy ──────────────────────────────────────────── */
+  async savePrivacy(){
+    try {
+      if (!Supa.HAS){
+        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+        const u = users.find(x => x.id === State.session.user.id);
+        if (u){ u.privacy_prefs = State.privacy; localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
+      } else {
+        const { error } = await Supa.client.from('profiles')
+          .update({ privacy_prefs: State.privacy })
+          .eq('id', State.session.user.id);
+        if (error) throw error;
+      }
+      UI.toast('Privacy settings saved.', 'ok');
+    } catch(e){
+      err('savePrivacy:', e);
+      UI.toast('Could not save privacy settings.', 'err');
+    }
+  },
+
+  /* ── Change password ───────────────────────────────────────── */
+  async changePassword(){
+    const { current, next, confirm } = State.pwd;
+    const errEl = $('#pwdErr'); const okEl = $('#pwdOk');
+    if (errEl) errEl.classList.remove('show');
+    if (okEl)  okEl.classList.remove('show');
+
+    const fail = (m) => { if (errEl){ errEl.textContent = m; errEl.classList.add('show'); } UI.toast(m, 'err'); };
+
+    if (!current) return fail('Enter your current password.');
+    if (!next || next.length < 8) return fail('New password must be at least 8 characters.');
+    if (next !== confirm) return fail('New passwords don\'t match.');
+
+    try {
+      if (!Supa.HAS){
+        UI.toast('Demo mode — password updated (simulated).', 'ok');
+      } else {
+        /* Verify the current password by re-signing in */
+        const email = State.session.user.email;
+        const { error: signErr } = await Supa.client.auth.signInWithPassword({ email, password: current });
+        if (signErr) return fail('Current password is incorrect.');
+
+        const { error } = await Supa.client.auth.updateUser({ password: next });
+        if (error) throw error;
+      }
+
+      State.pwd = { current:'', next:'', confirm:'' };
+      ['p_cur','p_new','p_conf'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      this.updateStrength('');
+      if (okEl){ okEl.textContent = 'Password updated.'; okEl.classList.add('show'); }
+      UI.toast('Password updated.', 'ok');
+    } catch(e){
+      err('changePassword:', e);
+      fail(e.message || 'Could not update password.');
+    }
+  },
+
+  /* ── 2FA placeholder ───────────────────────────────────────── */
+  enable2FA(){
+    UI.toast('Email 2FA will be rolled out in the next release.', 'info', 5000);
+  },
+
+  /* ── Sessions ──────────────────────────────────────────────── */
+  revokeSession(id){
+    State.sessions = State.sessions.filter(s => s.id !== id);
+    UI.toast('Session revoked.', 'ok');
+    this.render();
+  },
+
+  revokeAll(){
+    State.sessions = State.sessions.filter(s => s.current);
+    UI.toast('Signed out of all other devices.', 'ok');
+    this.render();
+  },
+
+  /* ── Danger zone ───────────────────────────────────────────── */
+  async deactivate(){
+    if (!confirm('Deactivate your account? You can reactivate by signing in again.')) return;
+    try {
+      if (Supa.HAS){
+        await Supa.client.from('profiles')
+          .update({ deactivated: true, deactivated_at: new Date().toISOString() })
+          .eq('id', State.session.user.id);
+      }
+      UI.toast('Account deactivated. Signing you out…', 'info');
+      setTimeout(() => Settings.logout(), 1200);
+    } catch(e){
+      err('deactivate:', e);
+      UI.toast('Could not deactivate account.', 'err');
+    }
+  },
+
+  async deleteAccount(){
+    const confirmEl = $('#deleteConfirm');
+    if (!confirmEl || confirmEl.value.trim() !== 'DELETE'){
+      UI.toast('Type DELETE to confirm.', 'err');
+      return;
+    }
+
+    /* Two-step confirmation via modal */
+    this.openModal({
+      title: 'Delete account?',
+      body: 'This is your last chance. Once deleted, your profile, stats, matches, and KYC documents are gone forever. Any un-withdrawn balance is forfeited.',
+      confirmLabel: 'Yes, delete forever',
+      danger: true,
+      onConfirm: async () => {
+        this.closeModal();
+        try {
+          if (!Supa.HAS){
+            const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+            const filtered = users.filter(u => u.id !== State.session.user.id);
+            localStorage.setItem('dls_demo_users', JSON.stringify(filtered));
+          } else {
+            try {
+              await Supa.client.rpc('delete_my_account');
+            } catch(e){
+              warn('delete_my_account rpc unavailable:', e.message);
+              await Supa.client.from('profiles')
+                .update({ deleted: true, deleted_at: new Date().toISOString() })
+                .eq('id', State.session.user.id);
+            }
+          }
+          UI.toast('Account deleted. Goodbye.', 'info', 5000);
+          setTimeout(() => this.logout(), 1500);
+        } catch(e){
+          err('deleteAccount:', e);
+          UI.toast('Could not delete account. Contact support.', 'err');
+        }
+      }
+    });
+  },
+
+  /* ── Modal ─────────────────────────────────────────────────── */
+  openModal({ title, body, confirmLabel, danger, onConfirm }){
+    const root = $('#modalRoot');
+    root.innerHTML = `
+      <div class="modal-back" onclick="Settings.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>${UI.escape(title)}</h3>
+          <p>${UI.escape(body)}</p>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Settings.closeModal()">Cancel</button>
+            <button class="btn ${danger ? 'btn-danger-solid' : 'btn-primary'}" id="modalConfirm">${UI.escape(confirmLabel)}</button>
+          </div>
+        </div>
+      </div>
+    `;
+    const btn = document.getElementById('modalConfirm');
+    if (btn) btn.addEventListener('click', onConfirm);
+  },
+
+  closeModal(e){
+    if (e && e.target && e.target.className !== 'modal-back') return;
+    $('#modalRoot').innerHTML = '';
+  },
+
+  /* ── Logout ────────────────────────────────────────────────── */
+  async logout(){
+    try { if (Supa.HAS) await Supa.client.auth.signOut(); } catch(e){ warn('signOut:', e); }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    location.href = CONFIG.LOGIN_PAGE;
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Settings boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Settings (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Settings (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Settings.init(); }
+  catch(e){ err('Settings init failed:', e); UI.toast('Failed to load settings.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'settings-1.0.0',
+  async debug(){
+    console.log('======== DLS Settings v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Tab:', State.tab);
+    console.log('Profile:', State.profile);
+    console.log('Notif prefs:', State.notif);
+    console.log('Privacy prefs:', State.privacy);
+    console.log('Sessions:', State.sessions.length);
+    console.log('===============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
