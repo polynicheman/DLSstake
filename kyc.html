@@ -4,8 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#070d16" />
-<title>Verify identity — DLS Stake</title>
-<meta name="description" content="Verify your identity to unlock withdrawals on DLS Stake." />
+<title>Verify Identity — DLS Stake</title>
+<meta name="description" content="Verify your identity to unlock real-money withdrawals on DLS Stake." />
 
 <style>
 :root{
@@ -14,12 +14,12 @@
   --border:#1e3048; --border-2:#27405f;
   --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
   --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
-  --warn:#ffb020; --purple:#8b5cf6;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
   --text:#e6eef8; --text-2:#b8c9dc;
   --muted:#7b90a8; --muted-2:#556b85;
   --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
   --shadow:0 8px 28px rgba(0,0,0,.45);
-  --shadow-lg:0 20px 60px rgba(0,0,0,.6);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
   --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
   --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
   --nav-h:62px;
@@ -33,8 +33,9 @@ a{color:inherit;text-decoration:none}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
   radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
   radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
-  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.05), transparent 60%);}
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
 .wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
 
 /* NAV */
 .nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
@@ -46,7 +47,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
 .nav-links a:hover{color:var(--text)}
 .nav-links a.active{color:var(--primary)}
-@media(min-width:860px){.nav-links{display:flex}}
+@media(min-width:980px){.nav-links{display:flex}}
 .nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
 .nav-user:hover{background:var(--surface-2)}
 .nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
@@ -60,145 +61,130 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
 .page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
 
-.grid{display:grid;gap:22px;grid-template-columns:1fr}
-@media(min-width:980px){.grid{grid-template-columns:1.3fr 1fr;align-items:start}}
+/* SOFT GATE BANNER */
+.softgate{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:var(--radius);background:linear-gradient(180deg, rgba(47,128,237,.10), rgba(47,128,237,.04));border:1px solid rgba(47,128,237,.32);margin-bottom:24px;flex-wrap:wrap}
+.softgate .ico{font-size:1.5rem;line-height:1;flex-shrink:0}
+.softgate .body{flex:1;min-width:220px}
+.softgate h3{font-size:1rem;font-weight:800;color:#bfd9ff;margin-bottom:6px}
+.softgate p{font-size:.85rem;line-height:1.6;color:#9cc4ff}
+.softgate .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;width:100%;margin-top:4px}
 
-.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px}
-.panel + .panel{margin-top:18px}
-.panel h2{font-size:1rem;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
-.panel .sub{font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.55}
+/* STATUS HERO */
+.status-hero{border-radius:var(--radius-lg);padding:32px 28px;margin-bottom:26px;text-align:center;position:relative;overflow:hidden}
+.status-hero::after{content:'';position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:360px;height:360px;border-radius:50%;pointer-events:none}
+.status-hero.verified{background:linear-gradient(180deg, rgba(0,217,126,.14), rgba(0,217,126,.02));border:1px solid rgba(0,217,126,.35)}
+.status-hero.verified::after{background:radial-gradient(circle, rgba(0,217,126,.16), transparent 65%)}
+.status-hero.pending{background:linear-gradient(180deg, rgba(255,176,32,.13), rgba(255,176,32,.02));border:1px solid rgba(255,176,32,.32)}
+.status-hero.pending::after{background:radial-gradient(circle, rgba(255,176,32,.16), transparent 65%)}
+.status-hero.rejected{background:linear-gradient(180deg, rgba(255,77,94,.12), rgba(255,77,94,.02));border:1px solid rgba(255,77,94,.32)}
+.status-hero.rejected::after{background:radial-gradient(circle, rgba(255,77,94,.16), transparent 65%)}
+.status-hero .badge-ico{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:2rem;margin:0 auto 18px;position:relative;z-index:1}
+.status-hero.verified .badge-ico{background:rgba(0,217,126,.14);border:1px solid rgba(0,217,126,.4);color:var(--primary)}
+.status-hero.pending  .badge-ico{background:rgba(255,176,32,.14);border:1px solid rgba(255,176,32,.4);color:var(--warn)}
+.status-hero.rejected .badge-ico{background:rgba(255,77,94,.14);border:1px solid rgba(255,77,94,.4);color:var(--danger)}
+.status-hero h2{font-size:1.35rem;font-weight:900;letter-spacing:-.03em;position:relative;z-index:1;margin-bottom:8px}
+.status-hero p{font-size:.9rem;color:var(--text-2);max-width:520px;margin:0 auto;line-height:1.65;position:relative;z-index:1}
+.status-hero .meta-row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:22px;position:relative;z-index:1}
+.status-hero .meta-item{text-align:center}
+.status-hero .meta-item .k{font-size:.65rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.status-hero .meta-item .v{font-family:var(--ff-mono);font-size:.86rem;font-weight:800;color:var(--text-2)}
 
-/* STATUS BANNER */
-.status-banner{display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:var(--radius-lg);margin-bottom:22px}
-.status-banner .ico{font-size:1.6rem;line-height:1;flex-shrink:0}
-.status-banner .body{flex:1;min-width:0}
-.status-banner .body h3{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
-.status-banner .body p{font-size:.86rem;line-height:1.6;color:var(--text-2)}
-.status-banner .body .meta{font-size:.74rem;color:var(--muted);margin-top:8px;font-family:var(--ff-mono)}
-.status-banner.pending{background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.28)}
-.status-banner.pending .ico{color:var(--warn)}
-.status-banner.verified{background:rgba(0,217,126,.07);border:1px solid rgba(0,217,126,.28)}
-.status-banner.verified .ico{color:var(--primary)}
-.status-banner.rejected{background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28)}
-.status-banner.rejected .ico{color:var(--danger)}
+/* STEPPER */
+.stepper{margin-bottom:26px}
+.step-track{position:relative;height:4px;border-radius:2px;background:var(--border);margin-bottom:14px;overflow:hidden}
+.step-track i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);border-radius:2px;transition:width .35s cubic-bezier(.4,0,.2,1)}
+.step-items{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;cursor:pointer;transition:.18s}
+.step-item .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.74rem;font-weight:900;background:var(--surface);border:1px solid var(--border-2);color:var(--muted);transition:.22s}
+.step-item .lbl{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);transition:.18s}
+.step-item.active .dot{background:linear-gradient(180deg,var(--primary),var(--primary-dark));border-color:var(--primary);color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.step-item.active .lbl{color:var(--text)}
+.step-item.done .dot{background:rgba(0,217,126,.14);border-color:rgba(0,217,126,.45);color:var(--primary)}
+.step-item.done .lbl{color:var(--text-2)}
+.step-item.locked{cursor:not-allowed;opacity:.55}
 
-/* STEPS */
-.steps{display:flex;gap:6px;margin-bottom:24px}
-.step-dot{flex:1;display:flex;flex-direction:column;gap:6px;font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2);text-align:center}
-.step-dot .bar{height:4px;border-radius:2px;background:var(--border);transition:.3s}
-.step-dot.done .bar{background:var(--primary)}
-.step-dot.active .bar{background:var(--primary);animation:pulse 1.4s ease-in-out infinite}
-.step-dot.done,.step-dot.active{color:var(--text)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
-
-/* SECTION LABEL */
-.section-label{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.section-label .num{width:22px;height:22px;border-radius:7px;background:rgba(0,217,126,.12);border:1px solid rgba(0,217,126,.28);display:grid;place-items:center;font-size:.7rem;font-weight:900;color:var(--primary);font-family:var(--ff-mono)}
-.panel-section{margin-bottom:28px}
-.panel-section:last-child{margin-bottom:0}
+/* PANEL */
+.panel{background:linear-gradient(180deg, var(--surface), var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;margin-bottom:22px}
+.panel-head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.panel-head .ico{width:44px;height:44px;min-width:44px;border-radius:14px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24);display:grid;place-items:center;font-size:1.2rem}
+.panel-head h2{font-size:1.08rem;font-weight:900;letter-spacing:-.02em}
+.panel-head p{font-size:.78rem;color:var(--muted);margin-top:2px}
 
 /* FIELDS */
-.field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.label{font-size:.82rem;font-weight:700;color:var(--text-2);display:flex;justify-content:space-between;align-items:baseline}
-.label .hint{font-size:.74rem;font-weight:600;color:var(--muted-2)}
-.input{width:100%;padding:14px 16px;background:var(--bg-2);border:1px solid var(--border-2);border-radius:var(--radius);color:var(--text);font-size:.95rem;outline:none;transition:border-color .15s,box-shadow .15s}
-.input::placeholder{color:var(--muted-2)}
-.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
-.input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.15)}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.field label{font-size:.78rem;font-weight:700;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.72rem;color:var(--muted-2);margin-top:-2px}
+.input-text,.input-select{width:100%;padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:border-color .15s,box-shadow .15s}
+.input-text:focus,.input-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid,.input-select.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-text::placeholder{color:var(--muted-2)}
+select.input-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237b90a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+.row-2{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:620px){.row-2{grid-template-columns:1fr 1fr}}
 
-.err{font-size:.78rem;color:var(--danger);display:none;margin-top:-8px;margin-bottom:12px}
+/* UPLOAD DROP */
+.upload-grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:620px){.upload-grid{grid-template-columns:1fr 1fr}}
+.drop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:190px;padding:22px;border-radius:var(--radius);border:2px dashed var(--border-2);background:var(--surface-2);cursor:pointer;transition:.2s;text-align:center}
+.drop:hover{border-color:var(--primary);background:var(--surface-3)}
+.drop.invalid{border-color:var(--danger);background:rgba(255,77,94,.04)}
+.drop.filled{border-style:solid;border-color:rgba(0,217,126,.5);background:rgba(0,217,126,.04);cursor:default}
+.drop input[type=file]{display:none}
+.drop .drop-ico{font-size:1.9rem;opacity:.9}
+.drop .drop-title{font-size:.86rem;font-weight:800}
+.drop .drop-help{font-size:.74rem;color:var(--muted);max-width:230px;line-height:1.5}
+.drop img{width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);background:#000}
+.drop .remove{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:rgba(255,77,94,.15);border:1px solid rgba(255,77,94,.4);color:var(--danger);font-weight:900;font-size:.8rem;display:grid;place-items:center}
+.drop .remove:hover{background:rgba(255,77,94,.28)}
+.drop .tag-ok{position:absolute;top:10px;left:10px;font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:var(--radius-full);background:rgba(0,217,126,.18);color:var(--primary)}
+.drop .filemeta{font-size:.68rem;font-family:var(--ff-mono);color:var(--muted-2)}
+
+/* REVIEW */
+.review-list{display:grid;gap:0}
+.review-item{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--border);font-size:.86rem}
+.review-item:last-child{border-bottom:none}
+.review-item .k{color:var(--muted);font-weight:600}
+.review-item .v{font-weight:700;text-align:right;word-break:break-word;font-family:var(--ff-mono);font-size:.84rem}
+
+/* CHECKBOX */
+.check{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.15s;margin-bottom:12px}
+.check:hover{border-color:var(--border-2)}
+.check.checked{border-color:rgba(0,217,126,.4);background:rgba(0,217,126,.05)}
+.check input{display:none}
+.check .box{width:20px;height:20px;min-width:20px;border-radius:6px;border:2px solid var(--border-2);display:grid;place-items:center;font-size:.72rem;font-weight:900;color:transparent;transition:.15s;margin-top:1px}
+.check.checked .box{background:var(--primary);border-color:var(--primary);color:#04140c}
+.check .txt{font-size:.83rem;line-height:1.55;color:var(--text-2)}
+.check .txt b{color:var(--text);font-weight:800}
+
+/* ERRORS / NOTICES */
+.err{font-size:.78rem;color:var(--danger);display:none;margin-bottom:14px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28)}
 .err.show{display:block}
-
-/* UPLOAD SLOTS */
-.upload-grid{display:grid;gap:14px;grid-template-columns:1fr;margin-bottom:18px}
-@media(min-width:640px){.upload-grid{grid-template-columns:1fr 1fr}}
-
-.upload-slot{
-  position:relative;
-  padding:24px 18px;
-  border:2px dashed var(--border-2);
-  border-radius:var(--radius);
-  background:var(--surface-2);
-  text-align:center;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  min-height:180px;
-  cursor:pointer;
-  transition:.2s;
-}
-.upload-slot:hover:not(.filled){border-color:var(--primary);background:var(--surface-3)}
-.upload-slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);background:rgba(0,217,126,.04);cursor:default}
-.upload-slot input[type="file"]{display:none}
-.upload-slot .uico{font-size:1.8rem;opacity:.85}
-.upload-slot .utitle{font-size:.9rem;font-weight:800}
-.upload-slot .usub{font-size:.75rem;color:var(--muted);line-height:1.5;max-width:220px}
-.upload-slot .upreview{width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);background:#000;display:block}
-.upload-slot .ubadge{position:absolute;top:10px;right:10px;font-size:.6rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:var(--radius-full)}
-.upload-slot .ubadge.ok{background:rgba(0,217,126,.2);color:var(--primary)}
-.upload-slot .ubadge.no{background:rgba(255,176,32,.18);color:var(--warn)}
-
-/* SELFIE */
-.selfie-wrap{display:flex;justify-content:center;margin-bottom:16px}
-.selfie-slot{
-  width:180px;height:180px;border-radius:50%;
-  border:3px dashed var(--border-2);
-  background:var(--surface-2);
-  display:grid;place-items:center;
-  cursor:pointer;transition:.2s;
-  overflow:hidden;position:relative;
-}
-.selfie-slot:hover:not(.filled){border-color:var(--primary);background:var(--surface-3)}
-.selfie-slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);cursor:default}
-.selfie-slot img{width:100%;height:100%;object-fit:cover}
-.selfie-slot .placeholder{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted)}
-.selfie-slot .placeholder .e{font-size:2rem;opacity:.8}
-.selfie-slot .placeholder .t{font-size:.78rem;font-weight:700}
-.selfie-slot .placeholder .s{font-size:.68rem;color:var(--muted-2)}
-.selfie-slot input{display:none}
-
-/* TWO COLUMN */
-.two{display:grid;gap:12px;grid-template-columns:1fr}
-@media(min-width:520px){.two{grid-template-columns:1fr 1fr}}
-
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s;white-space:nowrap}
-.btn:active{transform:translateY(1px) scale(.99)}
-.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
-.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 22px var(--primary-glow)}
-.btn-primary:hover:not(:disabled){filter:brightness(1.06);box-shadow:0 10px 32px var(--primary-glow)}
-.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
-.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
-.btn-block{width:100%}
-.btn-lg{padding:16px 26px;font-size:1rem}
-
-/* NOTICE */
-.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.55;margin-bottom:18px}
+.notice{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.6;margin-bottom:18px}
 .notice.info{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
 .notice.warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
 .notice.ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
-.notice .ico{font-size:1rem;line-height:1.3;flex-shrink:0}
+.notice.danger{background:rgba(255,77,94,.09);border:1px solid rgba(255,77,94,.28);color:#ff97a4}
+.notice .ico{font-size:1rem;line-height:1.35;flex-shrink:0}
 .notice b{font-weight:800}
 
-/* ASIDE */
-.aside-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;position:sticky;top:calc(var(--nav-h) + 20px)}
-.aside-card + .aside-card{margin-top:18px}
-.aside-card h3{font-size:.92rem;font-weight:800;letter-spacing:-.01em;margin-bottom:14px}
-.aside-list{display:grid;gap:14px}
-.aside-item{display:flex;gap:12px;align-items:flex-start}
-.aside-item .ico{width:36px;height:36px;min-width:36px;border-radius:10px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:.95rem}
-.aside-item.blue .ico{background:rgba(47,128,237,.1);border-color:rgba(47,128,237,.22)}
-.aside-item.warn .ico{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.22)}
-.aside-item .txt{flex:1;min-width:0}
-.aside-item .txt h4{font-size:.85rem;font-weight:800;margin-bottom:2px}
-.aside-item .txt p{font-size:.76rem;color:var(--muted);line-height:1.5}
-
-.checklist{display:grid;gap:10px;font-size:.82rem;color:var(--text-2);line-height:1.6;list-style:none}
-.checklist li{display:flex;gap:8px;align-items:flex-start}
-.checklist li::before{content:'✓';color:var(--primary);font-weight:900;flex-shrink:0}
-
-/* LOADING */
-.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
-.spin{width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 24px;border-radius:var(--radius-full);font-weight:800;font-size:.94rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 28px;font-size:1rem}
+.btn-sm{padding:10px 18px;font-size:.84rem}
+.nav-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.nav-buttons .btn{flex:1;min-width:150px}
 
 /* FOOTER */
 footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
@@ -215,6 +201,12 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* LOADING */
+.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;animation:spin .7s linear infinite;display:inline-block}
+.spin.light{border-color:rgba(0,217,126,.25);border-top-color:var(--primary)}
+@keyframes spin{to{transform:rotate(360deg)}}
 ::selection{background:var(--primary);color:#04140c}
 </style>
 </head>
@@ -230,6 +222,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <div class="nav-links">
       <a href="dashboard.html">Dashboard</a>
       <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
       <a href="create-match.html">Create</a>
       <a href="wallet.html">Wallet</a>
       <a href="profile.html">Profile</a>
@@ -242,17 +235,14 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 </nav>
 
 <main class="wrap page">
-
   <div class="page-head">
     <div class="eyebrow">Identity</div>
     <h1 class="page-title">Verify your identity</h1>
-    <div class="page-sub">Required to withdraw your winnings to a Nigerian bank account.</div>
+    <div class="page-sub">Required once before your first real-money withdrawal. Takes about 3 minutes.</div>
   </div>
 
-  <div id="statusBanner"></div>
-
   <div id="body">
-    <div class="loading-card"><span class="spin"></span> Loading…</div>
+    <div class="loading-card"><span class="spin light"></span> Loading verification status…</div>
   </div>
 
   <footer>
@@ -260,6 +250,8 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
       <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
       <div class="foot-links">
         <a href="dashboard.html">Dashboard</a>
+        <a href="lobby.html">Lobby</a>
+        <a href="discover.html">Discover</a>
         <a href="wallet.html">Wallet</a>
         <a href="profile.html">Profile</a>
       </div>
@@ -279,12 +271,14 @@ const CONFIG = {
   SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
   LOGIN_PAGE:        'login.html',
-  DASHBOARD_PAGE:    'dashboard.html',
-  CURRENCY:          '₦',
+  WALLET_PAGE:       'wallet.html',
+  BUCKET:            'kyc-documents',
+  MAX_FILE_MB:       5,
   DEBUG:             true
 };
 
-const $ = (s) => document.querySelector(s);
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
 const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
 const warn = (...a) => console.warn('[DLS]', ...a);
 const err  = (...a) => console.error('[DLS]', ...a);
@@ -300,43 +294,18 @@ const UI = {
   },
   escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
   initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
-  timeAgo(iso){
+  date(iso){
     if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('en-NG',{day:'2-digit',month:'short',year:'numeric'}); }
+    catch { return '—'; }
+  },
+  timeAgo(iso){
+    if (!iso) return '';
     const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
     if (s < 60) return 'just now';
     if (s < 3600) return Math.floor(s/60)+'m ago';
     if (s < 86400) return Math.floor(s/3600)+'h ago';
     return Math.floor(s/86400)+'d ago';
-  },
-  fieldError(inputId, message){
-    const input = document.getElementById(inputId);
-    const errEl = document.getElementById(inputId + 'Err');
-    if (message){
-      if (input) input.classList.add('invalid');
-      if (errEl){ errEl.textContent = message; errEl.classList.add('show'); }
-    } else {
-      if (input) input.classList.remove('invalid');
-      if (errEl){ errEl.textContent = ''; errEl.classList.remove('show'); }
-    }
-  },
-  alert(containerId, message, type='info'){
-    const el = document.getElementById(containerId);
-    if (!el) return;
-    if (!message){ el.innerHTML = ''; return; }
-    const icon = type === 'warn' ? '⚠' : type === 'ok' ? '✓' : type === 'danger' ? '⚠' : 'ℹ';
-    el.innerHTML = `<div class="notice ${type}"><span class="ico">${icon}</span><div>${message}</div></div>`;
-  },
-  busy(btnId, isBusy, label='Please wait…'){
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-    if (isBusy){
-      btn.dataset.label = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = `<span class="spin"></span> ${label}`;
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = btn.dataset.label || btn.innerHTML;
-    }
   }
 };
 
@@ -361,15 +330,48 @@ const Supa = (() => {
 })();
 
 /* ============================================================================
+   CONSTANTS
+   ============================================================================ */
+const NG_STATES = ['Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno','Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT - Abuja','Gombe','Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos','Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto','Taraba','Yobe','Zamfara'];
+
+const ID_TYPES = [
+  { value:'nin',        label:'National Identification Number (NIN)' },
+  { value:'bvn',        label:'Bank Verification Number (BVN)' },
+  { value:'passport',   label:'International Passport' },
+  { value:'drivers',    label:"Driver's License" },
+  { value:'voters',     label:'Permanent Voter\'s Card (PVC)' }
+];
+
+const STEP_LABELS = ['Personal','ID document','Selfie','Review'];
+
+/* ============================================================================
    STATE
    ============================================================================ */
 const State = {
   session: null,
   profile: null,
-  idFront: null,
-  idBack: null,
-  selfie: null,
-  busy: false
+  loading: true,
+
+  gateDismissed: false,   // demo soft-gate dismissed
+  step: 1,
+  maxStep: 1,
+
+  form: {
+    fullName: '',
+    dob: '',
+    phone: '',
+    address: '',
+    state: '',
+    city: '',
+    idType: '',
+    idNumber: '',
+    declaration: false
+  },
+
+  files: { idFront: null, idBack: null, selfie: null },
+
+  submission: null,       // last submitted payload (for pending/rejected views)
+  submitting: false
 };
 
 /* ============================================================================
@@ -378,12 +380,15 @@ const State = {
 const Auth = {
   async getSession(){
     if (!Supa.HAS){
-      try { const raw = localStorage.getItem('dls_demo_session'); return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } }; }
-      catch { return { data:{ session:null } }; }
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
     }
     try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
     catch(e){ err('getSession:', e); return { data:{ session:null } }; }
   },
+
   async fetchProfile(id){
     if (!Supa.HAS){
       const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
@@ -393,6 +398,64 @@ const Auth = {
       const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
       return data || null;
     } catch(e){ err('fetchProfile:', e); return null; }
+  },
+
+  async patchProfile(id, patch){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      const u = users.find(x => x.id === id);
+      if (u){ Object.assign(u, patch); localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
+      return { error: null };
+    }
+    try {
+      const { error } = await Supa.client.from('profiles').update(patch).eq('id', id);
+      return { error };
+    } catch(e){ return { error: e }; }
+  }
+};
+
+/* ============================================================================
+   FILE HELPERS
+   ============================================================================ */
+const Files = {
+  toDataUrl(file){
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  },
+
+  validate(file){
+    if (!file) return 'No file selected.';
+    if (!file.type.startsWith('image/')) return 'Only image files are accepted.';
+    if (file.size > CONFIG.MAX_FILE_MB * 1024 * 1024) return `File must be under ${CONFIG.MAX_FILE_MB} MB.`;
+    return null;
+  },
+
+  async upload(userId, folder, file){
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path = `${userId}/${folder}-${Date.now()}.${ext}`;
+
+    if (!Supa.HAS){
+      const dataUrl = await this.toDataUrl(file);
+      return { data: { url: dataUrl, path }, error: null };
+    }
+
+    try {
+      const { error: upErr } = await Supa.client.storage
+        .from(CONFIG.BUCKET)
+        .upload(path, file, { upsert:true, contentType:file.type || 'image/jpeg', cacheControl:'3600' });
+      if (upErr) return { error: upErr };
+
+      /* Private bucket — create a long-lived signed URL for the reviewer */
+      const { data: signed, error: sErr } = await Supa.client.storage
+        .from(CONFIG.BUCKET)
+        .createSignedUrl(path, 60 * 60 * 24 * 30);
+      if (sErr) return { data:{ url: path, path }, error: null };
+      return { data:{ url: signed.signedUrl, path }, error: null };
+    } catch(e){ return { error:{ message: e.message } }; }
   }
 };
 
@@ -412,490 +475,662 @@ const KYC = {
       return;
     }
 
-    State.profile = await Auth.fetchProfile(State.session.user.id);
+    await this.reload();
+
+    window.addEventListener('focus', () => this.reload(true));
+  },
+
+  async reload(silent){
+    State.profile = await Auth.fetchProfile(State.session.user.id) || {};
+    State.loading = false;
+
+    /* Restore any previous submission for the pending/rejected views */
+    State.submission = await this.loadSubmission();
+
+    /* If they were rejected, jump them back to step 1 to resubmit */
+    if (this.status() === 'rejected' && State.maxStep < 4) State.maxStep = 1;
+
     this.renderNav();
     this.render();
+    if (!silent) log('KYC loaded — status:', this.status());
+  },
+
+  async loadSubmission(){
+    if (!Supa.HAS){
+      try { return JSON.parse(localStorage.getItem('dls_demo_kyc') || 'null'); }
+      catch { return null; }
+    }
+    try {
+      const { data } = await Supa.client
+        .from('kyc_submissions')
+        .select('*')
+        .eq('user_id', State.session.user.id)
+        .order('created_at', { ascending:false })
+        .limit(1)
+        .maybeSingle();
+      return data || null;
+    } catch { return null; }
+  },
+
+  status(){
+    const s = (State.profile?.kyc_status || 'unverified').toLowerCase();
+    if (s === 'verified' || s === 'approved') return 'verified';
+    if (s === 'pending' || s === 'under_review') return 'pending';
+    if (s === 'rejected' || s === 'failed') return 'rejected';
+    return 'unverified';
+  },
+
+  isDemoAccount(){
+    return (State.profile?.account_type || 'real') === 'demo';
   },
 
   renderNav(){
     const u = State.session?.user;
     const p = State.profile;
-    if (!u) return;
-    const username = p?.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
-    const av = document.getElementById('navAvatar');
-    const nm = document.getElementById('navName');
-    if (av) av.textContent = UI.initials(username);
-    if (nm) nm.textContent = username;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
   },
 
-  currentStatus(){
-    return (State.profile?.kyc_status || 'pending').toLowerCase();
-  },
-
+  /* ── Main render ───────────────────────────────────────────── */
   render(){
-    const status = this.currentStatus();
-    this.renderBanner(status);
-    this.renderBody(status);
-  },
-
-  renderBanner(status){
-    const banner = $('#statusBanner');
-    let cls, ico, title, sub;
-
-    if (status === 'verified'){
-      cls='verified'; ico='✓';
-      title = 'Identity verified';
-      sub = 'You can now withdraw your winnings to a Nigerian bank account.';
-    } else if (status === 'rejected'){
-      cls='rejected'; ico='✕';
-      title = 'Verification failed';
-      sub = 'Please review the reason below and re-submit your documents.';
-    } else {
-      cls='pending'; ico='⏳';
-      title = 'Verification required';
-      sub = 'Complete the steps below to unlock withdrawals. Approval usually takes under 24 hours.';
-    }
-
-    const updated = State.profile?.updated_at
-      ? `<div class="meta">Last updated ${UI.timeAgo(State.profile.updated_at)}</div>` : '';
-
-    banner.innerHTML = `
-      <div class="status-banner ${cls}">
-        <div class="ico">${ico}</div>
-        <div class="body">
-          <h3>${title}</h3>
-          <p>${sub}</p>
-          ${updated}
-        </div>
-      </div>`;
-  },
-
-  renderBody(status){
     const body = $('#body');
-    if (status === 'verified'){
-      body.innerHTML = this.verifiedView();
-      return;
-    }
-    body.innerHTML = this.formView(status);
-    this.wireUploads();
+    if (!body) return;
+
+    const st = this.status();
+
+    if (st === 'verified'){ body.innerHTML = this.viewVerified(); return; }
+    if (st === 'pending'){  body.innerHTML = this.viewPending();  return; }
+    if (st === 'rejected'){ body.innerHTML = this.viewRejected() + this.viewForm(); this.wireForm(); return; }
+
+    /* Unverified — show soft gate for demo users, then the form */
+    body.innerHTML = (this.isDemoAccount() && !State.gateDismissed ? this.viewSoftGate() : '') + this.viewForm();
+    this.wireForm();
   },
 
-  verifiedView(){
-    const p = State.profile;
-    const bank = p?.bank_details || null;
+  /* ── Verified ──────────────────────────────────────────────── */
+  viewVerified(){
+    const p = State.profile || {};
+    const s = State.submission || {};
+    const name = s.full_name || p.kyc_full_name || p.full_name || p.username || '—';
+    const idType = ID_TYPES.find(t => t.value === (s.id_type || p.kyc_id_type))?.label || '—';
+    const when = s.reviewed_at || s.updated_at || s.created_at || p.kyc_verified_at;
+
     return `
-      <div class="grid">
-        <div>
-          <div class="panel">
-            <h2>Your verified identity</h2>
-            <div class="sub">This information is encrypted and only used to process withdrawals.</div>
+      <div class="status-hero verified">
+        <div class="badge-ico">✓</div>
+        <h2>You're verified</h2>
+        <p>Your identity has been confirmed. You can now withdraw real money to your Nigerian bank account at any time.</p>
+        <div class="meta-row">
+          <div class="meta-item"><div class="k">Name</div><div class="v">${UI.escape(name)}</div></div>
+          <div class="meta-item"><div class="k">Document</div><div class="v">${UI.escape(idType)}</div></div>
+          <div class="meta-item"><div class="k">Verified</div><div class="v">${UI.escape(UI.date(when))}</div></div>
+        </div>
+      </div>
 
-            <div class="panel-section">
-              <div class="section-label"><span class="num">1</span> Account</div>
-              <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;font-size:.9rem;line-height:1.7">
-                <div><b>Username:</b> ${UI.escape(p?.username || '—')}</div>
-                <div><b>DLS username:</b> ${UI.escape(p?.dls_username || '—')}</div>
-                <div><b>Email:</b> ${UI.escape(p?.email || '—')}</div>
-              </div>
-            </div>
+      <div class="notice ok">
+        <span class="ico">🔒</span>
+        <div>Your documents are encrypted at rest and only visible to our compliance reviewers. We never share them with other players.</div>
+      </div>
 
-            <div class="panel-section">
-              <div class="section-label"><span class="num">2</span> Bank account on file</div>
-              ${bank ? `
-                <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;font-size:.9rem;line-height:1.7">
-                  <div><b>Bank:</b> ${UI.escape(bank.bank_name || bank.bank_code || '—')}</div>
-                  <div><b>Account:</b> <span style="font-family:var(--ff-mono)">${UI.escape(bank.account_number || '—')}</span></div>
-                  <div><b>Name:</b> ${UI.escape(bank.account_name || '—')}</div>
-                </div>
-                <button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="KYC.updateBank()">Update bank details</button>
-              ` : `
-                <div class="notice warn">
-                  <span class="ico">⚠</span>
-                  <div>No bank account on file. You'll be asked for it the first time you withdraw.</div>
-                </div>
-                <button class="btn btn-primary btn-block" onclick="KYC.updateBank()">Add bank details</button>
-              `}
-            </div>
+      <div class="nav-buttons">
+        <button class="btn btn-primary" onclick="location.href='${CONFIG.WALLET_PAGE}'">Go to wallet</button>
+        <button class="btn btn-ghost" onclick="location.href='dashboard.html'">Back to dashboard</button>
+      </div>
+    `;
+  },
+
+  /* ── Pending ───────────────────────────────────────────────── */
+  viewPending(){
+    const s = State.submission || {};
+    const submitted = s.created_at || s.submitted_at;
+    return `
+      <div class="status-hero pending">
+        <div class="badge-ico">⏳</div>
+        <h2>Under review</h2>
+        <p>We received your documents and our compliance team is reviewing them. This usually takes under 24 hours — you'll be notified as soon as it's done.</p>
+        <div class="meta-row">
+          <div class="meta-item"><div class="k">Submitted</div><div class="v">${UI.escape(UI.timeAgo(submitted) || '—')}</div></div>
+          <div class="meta-item"><div class="k">Reference</div><div class="v">${UI.escape((s.id || '').slice(0,8).toUpperCase() || '—')}</div></div>
+          <div class="meta-item"><div class="k">ETA</div><div class="v">&lt; 24 hrs</div></div>
+        </div>
+      </div>
+
+      <div class="notice info">
+        <span class="ico">ℹ</span>
+        <div>You can keep playing and staking in the meantime. Only <b>withdrawals</b> are paused until verification completes.</div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-primary" onclick="location.href='dashboard.html'">Back to dashboard</button>
+        <button class="btn btn-ghost" onclick="KYC.reload()">↻ Refresh status</button>
+      </div>
+    `;
+  },
+
+  /* ── Rejected ──────────────────────────────────────────────── */
+  viewRejected(){
+    const s = State.submission || {};
+    const reason = s.rejection_reason || State.profile?.kyc_rejection_reason ||
+      'One or more of your documents could not be read clearly. Please make sure the images are sharp, well-lit, and show all four corners of the document.';
+    return `
+      <div class="status-hero rejected">
+        <div class="badge-ico">✕</div>
+        <h2>Verification failed</h2>
+        <p>${UI.escape(reason)}</p>
+      </div>
+
+      <div class="notice warn">
+        <span class="ico">⚠</span>
+        <div>Fix the issue below and resubmit. Your previous documents have been discarded for security.</div>
+      </div>
+    `;
+  },
+
+  /* ── Soft gate (demo users) ────────────────────────────────── */
+  viewSoftGate(){
+    return `
+      <div class="softgate" id="softGate">
+        <div class="ico">🎮</div>
+        <div class="body">
+          <h3>You're on a demo account</h3>
+          <p>
+            Demo money can't be withdrawn, so you don't need to verify your identity yet.
+            Verify now if you'd like to be ready the moment you switch to real money — or skip it and come back later.
+          </p>
+          <div class="actions">
+            <button class="btn btn-ghost btn-sm" onclick="KYC.skipGate()">Skip for now</button>
+            <button class="btn btn-outline btn-sm" onclick="location.href='${CONFIG.WALLET_PAGE}'">Go to wallet</button>
           </div>
         </div>
-        <aside>
-          <div class="aside-card">
-            <h3>Status</h3>
-            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
-              <span style="color:var(--muted);font-size:.8rem">KYC</span>
-              <span style="color:var(--primary);font-size:.78rem;font-weight:800">Verified ✓</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:12px 0">
-              <span style="color:var(--muted);font-size:.8rem">Withdrawals</span>
-              <span style="color:var(--primary);font-size:.85rem;font-weight:800">Unlocked</span>
-            </div>
-            <button class="btn btn-primary btn-block" style="margin-top:16px" onclick="location.href='${CONFIG.DASHBOARD_PAGE}'">
-              Back to dashboard
-            </button>
-          </div>
-        </aside>
-      </div>`;
+      </div>
+    `;
   },
 
-  formView(status){
-    const rejected = status === 'rejected';
+  skipGate(){
+    State.gateDismissed = true;
+    this.render();
+    UI.toast('No problem — you can verify any time from your profile.', 'info');
+  },
+
+  /* ── The multi-step form ───────────────────────────────────── */
+  viewForm(){
     return `
-      <div class="grid">
-        <div>
-          <div class="panel">
-            <h2>Identity verification</h2>
-            <div class="sub">All documents are encrypted and only used to confirm you're you. Approval typically within 24 hours.</div>
-
-            <div class="steps">
-              <div class="step-dot active"><div class="bar"></div><div>Documents</div></div>
-              <div class="step-dot"><div class="bar"></div><div>Selfie</div></div>
-              <div class="step-dot"><div class="bar"></div><div>Bank</div></div>
-              <div class="step-dot"><div class="bar"></div><div>Review</div></div>
-            </div>
-
-            ${rejected ? `
-              <div class="notice warn">
-                <span class="ico">⚠</span>
-                <div><b>Previous submission was rejected.</b> Please re-upload the documents below, making sure all details are clearly visible and match your account name.</div>
-              </div>` : ''}
-
-            <div class="panel-section">
-              <div class="section-label"><span class="num">1</span> Government ID</div>
-
-              <div class="upload-grid">
-                <label class="upload-slot" for="idFrontInput" id="idFrontSlot">
-                  <div class="ubadge no" id="idFrontBadge">Required</div>
-                  <div class="uico">🪪</div>
-                  <div class="utitle">Front of ID</div>
-                  <div class="usub">NIN slip, driver's licence, voter's card, or international passport</div>
-                  <input type="file" id="idFrontInput" accept="image/*" capture="environment">
-                </label>
-
-                <label class="upload-slot" for="idBackInput" id="idBackSlot">
-                  <div class="ubadge no" id="idBackBadge">Required</div>
-                  <div class="uico">🪪</div>
-                  <div class="utitle">Back of ID</div>
-                  <div class="usub">If your ID has information on both sides</div>
-                  <input type="file" id="idBackInput" accept="image/*" capture="environment">
-                </label>
-              </div>
-            </div>
-
-            <div class="panel-section">
-              <div class="section-label"><span class="num">2</span> Selfie with your ID</div>
-              <div class="notice info">
-                <span class="ico">ℹ</span>
-                <div>Hold your ID next to your face and take a clear selfie. Your face and the ID details must both be visible.</div>
-              </div>
-              <div class="selfie-wrap">
-                <label class="selfie-slot" for="selfieInput" id="selfieSlot">
-                  <div class="placeholder">
-                    <div class="e">🤳</div>
-                    <div class="t">Take selfie</div>
-                    <div class="s">Tap to open camera</div>
-                  </div>
-                  <input type="file" id="selfieInput" accept="image/*" capture="user">
-                </label>
-              </div>
-            </div>
-
-            <div class="panel-section">
-              <div class="section-label"><span class="num">3</span> Bank account</div>
-
-              <div class="two">
-                <div class="field">
-                  <label class="label" for="bankName">Bank</label>
-                  <select id="bankName" class="input">
-                    <option value="">Select bank…</option>
-                    <option value="Access Bank" data-code="044">Access Bank</option>
-                    <option value="Access Bank (Diamond)" data-code="063">Access Bank (Diamond)</option>
-                    <option value="ALAT by Wema" data-code="035">ALAT by Wema</option>
-                    <option value="Zenith Bank" data-code="057">Zenith Bank</option>
-                    <option value="GTBank" data-code="058">Guaranty Trust Bank (GTB)</option>
-                    <option value="First Bank" data-code="011">First Bank of Nigeria</option>
-                    <option value="FCMB" data-code="214">First City Monument Bank (FCMB)</option>
-                    <option value="Fidelity Bank" data-code="070">Fidelity Bank</option>
-                    <option value="Heritage Bank" data-code="030">Heritage Bank</option>
-                    <option value="Jaiz Bank" data-code="301">Jaiz Bank</option>
-                    <option value="Keystone Bank" data-code="082">Keystone Bank</option>
-                    <option value="Parallex Bank" data-code="526">Parallex Bank</option>
-                    <option value="Polaris Bank" data-code="076">Polaris Bank</option>
-                    <option value="Stanbic IBTC" data-code="221">Stanbic IBTC</option>
-                    <option value="Standard Chartered" data-code="068">Standard Chartered</option>
-                    <option value="Sterling Bank" data-code="232">Sterling Bank</option>
-                    <option value="Suntrust Bank" data-code="100">Suntrust Bank</option>
-                    <option value="Union Bank" data-code="032">Union Bank</option>
-                    <option value="UBA" data-code="033">United Bank for Africa (UBA)</option>
-                    <option value="Unity Bank" data-code="215">Unity Bank</option>
-                    <option value="Wema Bank" data-code="035">Wema Bank</option>
-                    <option value="Kuda" data-code="50211">Kuda</option>
-                    <option value="Opay" data-code="999992">Opay</option>
-                    <option value="Moniepoint" data-code="50515">Moniepoint</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label class="label" for="bankAcct">Account number</label>
-                  <input class="input" id="bankAcct" type="text" inputmode="numeric" maxlength="10" placeholder="10 digits">
-                </div>
-              </div>
-              <div class="field">
-                <label class="label" for="bankAcctName">Account name</label>
-                <input class="input" id="bankAcctName" type="text" placeholder="As it appears on your bank statement">
-              </div>
-            </div>
-
-            <div class="err" id="submitErr"></div>
-
-            <button class="btn btn-primary btn-lg btn-block" id="submitBtn" onclick="KYC.submit()">
-              Submit for verification
-            </button>
-
-            <div class="notice info" style="margin-top:16px">
-              <span class="ico">🔒</span>
-              <div>Your documents are stored encrypted and are never shared. They're only used to verify your identity.</div>
-            </div>
-          </div>
+      <div class="stepper" id="stepper">
+        <div class="step-track"><i id="stepFill" style="width:0%"></i></div>
+        <div class="step-items" id="stepItems">
+          ${STEP_LABELS.map((label, i) => {
+            const n = i + 1;
+            return `<div class="step-item" data-step="${n}">
+              <div class="dot">${n}</div>
+              <div class="lbl">${label}</div>
+            </div>`;
+          }).join('')}
         </div>
+      </div>
 
-        <aside>
-          <div class="aside-card">
-            <h3>Why we ask</h3>
-            <div class="aside-list">
-              <div class="aside-item">
-                <div class="ico">🛡️</div>
-                <div class="txt">
-                  <h4>Prevent fraud</h4>
-                  <p>Real identity verification stops stolen accounts and fake payouts.</p>
-                </div>
-              </div>
-              <div class="aside-item blue">
-                <div class="ico">🏦</div>
-                <div class="txt">
-                  <h4>Bank compliance</h4>
-                  <p>Nigerian banks require us to know who's receiving payouts.</p>
-                </div>
-              </div>
-              <div class="aside-item warn">
-                <div class="ico">⏱️</div>
-                <div class="txt">
-                  <h4>Fast approval</h4>
-                  <p>Most verifications complete within 24 hours.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="err" id="formErr"></div>
 
-          <div class="aside-card">
-            <h3>Document checklist</h3>
-            <ul class="checklist">
-              <li>All four corners of the ID visible</li>
-              <li>Text sharp and readable</li>
-              <li>No reflections or glare</li>
-              <li>Not expired</li>
-              <li>Photo on the ID matches your selfie</li>
-              <li>Name matches the account you're using</li>
-            </ul>
-          </div>
-        </aside>
-      </div>`;
+      <div id="stepBody"></div>
+
+      <div class="nav-buttons" id="stepNav"></div>
+    `;
   },
 
-  wireUploads(){
-    const wire = (inputId, key, isSelfie) => {
-      const input = document.getElementById(inputId);
-      if (!input) return;
-      input.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')){
-          UI.toast('Please pick an image.', 'err');
-          return;
-        }
-        if (file.size > 6 * 1024 * 1024){
-          UI.toast('Image too large (6 MB max).', 'err');
-          return;
-        }
-
-        const dataUrl = await new Promise((res, rej) => {
-          const r = new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
-        });
-
-        State[key] = { file, dataUrl };
-
-        if (isSelfie){
-          const slot = document.getElementById('selfieSlot');
-          slot.classList.add('filled');
-          slot.innerHTML = `<img src="${dataUrl}" alt=""><input type="file" id="selfieInput" accept="image/*" capture="user">`;
-          wire('selfieInput', key, true);
-        } else {
-          const slot = document.getElementById(inputId.replace('Input','Slot'));
-          slot.classList.add('filled');
-          const existingInput = slot.querySelector('input[type="file"]');
-          slot.innerHTML = `
-            <div class="ubadge ok">Ready</div>
-            <img class="upreview" src="${dataUrl}" alt="">
-            <div class="utitle" style="font-size:.8rem">${inputId === 'idFrontInput' ? 'Front' : 'Back'} uploaded</div>
-            <div class="usub" style="font-size:.7rem">Tap to replace</div>
-          `;
-          slot.appendChild(existingInput);
-        }
+  wireForm(){
+    /* Step clicks */
+    $$('#stepItems .step-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const n = Number(el.dataset.step);
+        if (n <= State.maxStep) KYC.goStep(n);
+        else UI.toast('Complete the current step first.', 'info');
       });
-    };
-
-    wire('idFrontInput', 'idFront', false);
-    wire('idBackInput',  'idBack',  false);
-    wire('selfieInput',  'selfie',  true);
+    });
+    this.renderStep();
   },
 
-  validate(){
-    const errEl = $('#submitErr');
-    errEl.classList.remove('show');
+  goStep(n){
+    if (n === State.step) return;
+    if (n > State.step && !this.validateStep(State.step, true)) return;
+    State.step = Math.max(1, Math.min(4, n));
+    State.maxStep = Math.max(State.maxStep, State.step);
+    $('#formErr').classList.remove('show');
+    this.renderStep();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
 
-    const fail = (msg) => {
-      errEl.textContent = msg;
-      errEl.classList.add('show');
-      errEl.scrollIntoView({ behavior:'smooth', block:'center' });
+  renderStep(){
+    /* Stepper visuals */
+    $$('#stepItems .step-item').forEach(el => {
+      const n = Number(el.dataset.step);
+      el.classList.toggle('active', n === State.step);
+      el.classList.toggle('done', n < State.step || (n <= State.maxStep && n !== State.step));
+      el.classList.toggle('locked', n > State.maxStep);
+    });
+    const fill = $('#stepFill');
+    if (fill) fill.style.width = ((State.step - 1) / (STEP_LABELS.length - 1) * 100) + '%';
+
+    const bodyEl = $('#stepBody');
+    const navEl  = $('#stepNav');
+    if (!bodyEl || !navEl) return;
+
+    if (State.step === 1){ bodyEl.innerHTML = this.stepPersonal(); }
+    else if (State.step === 2){ bodyEl.innerHTML = this.stepDocument(); }
+    else if (State.step === 3){ bodyEl.innerHTML = this.stepSelfie(); }
+    else { bodyEl.innerHTML = this.stepReview(); }
+
+    navEl.innerHTML = this.stepNavHtml();
+    this.wireStep();
+  },
+
+  stepNavHtml(){
+    const back = State.step > 1
+      ? `<button class="btn btn-ghost" onclick="KYC.goStep(${State.step - 1})">← Back</button>` : '';
+    const next = State.step < 4
+      ? `<button class="btn btn-primary" onclick="KYC.next()">Continue →</button>`
+      : `<button class="btn btn-primary btn-lg" id="submitBtn" onclick="KYC.submit()">Submit for verification</button>`;
+    return back + next;
+  },
+
+  /* ── STEP 1: Personal ──────────────────────────────────────── */
+  stepPersonal(){
+    const f = State.form;
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">👤</div>
+          <div style="flex:1">
+            <h2>Personal details</h2>
+            <p>Exactly as they appear on your ID document</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Full legal name <span class="req">*</span></label>
+          <input class="input-text" id="f_fullName" type="text" placeholder="e.g. Chinedu Okonkwo"
+                 value="${UI.escape(f.fullName)}" autocomplete="name">
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Date of birth <span class="req">*</span></label>
+            <input class="input-text" id="f_dob" type="date" value="${UI.escape(f.dob)}" max="${new Date().toISOString().slice(0,10)}">
+          </div>
+          <div class="field">
+            <label>Phone number <span class="req">*</span></label>
+            <input class="input-text" id="f_phone" type="tel" inputmode="numeric" placeholder="08012345678"
+                   maxlength="11" value="${UI.escape(f.phone)}" autocomplete="tel">
+            <div class="hint">Nigerian number, 11 digits</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Residential address <span class="req">*</span></label>
+          <input class="input-text" id="f_address" type="text" placeholder="Street, area, landmark"
+                 value="${UI.escape(f.address)}" autocomplete="street-address">
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>State <span class="req">*</span></label>
+            <select class="input-select" id="f_state">
+              <option value="">Select state…</option>
+              ${NG_STATES.map(s => `<option value="${UI.escape(s)}"${f.state === s ? ' selected' : ''}>${UI.escape(s)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>City / town <span class="req">*</span></label>
+            <input class="input-text" id="f_city" type="text" placeholder="e.g. Ikeja"
+                   value="${UI.escape(f.city)}">
+          </div>
+        </div>
+
+        <div class="notice info">
+          <span class="ico">ℹ</span>
+          <div>Your name must match the name on your bank account, or withdrawals will be rejected by the bank.</div>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── STEP 2: Document ──────────────────────────────────────── */
+  stepDocument(){
+    const f = State.form;
+    const front = State.files.idFront;
+    const back  = State.files.idBack;
+    const needsBack = ['drivers','voters'].includes(f.idType);
+
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🪪</div>
+          <div style="flex:1">
+            <h2>Identity document</h2>
+            <p>Government-issued, valid, and clearly photographed</p>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Document type <span class="req">*</span></label>
+            <select class="input-select" id="f_idType">
+              <option value="">Select document…</option>
+              ${ID_TYPES.map(t => `<option value="${t.value}"${f.idType === t.value ? ' selected' : ''}>${UI.escape(t.label)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>Document number <span class="req">*</span></label>
+            <input class="input-text" id="f_idNumber" type="text" placeholder="Enter the number on the document"
+                   value="${UI.escape(f.idNumber)}" style="font-family:var(--ff-mono);letter-spacing:.04em">
+          </div>
+        </div>
+
+        <div class="notice warn">
+          <span class="ico">📸</span>
+          <div>
+            <b>Photo tips:</b> use good lighting, avoid glare and shadows, keep the whole document in frame,
+            and make sure every number and letter is readable. Blurry photos are the #1 cause of rejection.
+          </div>
+        </div>
+
+        <div class="upload-grid">
+          ${this.dropHtml('idFront', 'Front of document', 'The side with your photo and details', front, true)}
+          ${this.dropHtml('idBack', needsBack ? 'Back of document' : 'Back of document (optional)',
+              needsBack ? 'Required for this document type' : 'Only needed if your document has a back', back, needsBack)}
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── STEP 3: Selfie ────────────────────────────────────────── */
+  stepSelfie(){
+    const selfie = State.files.selfie;
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🤳</div>
+          <div style="flex:1">
+            <h2>Selfie holding your ID</h2>
+            <p>Proves the document belongs to you</p>
+          </div>
+        </div>
+
+        <div class="notice info">
+          <span class="ico">💡</span>
+          <div>
+            Hold your ID next to your face, look straight at the camera, and make sure <b>both your face
+            and the document</b> are clearly visible. No hats, sunglasses, or filters.
+          </div>
+        </div>
+
+        <div class="upload-grid" style="grid-template-columns:1fr">
+          ${this.dropHtml('selfie', 'Your selfie with ID', 'Face and document both in frame', selfie, true, true)}
+        </div>
+
+        <label class="check ${State.form.declaration ? 'checked' : ''}" id="chkDeclare">
+          <input type="checkbox" id="f_declaration" ${State.form.declaration ? 'checked' : ''}>
+          <span class="box">✓</span>
+          <span class="txt">
+            I confirm this is a <b>live photo of me</b> taken right now, holding my own genuine ID document.
+            I understand that submitting someone else's identity is fraud and will result in a permanent ban.
+          </span>
+        </label>
+      </div>
+    `;
+  },
+
+  /* ── STEP 4: Review ────────────────────────────────────────── */
+  stepReview(){
+    const f = State.form;
+    const idLabel = ID_TYPES.find(t => t.value === f.idType)?.label || '—';
+
+    return `
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🔍</div>
+          <div style="flex:1">
+            <h2>Review your submission</h2>
+            <p>Check everything is correct before sending</p>
+          </div>
+        </div>
+
+        <div class="review-list">
+          <div class="review-item"><span class="k">Full name</span><span class="v">${UI.escape(f.fullName || '—')}</span></div>
+          <div class="review-item"><span class="k">Date of birth</span><span class="v">${UI.escape(f.dob || '—')}</span></div>
+          <div class="review-item"><span class="k">Phone</span><span class="v">${UI.escape(f.phone || '—')}</span></div>
+          <div class="review-item"><span class="k">Address</span><span class="v">${UI.escape(f.address || '—')}</span></div>
+          <div class="review-item"><span class="k">City / State</span><span class="v">${UI.escape((f.city || '—') + ', ' + (f.state || '—'))}</span></div>
+          <div class="review-item"><span class="k">Document</span><span class="v">${UI.escape(idLabel)}</span></div>
+          <div class="review-item"><span class="k">Document number</span><span class="v">${UI.escape(f.idNumber || '—')}</span></div>
+          <div class="review-item"><span class="k">ID front</span><span class="v">${State.files.idFront ? '✓ Attached' : '✕ Missing'}</span></div>
+          <div class="review-item"><span class="k">ID back</span><span class="v">${State.files.idBack ? '✓ Attached' : '— Not provided'}</span></div>
+          <div class="review-item"><span class="k">Selfie with ID</span><span class="v">${State.files.selfie ? '✓ Attached' : '✕ Missing'}</span></div>
+        </div>
+
+        <div class="notice warn" style="margin-top:20px">
+          <span class="ico">⚠</span>
+          <div>Once submitted, your documents go to our compliance team. You can't edit them while under review.</div>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Drop zone HTML ────────────────────────────────────────── */
+  dropHtml(key, title, help, file, required, wide){
+    if (file){
+      return `
+        <div class="drop filled" ${wide ? 'style="min-height:260px"' : ''}>
+          <div class="tag-ok">Attached</div>
+          <button class="remove" title="Remove" onclick="KYC.clearFile('${key}')">✕</button>
+          <img src="${file.dataUrl}" alt="">
+          <div class="filemeta">${UI.escape(file.name)} · ${(file.size/1024).toFixed(0)} KB</div>
+        </div>`;
+    }
+    return `
+      <label class="drop ${required ? '' : ''}" for="file_${key}" ${wide ? 'style="min-height:260px"' : ''}>
+        <div class="drop-ico">📤</div>
+        <div class="drop-title">${UI.escape(title)}${required ? ' <span style="color:var(--danger)">*</span>' : ''}</div>
+        <div class="drop-help">${UI.escape(help)}</div>
+        <div class="drop-help" style="font-family:var(--ff-mono);font-size:.68rem">JPG or PNG · max ${CONFIG.MAX_FILE_MB} MB</div>
+        <input type="file" id="file_${key}" accept="image/*" onchange="KYC.pickFile('${key}', this.files[0])">
+      </label>`;
+  },
+
+  /* ── Wire inputs for the current step ──────────────────────── */
+  wireStep(){
+    const bind = (id, key) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => { State.form[key] = el.value; el.classList.remove('invalid'); });
+      el.addEventListener('change', () => { State.form[key] = el.value; el.classList.remove('invalid'); });
+    };
+    bind('f_fullName','fullName');
+    bind('f_dob','dob');
+    bind('f_phone','phone');
+    bind('f_address','address');
+    bind('f_state','state');
+    bind('f_city','city');
+    bind('f_idType','idType');
+    bind('f_idNumber','idNumber');
+
+    const chk = $('#f_declaration');
+    if (chk){
+      chk.addEventListener('change', () => {
+        State.form.declaration = chk.checked;
+        $('#chkDeclare')?.classList.toggle('checked', chk.checked);
+      });
+    }
+  },
+
+  /* ── File picking ──────────────────────────────────────────── */
+  async pickFile(key, file){
+    if (!file) return;
+    const problem = Files.validate(file);
+    if (problem){ UI.toast(problem, 'err'); return; }
+
+    const dataUrl = await Files.toDataUrl(file);
+    State.files[key] = { file, dataUrl, name: file.name, size: file.size };
+
+    /* Changing document type affects whether back is required */
+    this.renderStep();
+    UI.toast('Image attached.', 'ok', 2200);
+  },
+
+  clearFile(key){
+    State.files[key] = null;
+    this.renderStep();
+  },
+
+  /* ── Validation ────────────────────────────────────────────── */
+  validateStep(step, silent){
+    const f = State.form;
+    let msg = '';
+
+    if (step === 1){
+      if (!f.fullName || f.fullName.trim().length < 3) msg = 'Enter your full legal name.';
+      else if (!f.dob) msg = 'Enter your date of birth.';
+      else if (new Date(f.dob) > new Date(Date.now() - 16 * 365.25 * 864e5)) msg = 'You must be at least 16 years old.';
+      else if (!/^0\d{10}$/.test((f.phone || '').replace(/\s/g,''))) msg = 'Enter a valid 11-digit Nigerian phone number.';
+      else if (!f.address || f.address.trim().length < 6) msg = 'Enter your residential address.';
+      else if (!f.state) msg = 'Select your state.';
+      else if (!f.city || f.city.trim().length < 2) msg = 'Enter your city or town.';
+    }
+    else if (step === 2){
+      if (!f.idType) msg = 'Select your document type.';
+      else if (!f.idNumber || f.idNumber.trim().length < 5) msg = 'Enter the document number.';
+      else if (!State.files.idFront) msg = 'Attach a photo of the front of your document.';
+      else if (['drivers','voters'].includes(f.idType) && !State.files.idBack)
+        msg = 'Attach a photo of the back of your document.';
+    }
+    else if (step === 3){
+      if (!State.files.selfie) msg = 'Attach your selfie holding your ID.';
+      else if (!f.declaration) msg = 'Tick the declaration to continue.';
+    }
+
+    if (msg){
+      if (!silent) this.showError(msg);
+      else UI.toast(msg, 'err');
       return false;
-    };
-
-    if (!State.idFront) return fail('Upload the front of your ID.');
-    if (!State.idBack)  return fail('Upload the back of your ID.');
-    if (!State.selfie)  return fail('Take a selfie holding your ID.');
-
-    const bankSel = document.getElementById('bankName');
-    const bankName = bankSel.value;
-    const bankCode = bankSel.selectedOptions[0]?.dataset.code;
-    const bankAcct = document.getElementById('bankAcct').value.trim();
-    const bankAcctName = document.getElementById('bankAcctName').value.trim();
-
-    if (!bankName) return fail('Select your bank.');
-    if (!/^\d{10}$/.test(bankAcct)) return fail('Account number must be 10 digits.');
-    if (!bankAcctName) return fail('Enter the account name.');
-
-    return { bankName, bankCode, bankAcct, bankAcctName };
+    }
+    return true;
   },
 
-  async submit(){
-    if (State.busy) return;
-    const v = this.validate();
-    if (!v) return;
+  showError(msg){
+    const el = $('#formErr');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add('show');
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+  },
 
-    State.busy = true;
-    UI.busy('submitBtn', true, 'Uploading…');
+  next(){
+    if (!this.validateStep(State.step)) return;
+    $('#formErr')?.classList.remove('show');
+    State.step = Math.min(4, State.step + 1);
+    State.maxStep = Math.max(State.maxStep, State.step);
+    this.renderStep();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  /* ── Submit ────────────────────────────────────────────────── */
+  async submit(){
+    if (State.submitting) return;
+
+    for (let s = 1; s <= 3; s++){
+      if (!this.validateStep(s)){
+        State.step = s;
+        State.maxStep = Math.max(State.maxStep, s);
+        this.renderStep();
+        return;
+      }
+    }
+
+    State.submitting = true;
+    const btn = $('#submitBtn');
+    const orig = btn ? btn.innerHTML : '';
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Uploading documents…'; }
 
     try {
       const uid = State.session.user.id;
-      const ts = Date.now();
-      const folder = `kyc/${uid}`;
 
-      const uploadOne = async (input, name) => {
-        if (!Supa.HAS) return input.dataUrl;
-        const ext = (input.file.name.split('.').pop() || 'jpg').toLowerCase();
-        const path = `${folder}/${name}-${ts}.${ext}`;
-        const { error: upErr } = await Supa.client.storage
-          .from('kyc-docs')
-          .upload(path, input.file, { upsert: true, contentType: input.file.type || 'image/jpeg', cacheControl:'600' });
-        if (upErr) throw upErr;
-        return path;
+      /* 1. Upload the three images */
+      const [front, back, selfie] = await Promise.all([
+        Files.upload(uid, 'id-front', State.files.idFront.file),
+        State.files.idBack ? Files.upload(uid, 'id-back', State.files.idBack.file) : Promise.resolve({ data:null, error:null }),
+        Files.upload(uid, 'selfie', State.files.selfie.file)
+      ]);
+
+      if (front.error) throw new Error('ID front upload failed: ' + (front.error.message || 'unknown'));
+      if (back.error)  throw new Error('ID back upload failed: ' + (back.error.message || 'unknown'));
+      if (selfie.error) throw new Error('Selfie upload failed: ' + (selfie.error.message || 'unknown'));
+
+      if (btn) btn.innerHTML = '<span class="spin"></span> Submitting…';
+
+      const payload = {
+        full_name:    State.form.fullName.trim(),
+        date_of_birth: State.form.dob,
+        phone:        State.form.phone.replace(/\s/g,''),
+        address:      State.form.address.trim(),
+        state:        State.form.state,
+        city:         State.form.city.trim(),
+        id_type:      State.form.idType,
+        id_number:    State.form.idNumber.trim().toUpperCase(),
+        id_front_url: front.data?.url || null,
+        id_back_url:  back.data?.url || null,
+        selfie_url:   selfie.data?.url || null,
+        id_front_path: front.data?.path || null,
+        id_back_path:  back.data?.path || null,
+        selfie_path:   selfie.data?.path || null,
+        submitted_at: new Date().toISOString()
       };
 
-      const idFrontPath = await uploadOne(State.idFront, 'front');
-      const idBackPath  = await uploadOne(State.idBack,  'back');
-      const selfiePath  = await uploadOne(State.selfie,  'selfie');
-
-      if (Supa.HAS){
-        const { error: upErr } = await Supa.client
-          .from('profiles')
-          .update({
-            kyc_status: 'pending',
-            bank_details: {
-              bank_name:      v.bankName,
-              bank_code:      v.bankCode,
-              account_number: v.bankAcct,
-              account_name:   v.bankAcctName
-            }
-          })
-          .eq('id', uid);
-        if (upErr) throw upErr;
-
-        const { error: insErr } = await Supa.client
-          .from('kyc_submissions')
-          .insert({
-            user_id: uid,
-            id_front_path: idFrontPath,
-            id_back_path:  idBackPath,
-            selfie_path:   selfiePath,
-            bank_details: {
-              bank_name:      v.bankName,
-              bank_code:      v.bankCode,
-              account_number: v.bankAcct,
-              account_name:   v.bankAcctName
-            },
-            status: 'pending'
-          });
-        if (insErr) warn('kyc_submissions insert failed:', insErr.message);
-      } else {
+      /* 2. Persist */
+      if (!Supa.HAS){
+        localStorage.setItem('dls_demo_kyc', JSON.stringify({ id:'demo-'+Date.now(), ...payload, status:'pending', created_at:payload.submitted_at }));
         const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
         const u = users.find(x => x.id === uid);
-        if (u){
-          u.kyc_status = 'pending';
-          u.bank_details = {
-            bank_name: v.bankName,
-            bank_code: v.bankCode,
-            account_number: v.bankAcct,
-            account_name: v.bankAcctName
-          };
-          localStorage.setItem('dls_demo_users', JSON.stringify(users));
-        }
-      }
-
-      UI.busy('submitBtn', false);
-      State.busy = false;
-
-      State.profile = await Auth.fetchProfile(uid);
-      UI.toast('Submitted! Approval within 24 hours.', 'ok');
-      this.render();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    } catch (e){
-      err('KYC submit failed:', e);
-      UI.busy('submitBtn', false);
-      State.busy = false;
-      const errEl = $('#submitErr');
-      errEl.textContent = e.message || 'Submission failed. Please try again.';
-      errEl.classList.add('show');
-    }
-  },
-
-  async updateBank(){
-    const bankName = prompt('Bank name (e.g. GTBank):');
-    if (!bankName) return;
-    const acct = prompt('10-digit account number:');
-    if (!acct || !/^\d{10}$/.test(acct)){ UI.toast('Invalid account number.', 'err'); return; }
-    const name = prompt('Account name:');
-    if (!name) return;
-
-    try {
-      if (Supa.HAS){
-        const { error } = await Supa.client.from('profiles').update({
-          bank_details: { bank_name: bankName, account_number: acct, account_name: name }
-        }).eq('id', State.session.user.id);
-        if (error) throw error;
+        if (u){ u.kyc_status = 'pending'; localStorage.setItem('dls_demo_users', JSON.stringify(users)); }
       } else {
-        const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
-        const u = users.find(x => x.id === State.session.user.id);
-        if (u){
-          u.bank_details = { bank_name: bankName, account_number: acct, account_name: name };
-          localStorage.setItem('dls_demo_users', JSON.stringify(users));
+        /* Try the dedicated RPC first — it handles status + audit trail server-side */
+        let done = false;
+        try {
+          const { error: rpcErr } = await Supa.client.rpc('submit_kyc', { p_payload: payload });
+          if (!rpcErr) done = true;
+          else warn('submit_kyc rpc unavailable:', rpcErr.message);
+        } catch(e){ warn('submit_kyc threw:', e.message); }
+
+        /* Fallback: write the row + bump the profile directly */
+        if (!done){
+          try {
+            await Supa.client.from('kyc_submissions').insert({
+              user_id: uid,
+              ...payload,
+              status: 'pending'
+            });
+          } catch(e){ warn('kyc_submissions insert skipped:', e.message); }
+
+          const { error: pErr } = await Supa.client.from('profiles')
+            .update({ kyc_status: 'pending' })
+            .eq('id', uid);
+          if (pErr) warn('profile kyc_status update failed:', pErr.message);
         }
       }
-      UI.toast('Bank details updated.', 'ok');
-      State.profile = await Auth.fetchProfile(State.session.user.id);
-      this.render();
+
+      if (btn) btn.innerHTML = '<span class="spin"></span> Done';
+
+      State.form = { fullName:'', dob:'', phone:'', address:'', state:'', city:'', idType:'', idNumber:'', declaration:false };
+      State.files = { idFront:null, idBack:null, selfie:null };
+      State.step = 1; State.maxStep = 1;
+
+      UI.toast('Documents submitted. We\'ll review them within 24 hours.', 'ok', 6000);
+      await this.reload();
+
     } catch(e){
-      err(e);
-      UI.toast(e.message || 'Failed to update.', 'err');
+      err('submit failed:', e);
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
+      this.showError(e.message || 'Submission failed. Please try again.');
+    } finally {
+      State.submitting = false;
     }
   }
 };
@@ -913,17 +1148,38 @@ const KYC = {
       'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
   }
   try { await KYC.init(); }
-  catch(e){ err('KYC init failed:', e); UI.toast('Failed to load page.', 'err'); }
+  catch(e){ err('KYC init failed:', e); UI.toast('Failed to load verification page.', 'err'); }
 })();
 
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
 window.DLS = {
-  version: 'kyc-2.0.0',
+  version: 'kyc-1.0.0',
   async debug(){
-    console.log('======== DLS KYC v2 ========');
+    console.log('======== DLS KYC v1 ========');
     console.log('Session:', State.session?.user?.email);
-    console.log('Profile:', State.profile);
-    console.log('Files:', { idFront: !!State.idFront, idBack: !!State.idBack, selfie: !!State.selfie });
+    console.log('KYC status:', KYC.status());
+    console.log('Account type:', State.profile?.account_type);
+    console.log('Current step:', State.step, '/ max', State.maxStep);
+    console.log('Form:', State.form);
+    console.log('Files:', {
+      idFront: State.files.idFront?.name || null,
+      idBack:  State.files.idBack?.name  || null,
+      selfie:  State.files.selfie?.name  || null
+    });
+    console.log('Submission:', State.submission);
     console.log('============================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    sessionStorage.clear();
+    location.reload();
   }
 };
 </script>
