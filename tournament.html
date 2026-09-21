@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Tournaments — DLS Stake</title>
+<meta name="description" content="Multi-player Dream League Soccer tournaments with real prizes on DLS Stake." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --gold:#ffd700; --silver:#c0c8d6; --bronze:#cd7f32;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(255,215,0,.08), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(139,92,246,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(0,217,126,.06), transparent 60%);}
+.wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:22px;font-size:.85rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:1024px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* PAGE */
+.page{padding:36px 0 80px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px;max-width:520px}
+
+/* HERO BANNER */
+.hero{background:linear-gradient(160deg,rgba(139,92,246,.14),var(--bg-2));border:1px solid rgba(139,92,246,.35);border-radius:var(--radius-lg);padding:30px;margin-bottom:26px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-90px;right:-90px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.2),transparent 65%);pointer-events:none}
+.hero-inner{display:flex;gap:22px;align-items:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-ico{width:78px;height:78px;min-width:78px;border-radius:24px;background:linear-gradient(140deg,var(--gold),#c9a800);display:grid;place-items:center;font-size:2.2rem;color:#1a1000;box-shadow:0 14px 36px rgba(255,215,0,.35)}
+.hero-txt{flex:1;min-width:220px}
+.hero-txt h2{font-size:1.4rem;font-weight:900;letter-spacing:-.03em;line-height:1.2;margin-bottom:8px}
+.hero-txt h2 .grad{background:linear-gradient(120deg,var(--gold),#ffe98a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-txt p{font-size:.9rem;color:var(--text-2);line-height:1.65;max-width:520px}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.hero-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;position:relative;z-index:1}
+@media(max-width:520px){.hero-stat-grid{grid-template-columns:1fr 1fr}}
+.hero-stat{background:rgba(7,13,22,.55);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px}
+.hero-stat .k{font-size:.6rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.hero-stat .v{font-family:var(--ff-mono);font-size:1.25rem;font-weight:900;letter-spacing:-.02em;color:var(--text)}
+.hero-stat .v.gold{color:var(--gold)}
+.hero-stat .v.green{color:var(--primary)}
+
+/* FILTERS */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.filters .seg{display:flex;gap:5px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);padding:5px}
+.filters .seg button{padding:9px 16px;border-radius:var(--radius-full);font-size:.8rem;font-weight:800;color:var(--muted);transition:.18s;white-space:nowrap}
+.filters .seg button:hover{color:var(--text-2)}
+.filters .seg button.active{background:var(--surface-3);color:var(--text);box-shadow:var(--shadow-sm)}
+.filters .seg button.active.demo{background:linear-gradient(180deg,rgba(47,128,237,.16),rgba(47,128,237,.08));color:#7cb4ff}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;padding:11px 42px 11px 16px;border-radius:var(--radius-full);background:var(--bg-2);border:1px solid var(--border);color:var(--text);font-size:.86rem;outline:none;transition:.15s}
+.search-box input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.search-box input::placeholder{color:var(--muted-2)}
+.search-box .ico{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;pointer-events:none}
+
+/* TOURNAMENT LIST */
+.t-list{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:720px){.t-list{grid-template-columns:repeat(2,1fr)}}
+.t-card{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.t-card:hover{transform:translateY(-3px);border-color:var(--border-2);box-shadow:var(--shadow)}
+.t-card.registered{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,rgba(0,217,126,.06),var(--bg-2))}
+.t-card.live{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,rgba(255,77,94,.06),var(--bg-2))}
+.t-card.completed{opacity:.85}
+.t-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.t-title-wrap{flex:1;min-width:0}
+.t-title{font-size:1.05rem;font-weight:900;letter-spacing:-.02em;line-height:1.25;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.t-sub{font-size:.74rem;color:var(--muted);font-family:var(--ff-mono);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.t-status{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0}
+.t-status.open{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.t-status.open i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--primary);margin-right:5px;animation:pulse 1.8s ease-in-out infinite}
+.t-status.live{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.t-status.live i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--danger);margin-right:5px;animation:pulse 1s ease-in-out infinite}
+.t-status.completed{background:var(--surface-3);color:var(--muted);border:1px solid var(--border)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.t-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.t-stat{padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.t-stat .k{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.t-stat .v{font-family:var(--ff-mono);font-size:.98rem;font-weight:900;letter-spacing:-.02em}
+.t-stat .v.gold{color:var(--gold)}
+.t-stat .v.green{color:var(--primary)}
+.t-stat .v.blue{color:#7cb4ff}
+
+.t-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.t-slots{display:flex;align-items:center;gap:10px}
+.t-slots .avatar-stack{display:flex}
+.t-slots .av{width:26px;height:26px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));border:2px solid var(--surface);display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.6rem;margin-left:-8px}
+.t-slots .av:first-child{margin-left:0}
+.t-slots .av.more{background:var(--surface-3);color:var(--muted)}
+.t-slots .txt{font-size:.72rem;color:var(--muted);font-family:var(--ff-mono);font-weight:700}
+.t-actions{display:flex;gap:8px;align-items:center}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-full);font-weight:800;font-size:.86rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap;text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-gold{background:linear-gradient(180deg,var(--gold),#c9a800);color:#1a1000;box-shadow:0 6px 20px rgba(255,215,0,.3)}
+.btn-gold:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-block{width:100%}
+.btn-sm{padding:9px 14px;font-size:.8rem}
+.btn-lg{padding:15px 26px;font-size:.98rem}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* DETAIL VIEW */
+.back-row{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:.84rem;font-weight:800;color:var(--muted);padding:8px 14px;border-radius:var(--radius-full);transition:.15s}
+.back-btn:hover{color:var(--text);background:var(--surface)}
+
+.detail-head{background:linear-gradient(160deg,var(--surface-3),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:28px;margin-bottom:22px;position:relative;overflow:hidden}
+.detail-head::after{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,0,.12),transparent 65%);pointer-events:none}
+.detail-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap;position:relative;z-index:1}
+.detail-title-row h1{font-size:1.6rem;font-weight:900;letter-spacing:-.035em;line-height:1.15}
+.detail-title-row .meta{font-size:.78rem;color:var(--muted);font-family:var(--ff-mono);margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.detail-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;position:relative;z-index:1}
+@media(min-width:720px){.detail-stats{grid-template-columns:repeat(4,1fr)}}
+.detail-stat{background:rgba(7,13,22,.55);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.detail-stat.gold{background:linear-gradient(180deg,rgba(255,215,0,.12),rgba(7,13,22,.55));border-color:rgba(255,215,0,.35)}
+.detail-stat .k{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.detail-stat .v{font-family:var(--ff-mono);font-size:1.35rem;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.detail-stat .v.gold{color:var(--gold)}
+.detail-stat .v.green{color:var(--primary)}
+.detail-stat .v.blue{color:#7cb4ff}
+.detail-stat .sub{font-size:.68rem;color:var(--muted-2);margin-top:5px}
+
+/* PRIZE BREAKDOWN */
+.prize-breakdown{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:22px}
+.pb-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.pb-head h3{font-size:.98rem;font-weight:900;display:flex;align-items:center;gap:10px}
+.pb-head .total{font-family:var(--ff-mono);font-weight:900;font-size:1.1rem;color:var(--gold)}
+.pb-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.pb-row:last-child{border-bottom:none}
+.pb-row .pos{width:44px;height:36px;border-radius:10px;display:grid;place-items:center;font-family:var(--ff-mono);font-weight:900;font-size:.86rem;flex-shrink:0}
+.pb-row .pos.first{background:linear-gradient(140deg,var(--gold),#c9a800);color:#1a1000}
+.pb-row .pos.second{background:linear-gradient(140deg,var(--silver),#8f97a8);color:#1a1000}
+.pb-row .pos.third{background:linear-gradient(140deg,var(--bronze),#8b5a1f);color:#fff}
+.pb-row .pos.other{background:var(--surface-3);color:var(--muted)}
+.pb-row .lbl{flex:1;min-width:0;font-size:.86rem;font-weight:700;color:var(--text-2)}
+.pb-row .amt{font-family:var(--ff-mono);font-weight:900;font-size:.92rem;color:var(--gold);text-align:right}
+.pb-row .amt.pending{color:var(--muted-2)}
+
+/* BRACKET */
+.bracket{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:22px;overflow-x:auto}
+.bracket-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.bracket-head h3{font-size:1rem;font-weight:900;display:flex;align-items:center;gap:10px}
+.bracket-head .hint{font-size:.72rem;color:var(--muted)}
+.bracket-grid{display:flex;gap:24px;min-width:min-content;padding-bottom:6px}
+.round{display:flex;flex-direction:column;gap:16px;min-width:200px;flex-shrink:0}
+.round-title{font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.match-slot{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;position:relative}
+.match-slot.live{border-color:rgba(255,77,94,.5);box-shadow:0 0 0 2px rgba(255,77,94,.15)}
+.match-slot.done{border-color:var(--border-2)}
+.match-slot.pending{opacity:.65}
+.match-slot.my-match{border-color:rgba(0,217,126,.6);box-shadow:0 0 0 3px var(--primary-glow)}
+.ms-player{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:.8rem;font-weight:700;transition:.15s}
+.ms-player.win{background:rgba(0,217,126,.1);color:var(--primary)}
+.ms-player.lose{color:var(--muted-2)}
+.ms-player.bye{color:var(--muted-2);font-style:italic;font-weight:500}
+.ms-player.tbd{color:var(--muted-2);font-style:italic;font-weight:500}
+.ms-av{width:22px;height:22px;min-width:22px;border-radius:6px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.6rem}
+.ms-av.tbd{background:var(--surface-3);color:var(--muted)}
+.ms-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-score{font-family:var(--ff-mono);font-weight:900;font-size:.82rem;padding:0 6px}
+.ms-sep{height:1px;background:var(--border);margin:2px 8px}
+.ms-tag{position:absolute;top:-8px;right:8px;font-size:.54rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full)}
+.ms-tag.live{background:var(--danger);color:#fff;animation:pulse 1.2s ease-in-out infinite}
+.ms-tag.you{background:var(--primary);color:#04140c}
+
+/* CHAT / RULES */
+.rules{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:22px}
+.rules-head{font-size:.98rem;font-weight:900;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rules ul{margin:0 0 0 20px;font-size:.85rem;line-height:1.75;color:var(--text-2)}
+.rules li{margin-bottom:7px}
+.rules li b{color:var(--text);font-weight:800}
+
+/* ACTION BAR (sticky) */
+.action-bar{position:sticky;bottom:20px;background:linear-gradient(160deg,var(--surface-3),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow);margin-top:22px;z-index:20}
+.action-bar .info{flex:1;min-width:200px}
+.action-bar .info h4{font-size:.94rem;font-weight:900;margin-bottom:4px}
+.action-bar .info p{font-size:.78rem;color:var(--muted);line-height:1.5}
+.action-bar .price{font-family:var(--ff-mono);font-size:1.4rem;font-weight:900;letter-spacing:-.03em;color:var(--gold);white-space:nowrap}
+.action-bar .btns{display:flex;gap:10px;flex-wrap:wrap}
+
+/* EMPTY */
+.empty{padding:70px 24px;text-align:center;background:var(--surface);border:1px dashed var(--border-2);border-radius:var(--radius-lg)}
+.empty .ico{font-size:2.6rem;margin-bottom:14px;opacity:.7}
+.empty h3{font-size:1.05rem;font-weight:800;margin-bottom:8px}
+.empty p{font-size:.86rem;color:var(--muted);max-width:400px;margin:0 auto 20px;line-height:1.65}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,14,.85);backdrop-filter:blur(6px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
+.modal{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);max-width:480px;width:100%;padding:28px;box-shadow:var(--shadow);animation:popIn .24s cubic-bezier(.2,.9,.3,1.2);position:relative;overflow:hidden}
+.modal::after{content:'';position:absolute;top:-90px;left:50%;transform:translateX(-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,0,.1),transparent 65%);pointer-events:none}
+.modal h3{font-size:1.15rem;font-weight:900;margin-bottom:10px;position:relative;z-index:1}
+.modal p{font-size:.86rem;color:var(--muted);line-height:1.65;margin-bottom:18px;position:relative;z-index:1}
+.modal .detail-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:18px;position:relative;z-index:1}
+.modal .detail-box .row{display:flex;justify-content:space-between;padding:6px 0;font-size:.84rem}
+.modal .detail-box .row .k{color:var(--muted)}
+.modal .detail-box .row .v{font-family:var(--ff-mono);font-weight:800;color:var(--text-2)}
+.modal .detail-box .row .v.gold{color:var(--gold)}
+.modal .detail-box .row .v.green{color:var(--primary)}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.modal-actions .btn{flex:1;min-width:120px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+.toast.gold{border-color:rgba(255,215,0,.5);background:linear-gradient(180deg,#2a2510,#1d1a0b)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* LOADING */
+.loading-card{padding:70px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+
+::selection{background:var(--gold);color:#1a1000}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="tournament.html" class="active">Tournaments</a>
+      <a href="history.html">History</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading tournaments…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="lobby.html">Lobby</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="support.html">Support</a>
+        <a href="terms.html">Legal</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  MATCH_PAGE:        'match.html',
+  CURRENCY:          '₦',
+  PLATFORM_CUT_PCT:  10,
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : type==='gold' ? '🏆' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:0,maximumFractionDigits:0}); },
+  date(iso){
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString('en-NG',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
+    catch { return '—'; }
+  },
+  timeUntil(iso){
+    if (!iso) return '';
+    const diff = new Date(iso).getTime() - Date.now();
+    if (diff <= 0) return 'Started';
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h ${mins % 60}m`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ${hours % 24}h`;
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  wallet: 'real',
+  filter: 'all',        // 'all' | 'open' | 'live' | 'completed' | 'mine'
+  query: '',
+  tournaments: [],
+  current: null,        // open tournament detail
+  loading: true,
+  busy: false
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ return null; }
+  }
+};
+
+/* ============================================================================
+   DATA
+   ============================================================================ */
+const Data = {
+  async list(){
+    if (!Supa.HAS) return Demo.list();
+    try {
+      const { data, error } = await Supa.client
+        .from('tournaments')
+        .select(`
+          *,
+          participants:tournament_participants(
+            user_id, username, dls_username, seed, eliminated_at,
+            profile:profiles(id, username, dls_username)
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(60);
+      if (error) throw error;
+      return data || [];
+    } catch(e){
+      warn('list tournaments:', e.message);
+      return [];
+    }
+  },
+
+  async get(id){
+    if (!Supa.HAS) return Demo.get(id);
+    try {
+      const { data, error } = await Supa.client
+        .from('tournaments')
+        .select(`
+          *,
+          participants:tournament_participants(
+            user_id, username, dls_username, seed, eliminated_at, joined_at,
+            profile:profiles(id, username, dls_username)
+          )
+        `)
+        .eq('id', id)
+        .maybeSingle();
+      if (error) throw error;
+      return data || null;
+    } catch(e){ warn('get tournament:', e.message); return null; }
+  },
+
+  async register(tournamentId, userId, username, dlsUsername){
+    if (!Supa.HAS) return Demo.register(tournamentId, userId, username, dlsUsername);
+    try {
+      let done = false;
+      try {
+        const { error } = await Supa.client.rpc('register_for_tournament', { p_tournament_id: tournamentId });
+        if (!error) done = true;
+        else warn('register rpc unavailable:', error.message);
+      } catch(e){ warn('register threw:', e.message); }
+
+      if (!done){
+        const { error } = await Supa.client.from('tournament_participants').insert({
+          tournament_id: tournamentId,
+          user_id: userId,
+          username,
+          dls_username: dlsUsername,
+          joined_at: new Date().toISOString()
+        });
+        if (error) throw error;
+      }
+      return { error: null };
+    } catch(e){ return { error: e }; }
+  },
+
+  async unregister(tournamentId, userId){
+    if (!Supa.HAS) return Demo.unregister(tournamentId, userId);
+    try {
+      const { error } = await Supa.client
+        .from('tournament_participants')
+        .delete()
+        .eq('tournament_id', tournamentId)
+        .eq('user_id', userId);
+      return { error };
+    } catch(e){ return { error: e }; }
+  }
+};
+
+/* ============================================================================
+   DEMO BACKEND
+   ============================================================================ */
+const Demo = (() => {
+  const KEY = 'dls_demo_tournaments';
+
+  function seed(){
+    const now = Date.now();
+    const h = (n) => new Date(now - n * 3600000).toISOString();
+    const fh = (n) => new Date(now + n * 3600000).toISOString();
+
+    const players = [
+      { id:'o1', username:'ChidiThunder', dls_username:'chidi_tt' },
+      { id:'o2', username:'KunleStrikes', dls_username:'kunle_dls' },
+      { id:'o3', username:'AmakaGoals',   dls_username:'amaka_g' },
+      { id:'o4', username:'TundeBlaze',   dls_username:'tunde_bz' },
+      { id:'o5', username:'NgoziQueen',   dls_username:'ngozi_q' },
+      { id:'o6', username:'IbrahimKing',  dls_username:'ibra_king' },
+      { id:'o7', username:'BolaFire',     dls_username:'bola_f' },
+      { id:'o8', username:'AdaRocket',    dls_username:'ada_rk' },
+      { id:'o9', username:'YemiSwift',    dls_username:'yemi_s' },
+      { id:'o10',username:'IfyRunner',    dls_username:'ify_r' }
+    ];
+
+    return [
+      /* 1) Open 8-player, ₦2,000 entry */
+      {
+        id: 't-open-8',
+        name: 'Friday Night Cup',
+        description: 'Every Friday, 8 players, single elimination. Winner takes home 70% of the pot.',
+        format: 'single_elim',
+        game_type: 'real',
+        entry_fee: 2000,
+        max_players: 8,
+        status: 'open',
+        starts_at: fh(6),
+        created_at: h(20),
+        participants: players.slice(0, 5).map((p, i) => ({ user_id:p.id, username:p.username, dls_username:p.dls_username, seed:i+1 })),
+        matches: []
+      },
+
+      /* 2) Open 16-player ₦5,000 */
+      {
+        id: 't-open-16',
+        name: 'Weekend Champions',
+        description: 'Big bracket, big prize. 16 players, single elimination, top 3 paid out.',
+        format: 'single_elim',
+        game_type: 'real',
+        entry_fee: 5000,
+        max_players: 16,
+        status: 'open',
+        starts_at: fh(28),
+        created_at: h(48),
+        participants: players.slice(0, 9).map((p, i) => ({ user_id:p.id, username:p.username, dls_username:p.dls_username, seed:i+1 })),
+        matches: []
+      },
+
+      /* 3) Live 8-player tournament */
+      {
+        id: 't-live-8',
+        name: 'Blitz Bracket #47',
+        description: 'In progress. Watch the action live.',
+        format: 'single_elim',
+        game_type: 'real',
+        entry_fee: 3000,
+        max_players: 8,
+        status: 'live',
+        starts_at: h(1),
+        created_at: h(26),
+        participants: players.slice(0, 8).map((p, i) => ({ user_id:p.id, username:p.username, dls_username:p.dls_username, seed:i+1 })),
+        matches: [
+          /* Quarter finals */
+          { round:1, pos:1, p1:'o1', p2:'o2', s1:3, s2:1, winner:'o1', status:'done' },
+          { round:1, pos:2, p1:'o3', p2:'o4', s1:2, s2:2, winner:null, status:'live' },
+          { round:1, pos:3, p1:'o5', p2:'o6', s1:4, s2:0, winner:'o5', status:'done' },
+          { round:1, pos:4, p1:'o7', p2:'o8', s1:1, s2:3, winner:'o8', status:'done' },
+          /* Semis — waiting */
+          { round:2, pos:1, p1:'o1', p2:null, s1:null, s2:null, winner:null, status:'pending' },
+          { round:2, pos:2, p1:'o5', p2:'o8', s1:null, s2:null, winner:null, status:'pending' },
+          /* Final */
+          { round:3, pos:1, p1:null, p2:null, s1:null, s2:null, winner:null, status:'pending' }
+        ]
+      },
+
+      /* 4) Demo ₦500 entry, open */
+      {
+        id: 't-demo-8',
+        name: 'Free Practice Bracket',
+        description: 'Demo tournaments use practice money. No real rewards, all the fun.',
+        format: 'single_elim',
+        game_type: 'demo',
+        entry_fee: 500,
+        max_players: 8,
+        status: 'open',
+        starts_at: fh(4),
+        created_at: h(6),
+        participants: players.slice(0, 3).map((p, i) => ({ user_id:p.id, username:p.username, dls_username:p.dls_username, seed:i+1 })),
+        matches: []
+      },
+
+      /* 5) Completed ₦10,000 final */
+      {
+        id: 't-completed',
+        name: 'Grand Masters Series',
+        description: 'The big one. Completed last week.',
+        format: 'single_elim',
+        game_type: 'real',
+        entry_fee: 10000,
+        max_players: 8,
+        status: 'completed',
+        starts_at: h(200),
+        created_at: h(260),
+        completed_at: h(180),
+        winner_id: 'o2',
+        participants: players.slice(0, 8).map((p, i) => ({ user_id:p.id, username:p.username, dls_username:p.dls_username, seed:i+1 })),
+        matches: [
+          { round:1, pos:1, p1:'o1', p2:'o2', s1:1, s2:2, winner:'o2', status:'done' },
+          { round:1, pos:2, p1:'o3', p2:'o4', s1:3, s2:0, winner:'o3', status:'done' },
+          { round:1, pos:3, p1:'o5', p2:'o6', s1:2, s2:4, winner:'o6', status:'done' },
+          { round:1, pos:4, p1:'o7', p2:'o8', s1:3, s2:2, winner:'o7', status:'done' },
+          { round:2, pos:1, p1:'o2', p2:'o3', s1:2, s2:1, winner:'o2', status:'done' },
+          { round:2, pos:2, p1:'o6', p2:'o7', s1:1, s2:3, winner:'o7', status:'done' },
+          { round:3, pos:1, p1:'o2', p2:'o7', s1:3, s2:1, winner:'o2', status:'done' }
+        ]
+      }
+    ];
+  }
+
+  function read(){
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) return JSON.parse(raw);
+      const fresh = seed();
+      localStorage.setItem(KEY, JSON.stringify(fresh));
+      return fresh;
+    } catch { return seed(); }
+  }
+
+  function write(rows){
+    try { localStorage.setItem(KEY, JSON.stringify(rows)); } catch {}
+  }
+
+  return {
+    list(){ return read(); },
+
+    get(id){
+      const rows = read();
+      return rows.find(t => t.id === id) || null;
+    },
+
+    register(tournamentId, userId, username, dlsUsername){
+      const rows = read();
+      const t = rows.find(x => x.id === tournamentId);
+      if (!t) return { error: { message:'Tournament not found' } };
+      if (t.status !== 'open') return { error: { message:'Registration closed' } };
+      if (t.participants.some(p => p.user_id === userId)) return { error: { message:'Already registered' } };
+      if (t.participants.length >= t.max_players) return { error: { message:'Tournament is full' } };
+
+      t.participants.push({
+        user_id: userId,
+        username: username || 'You',
+        dls_username: dlsUsername || 'you_dls',
+        seed: t.participants.length + 1,
+        joined_at: new Date().toISOString()
+      });
+      write(rows);
+      return { error: null };
+    },
+
+    unregister(tournamentId, userId){
+      const rows = read();
+      const t = rows.find(x => x.id === tournamentId);
+      if (!t) return { error: { message:'Tournament not found' } };
+      if (t.status !== 'open') return { error: { message:'Cannot unregister now' } };
+      t.participants = t.participants.filter(p => p.user_id !== userId);
+      write(rows);
+      return { error: null };
+    }
+  };
+})();
+
+/* ============================================================================
+   TOURNAMENT PAGE
+   ============================================================================ */
+const Tournament = {
+
+  async init(){
+    log('Tournament init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in to view tournaments.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 700);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id) || {};
+    State.wallet = State.profile.account_type === 'demo' ? 'demo' : 'real';
+
+    this.renderNav();
+
+    /* Deep link: ?id=t-xxx */
+    const params = new URLSearchParams(location.search);
+    const tId = params.get('id');
+    if (tId){
+      await this.openDetail(tId, true);
+      return;
+    }
+
+    await this.reload();
+    window.addEventListener('focus', () => this.reload(true));
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  async reload(silent){
+    State.loading = true;
+    this.render();
+
+    try {
+      State.tournaments = await Data.list();
+    } catch(e){
+      err('reload:', e);
+      State.tournaments = [];
+      UI.toast('Failed to load tournaments.', 'err');
+    }
+
+    State.loading = false;
+    this.render();
+    if (!silent) log('Tournaments loaded —', State.tournaments.length);
+  },
+
+  /* ── Navigation ────────────────────────────────────────── */
+  async openDetail(id, silent){
+    State.current = await Data.get(id);
+    if (!State.current){
+      UI.toast('Tournament not found.', 'err');
+      if (!silent) location.href = 'tournament.html';
+      return;
+    }
+    try { history.replaceState(null, '', '?id=' + id); } catch {}
+    this.renderDetail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  closeDetail(){
+    State.current = null;
+    try { history.replaceState(null, '', location.pathname); } catch {}
+    this.render();
+  },
+
+  setWallet(w){ State.wallet = w; this.render(); },
+  setFilter(f){ State.filter = f; this.render(); },
+  setQuery(q){ State.query = q; this.render(); },
+
+  /* ── Filtering ─────────────────────────────────────────── */
+  filtered(){
+    const uid = State.session.user.id;
+    const isDemo = State.wallet === 'demo';
+
+    return State.tournaments.filter(t => {
+      if (isDemo !== (t.game_type === 'demo')) return false;
+
+      if (State.filter === 'open'      && t.status !== 'open')      return false;
+      if (State.filter === 'live'      && t.status !== 'live')      return false;
+      if (State.filter === 'completed' && t.status !== 'completed') return false;
+      if (State.filter === 'mine'      && !(t.participants || []).some(p => p.user_id === uid)) return false;
+
+      if (State.query){
+        const hay = (t.name + ' ' + (t.description || '')).toLowerCase();
+        if (!hay.includes(State.query.toLowerCase())) return false;
+      }
+      return true;
+    });
+  },
+
+  /* ── Derived helpers ───────────────────────────────────── */
+  prizePool(t){
+    const n = (t.participants || []).length;
+    const collected = n * Number(t.entry_fee || 0);
+    const platformCut = Math.round(collected * (CONFIG.PLATFORM_CUT_PCT / 100));
+    return { collected, platformCut, distributable: collected - platformCut };
+  },
+
+  distribution(t){
+    const { distributable } = this.prizePool(t);
+    const isSmall = t.max_players <= 8;
+    if (isSmall){
+      /* Winner takes 70%, runner-up 30% of distributable */
+      return [
+        { pos:1, label:'Winner', amount: Math.round(distributable * 0.7) },
+        { pos:2, label:'Runner-up', amount: distributable - Math.round(distributable * 0.7) }
+      ];
+    }
+    /* 16-player: 60/25/15 */
+    return [
+      { pos:1, label:'Winner', amount: Math.round(distributable * 0.6) },
+      { pos:2, label:'Runner-up', amount: Math.round(distributable * 0.25) },
+      { pos:3, label:'Third place', amount: distributable - Math.round(distributable * 0.6) - Math.round(distributable * 0.25) }
+    ];
+  },
+
+  isRegistered(t){
+    const uid = State.session?.user?.id;
+    return (t.participants || []).some(p => p.user_id === uid);
+  },
+
+  /* ── Render ────────────────────────────────────────────── */
+  render(){
+    if (State.current){ this.renderDetail(); return; }
+
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.loading){
+      body.innerHTML = `<div class="loading-card"><span class="spin"></span> Loading tournaments…</div>`;
+      return;
+    }
+
+    body.innerHTML = this.listHtml();
+    this.wireList();
+  },
+
+  listHtml(){
+    const rows = this.filtered();
+    const walletCounts = {
+      real: State.tournaments.filter(t => t.game_type !== 'demo').length,
+      demo: State.tournaments.filter(t => t.game_type === 'demo').length
+    };
+    const openCount = State.tournaments.filter(t => t.status === 'open' && (State.wallet === 'demo' ? t.game_type === 'demo' : t.game_type !== 'demo')).length;
+    const liveCount = State.tournaments.filter(t => t.status === 'live' && (State.wallet === 'demo' ? t.game_type === 'demo' : t.game_type !== 'demo')).length;
+    const biggestPool = Math.max(0, ...State.tournaments
+      .filter(t => State.wallet === 'demo' ? t.game_type === 'demo' : t.game_type !== 'demo')
+      .map(t => this.prizePool(t).distributable));
+
+    return `
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="hero-ico">🏆</div>
+          <div class="hero-txt">
+            <h2>Compete in <span class="grad">brackets</span>, win bigger pots</h2>
+            <p>Single-elimination tournaments with 8 or 16 players. Entry from ₦500. Winner takes the lion's share of the prize pool.</p>
+          </div>
+        </div>
+        <div class="hero-stat-grid">
+          <div class="hero-stat">
+            <div class="k">Open now</div>
+            <div class="v green">${openCount}</div>
+          </div>
+          <div class="hero-stat">
+            <div class="k">Live</div>
+            <div class="v">${liveCount}</div>
+          </div>
+          <div class="hero-stat">
+            <div class="k">Biggest prize</div>
+            <div class="v gold">${UI.money(biggestPool)}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <div class="seg">
+          <button class="${State.wallet === 'real' ? 'active' : ''}" onclick="Tournament.setWallet('real')">💰 Real · ${walletCounts.real}</button>
+          <button class="demo ${State.wallet === 'demo' ? 'active' : ''}" onclick="Tournament.setWallet('demo')">🎮 Demo · ${walletCounts.demo}</button>
+        </div>
+        <div class="seg">
+          <button class="${State.filter === 'all' ? 'active' : ''}" onclick="Tournament.setFilter('all')">All</button>
+          <button class="${State.filter === 'open' ? 'active' : ''}" onclick="Tournament.setFilter('open')">Open</button>
+          <button class="${State.filter === 'live' ? 'active' : ''}" onclick="Tournament.setFilter('live')">Live</button>
+          <button class="${State.filter === 'completed' ? 'active' : ''}" onclick="Tournament.setFilter('completed')">Completed</button>
+          <button class="${State.filter === 'mine' ? 'active' : ''}" onclick="Tournament.setFilter('mine')">Mine</button>
+        </div>
+        <div class="search-box">
+          <input type="search" placeholder="Search tournaments…" value="${UI.escape(State.query)}" oninput="Tournament.setQuery(this.value)">
+          <span class="ico">🔍</span>
+        </div>
+      </div>
+
+      <!-- LIST -->
+      ${rows.length ? `
+        <div class="t-list">
+          ${rows.map(t => this.cardHtml(t)).join('')}
+        </div>
+      ` : `
+        <div class="empty">
+          <div class="ico">🏆</div>
+          <h3>No tournaments match these filters</h3>
+          <p>Try switching the wallet or filter above. ${State.wallet === 'demo' ? 'Demo brackets are a good way to practise without risking real money.' : ''}</p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="Tournament.setFilter('all')">Show all</button>
+            <button class="btn btn-ghost" onclick="location.href='lobby.html'">Go to lobby</button>
+          </div>
+        </div>
+      `}
+    `;
+  },
+
+  cardHtml(t){
+    const uid = State.session.user.id;
+    const isRegistered = this.isRegistered(t);
+    const prizes = this.prizePool(t);
+    const dist = this.distribution(t);
+    const n = (t.participants || []).length;
+    const slotsLeft = t.max_players - n;
+    const startsIn = UI.timeUntil(t.starts_at);
+
+    const statusCls = t.status;
+    const statusLabel = t.status === 'open' ? 'Registration open'
+                       : t.status === 'live' ? 'Live now'
+                       : t.status === 'completed' ? 'Completed'
+                       : t.status;
+
+    const cardCls = t.status === 'live' ? 'live'
+                    : isRegistered && t.status === 'open' ? 'registered'
+                    : t.status === 'completed' ? 'completed' : '';
+
+    /* Show first 4 participants as avatars */
+    const avatars = (t.participants || []).slice(0, 4).map(p =>
+      `<div class="av">${UI.escape(UI.initials(p.username))}</div>`
+    ).join('');
+    const moreCount = Math.max(0, n - 4);
+
+    return `
+      <div class="t-card ${cardCls}" data-id="${t.id}" onclick="Tournament.openDetail('${t.id}')">
+        <div class="t-head">
+          <div class="t-title-wrap">
+            <div class="t-title">${UI.escape(t.name)}</div>
+            <div class="t-sub">
+              <span>${t.format === 'single_elim' ? 'Single elimination' : t.format}</span>
+              <span>·</span>
+              <span>${t.max_players} players</span>
+              ${t.status === 'open' && startsIn ? `<span>·</span><span>Starts in ${UI.escape(startsIn)}</span>` : ''}
+              ${t.status === 'live' ? `<span>·</span><span style="color:var(--danger);font-weight:800">Ongoing</span>` : ''}
+            </div>
+          </div>
+          <span class="t-status ${statusCls}"><i></i>${statusLabel}</span>
+        </div>
+
+        <div class="t-stats">
+          <div class="t-stat">
+            <div class="k">Entry</div>
+            <div class="v blue">${UI.money(t.entry_fee)}</div>
+          </div>
+          <div class="t-stat">
+            <div class="k">Prize pool</div>
+            <div class="v gold">${UI.money(prizes.distributable)}</div>
+          </div>
+          <div class="t-stat">
+            <div class="k">1st prize</div>
+            <div class="v green">${UI.money(dist[0].amount)}</div>
+          </div>
+        </div>
+
+        <div class="t-footer">
+          <div class="t-slots">
+            ${avatars ? `<div class="avatar-stack">${avatars}${moreCount > 0 ? `<div class="av more">+${moreCount}</div>` : ''}</div>` : ''}
+            <span class="txt">${n}/${t.max_players} joined</span>
+          </div>
+          <div class="t-actions">
+            ${isRegistered && t.status === 'open' ? `<span class="btn btn-sm btn-ghost" style="pointer-events:none">✓ Registered</span>` : ''}
+            ${!isRegistered && t.status === 'open' && slotsLeft > 0 ? `<span class="btn btn-sm btn-primary" style="pointer-events:none">Join →</span>` : ''}
+            ${!isRegistered && t.status === 'open' && slotsLeft === 0 ? `<span class="btn btn-sm btn-ghost" style="pointer-events:none">Full</span>` : ''}
+            ${t.status === 'live' ? `<span class="btn btn-sm btn-danger" style="pointer-events:none">🔴 Watch</span>` : ''}
+            ${t.status === 'completed' ? `<span class="btn btn-sm btn-ghost" style="pointer-events:none">View results</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  wireList(){
+    $$('.t-card').forEach(el => {
+      el.addEventListener('click', () => {
+        this.openDetail(el.dataset.id);
+      });
+    });
+  },
+
+  /* ── DETAIL VIEW ───────────────────────────────────────── */
+  renderDetail(){
+    const body = $('#body');
+    if (!body) return;
+
+    const t = State.current;
+    if (!t){
+      body.innerHTML = `<div class="empty"><div class="ico">🔍</div><h3>Tournament not found</h3><p>This tournament may have been removed.</p><button class="btn btn-primary" onclick="Tournament.closeDetail()">Back to tournaments</button></div>`;
+      return;
+    }
+
+    const isRegistered = this.isRegistered(t);
+    const prizes = this.prizePool(t);
+    const dist = this.distribution(t);
+    const n = (t.participants || []).length;
+    const slotsLeft = t.max_players - n;
+    const startsIn = UI.timeUntil(t.starts_at);
+
+    body.innerHTML = `
+      <div class="back-row">
+        <button class="back-btn" onclick="Tournament.closeDetail()">← All tournaments</button>
+      </div>
+
+      <!-- HEADER -->
+      <div class="detail-head">
+        <div class="detail-title-row">
+          <div style="flex:1;min-width:220px">
+            <div class="eyebrow">${t.game_type === 'demo' ? '🎮 Demo tournament' : '💰 Real money tournament'}</div>
+            <h1>${UI.escape(t.name)}</h1>
+            <div class="meta">
+              <span>${t.format === 'single_elim' ? 'Single elimination' : t.format}</span>
+              <span>·</span>
+              <span>${t.max_players} players</span>
+              ${t.status === 'open' && startsIn ? `<span>·</span><span>Starts in ${UI.escape(startsIn)}</span>` : ''}
+              ${t.status === 'live' ? `<span>·</span><span style="color:var(--danger);font-weight:800">Live now</span>` : ''}
+              ${t.status === 'completed' ? `<span>·</span><span>Completed</span>` : ''}
+            </div>
+          </div>
+          <span class="t-status ${t.status}"><i></i>${
+            t.status === 'open' ? 'Registration open' :
+            t.status === 'live' ? 'Live now' :
+            t.status === 'completed' ? 'Completed' : t.status
+          }</span>
+        </div>
+
+        <div class="detail-stats">
+          <div class="detail-stat">
+            <div class="k">Entry fee</div>
+            <div class="v blue">${UI.money(t.entry_fee)}</div>
+          </div>
+          <div class="detail-stat gold">
+            <div class="k">Prize pool</div>
+            <div class="v gold">${UI.money(prizes.distributable)}</div>
+            <div class="sub">${n} × ${UI.money(t.entry_fee)} minus ${CONFIG.PLATFORM_CUT_PCT}%</div>
+          </div>
+          <div class="detail-stat">
+            <div class="k">1st prize</div>
+            <div class="v green">${UI.money(dist[0].amount)}</div>
+            <div class="sub">Winner takes it</div>
+          </div>
+          <div class="detail-stat">
+            <div class="k">Slots left</div>
+            <div class="v">${slotsLeft} <span style="font-size:.9rem;color:var(--muted);font-weight:600">/ ${t.max_players}</span></div>
+            <div class="sub">${n} registered</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DESCRIPTION -->
+      ${t.description ? `
+        <div class="rules">
+          <div class="rules-head"><span>📋</span> About this tournament</div>
+          <div style="font-size:.88rem;color:var(--text-2);line-height:1.7">${UI.escape(t.description)}</div>
+        </div>
+      ` : ''}
+
+      <!-- PRIZE BREAKDOWN -->
+      <div class="prize-breakdown">
+        <div class="pb-head">
+          <h3><span>💰</span> Prize breakdown</h3>
+          <span class="total">${UI.money(prizes.distributable)}</span>
+        </div>
+        ${dist.map(d => `
+          <div class="pb-row">
+            <div class="pos ${d.pos === 1 ? 'first' : d.pos === 2 ? 'second' : d.pos === 3 ? 'third' : 'other'}">${d.pos}</div>
+            <div class="lbl">${UI.escape(d.label)}</div>
+            <div class="amt ${t.status === 'completed' ? '' : 'pending'}">${UI.money(d.amount)}</div>
+          </div>
+        `).join('')}
+        <div style="padding-top:14px;margin-top:4px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted);line-height:1.6">
+          ${t.status === 'completed'
+            ? `Prizes have been paid out.`
+            : `Prize amounts assume all ${t.max_players} slots fill. Prizes scale if fewer players register — see the exact split at the bottom of this page.`}
+        </div>
+      </div>
+
+      <!-- BRACKET -->
+      ${(t.matches || []).length ? `
+        <div class="bracket">
+          <div class="bracket-head">
+            <h3><span>🎯</span> Bracket</h3>
+            <span class="hint">${t.status === 'live' ? 'Matches are being played' : t.status === 'completed' ? 'Final result' : 'Bracket visible once the tournament starts'}</span>
+          </div>
+          <div class="bracket-grid">
+            ${this.bracketHtml(t)}
+          </div>
+        </div>
+      ` : (t.status === 'open' ? `
+        <div class="rules" style="text-align:center;padding:36px 22px">
+          <div style="font-size:2rem;margin-bottom:10px">🥊</div>
+          <h3 style="font-size:1rem;margin-bottom:8px">Bracket appears when the tournament starts</h3>
+          <p style="font-size:.84rem;color:var(--muted);line-height:1.65;max-width:420px;margin:0 auto">
+            Players are seeded randomly at kickoff. You'll get a notification with your first-round opponent and their DLS username.
+          </p>
+        </div>
+      ` : '')}
+
+      <!-- RULES -->
+      <div class="rules">
+        <div class="rules-head"><span>⚖️</span> Rules</div>
+        <ul>
+          <li><b>Single elimination.</b> Lose once, you're out. There's no lower bracket.</li>
+          <li><b>Match duration:</b> each round is a 5-minute match played in DLS as a Friend Match.</li>
+          <li><b>Submission window:</b> both players must upload a screenshot within 5 minutes of the final whistle.</li>
+          <li><b>Verification:</b> our usual screenshot pipeline runs on every match. Results must mirror each other.</li>
+          <li><b>Disputes:</b> same 48-hour window as regular matches. Reviewers prioritise live tournaments.</li>
+          <li><b>Timing:</b> if you don't show up for your scheduled match within 10 minutes, you forfeit that round.</li>
+          <li><b>Entry refunds:</b> if the tournament is cancelled (not enough players), everyone is refunded in full with no fee.</li>
+          <li><b>Prize distribution:</b> paid out within 24 hours of the final.</li>
+        </ul>
+      </div>
+
+      <!-- ACTION BAR -->
+      ${t.status === 'open' ? `
+        <div class="action-bar">
+          <div class="info">
+            <h4>${isRegistered ? 'You\'re registered' : slotsLeft > 0 ? 'Join this tournament' : 'Tournament is full'}</h4>
+            <p>${isRegistered
+              ? 'Sit tight — you\'ll be notified when the bracket is drawn.'
+              : slotsLeft > 0
+                ? `${slotsLeft} slot${slotsLeft === 1 ? '' : 's'} remaining · Starts in ${UI.escape(startsIn)}`
+                : 'No more slots available'}</p>
+          </div>
+          ${isRegistered
+            ? `<div class="price">${UI.money(t.entry_fee)}</div>
+               <div class="btns">
+                 <button class="btn btn-danger" onclick="Tournament.unregisterConfirm()">Withdraw</button>
+               </div>`
+            : slotsLeft > 0
+              ? `<div class="price">${UI.money(t.entry_fee)}</div>
+                 <div class="btns">
+                   <button class="btn btn-primary btn-lg" onclick="Tournament.registerConfirm()">Join for ${UI.money(t.entry_fee)}</button>
+                 </div>`
+              : `<div class="btns"><button class="btn btn-ghost" disabled>Full</button></div>`
+          }
+        </div>
+      ` : ''}
+    `;
+  },
+
+  bracketHtml(t){
+    /* Group matches by round */
+    const byRound = {};
+    (t.matches || []).forEach(m => {
+      if (!byRound[m.round]) byRound[m.round] = [];
+      byRound[m.round].push(m);
+    });
+
+    const roundNames = {
+      1: t.max_players === 16 ? 'Round of 16' : 'Quarter-finals',
+      2: t.max_players === 16 ? 'Quarter-finals' : 'Semi-finals',
+      3: t.max_players === 16 ? 'Semi-finals' : 'Final',
+      4: 'Final'
+    };
+
+    const rounds = Object.keys(byRound).map(Number).sort((a, b) => a - b);
+    const meId = State.session?.user?.id;
+
+    return rounds.map(r => {
+      const matches = byRound[r].sort((a, b) => a.pos - b.pos);
+      return `
+        <div class="round">
+          <div class="round-title">${UI.escape(roundNames[r] || `Round ${r}`)}</div>
+          ${matches.map(m => this.bracketMatchHtml(m, t, meId)).join('')}
+        </div>
+      `;
+    }).join('');
+  },
+
+  bracketMatchHtml(m, t, meId){
+    const findP = (id) => id ? (t.participants || []).find(p => p.user_id === id) : null;
+    const p1 = findP(m.p1);
+    const p2 = findP(m.p2);
+    const myMatch = (m.p1 === meId || m.p2 === meId);
+
+    const cls = m.status === 'live' ? 'live' : m.status === 'done' ? 'done' : 'pending';
+
+    const tag = myMatch && m.status !== 'done'
+      ? `<div class="ms-tag you">Yours</div>`
+      : m.status === 'live'
+        ? `<div class="ms-tag live">Live</div>`
+        : '';
+
+    const renderPlayer = (p, isWinner, score, side) => {
+      if (!p) return `<div class="ms-player tbd"><div class="ms-av tbd">?</div><span class="ms-name">TBD</span></div>`;
+      const cls = m.status === 'done' ? (isWinner ? 'win' : 'lose') : '';
+      return `
+        <div class="ms-player ${cls}">
+          <div class="ms-av">${UI.escape(UI.initials(p.username))}</div>
+          <span class="ms-name">${UI.escape(p.username)}</span>
+          ${m.status !== 'pending' && score != null ? `<span class="ms-score">${score}</span>` : ''}
+        </div>`;
+    };
+
+    return `
+      <div class="match-slot ${cls} ${myMatch ? 'my-match' : ''}">
+        ${tag}
+        ${renderPlayer(p1, m.winner === m.p1, m.s1, 'p1')}
+        <div class="ms-sep"></div>
+        ${renderPlayer(p2, m.winner === m.p2, m.s2, 'p2')}
+      </div>
+    `;
+  },
+
+  /* ── Actions ──────────────────────────────────────────── */
+  registerConfirm(){
+    const t = State.current;
+    if (!t) return;
+
+    const prizes = this.prizePool(t);
+    const dist = this.distribution(t);
+
+    const root = $('#modalRoot');
+    root.innerHTML = `
+      <div class="modal-back" onclick="Tournament.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>Join ${UI.escape(t.name)}?</h3>
+          <p>Your entry fee will be locked in escrow until the tournament ends. If the tournament is cancelled, you're refunded in full.</p>
+
+          <div class="detail-box">
+            <div class="row"><span class="k">Entry fee</span><span class="v gold">${UI.money(t.entry_fee)}</span></div>
+            <div class="row"><span class="k">Format</span><span class="v">${t.max_players}-player single elim</span></div>
+            <div class="row"><span class="k">Prize pool (if full)</span><span class="v green">${UI.money(prizes.distributable)}</span></div>
+            ${dist.slice(0, 2).map(d => `
+              <div class="row"><span class="k">${d.pos === 1 ? '🥇 Winner' : '🥈 Runner-up'}</span><span class="v">${UI.money(d.amount)}</span></div>
+            `).join('')}
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Tournament.closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="Tournament.doRegister()">Pay &amp; join</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  async doRegister(){
+    if (State.busy) return;
+    const t = State.current;
+    if (!t) return;
+
+    State.busy = true;
+    try {
+      const res = await Data.register(
+        t.id,
+        State.session.user.id,
+        State.profile?.username,
+        State.profile?.dls_username
+      );
+      if (res.error) throw res.error;
+
+      this.closeModal();
+      UI.toast(`You're in! ${t.name} — see you at kickoff.`, 'gold', 5000);
+      await this.openDetail(t.id, true);
+    } catch(e){
+      err('register:', e);
+      UI.toast(e.message || 'Could not register. Try again.', 'err');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  unregisterConfirm(){
+    const t = State.current;
+    if (!t) return;
+
+    const root = $('#modalRoot');
+    root.innerHTML = `
+      <div class="modal-back" onclick="Tournament.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>Withdraw from ${UI.escape(t.name)}?</h3>
+          <p>Your ${UI.money(t.entry_fee)} entry fee will be refunded in full. You can re-register any time before the tournament fills up or kicks off.</p>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Tournament.closeModal()">Keep my spot</button>
+            <button class="btn btn-danger" onclick="Tournament.doUnregister()">Yes, withdraw</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  async doUnregister(){
+    if (State.busy) return;
+    const t = State.current;
+    if (!t) return;
+
+    State.busy = true;
+    try {
+      const res = await Data.unregister(t.id, State.session.user.id);
+      if (res.error) throw res.error;
+
+      this.closeModal();
+      UI.toast('Withdrawn. Entry refunded.', 'ok', 4000);
+      await this.openDetail(t.id, true);
+    } catch(e){
+      err('unregister:', e);
+      UI.toast(e.message || 'Could not withdraw. Try again.', 'err');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  closeModal(e){
+    if (e && e.target && e.target.className !== 'modal-back') return;
+    $('#modalRoot').innerHTML = '';
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Tournament boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Tournaments (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Tournaments (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Tournament.init(); }
+  catch(e){ err('Tournament init failed:', e); UI.toast('Failed to load tournaments.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'tournament-1.0.0',
+  debug(){
+    console.log('======== DLS Tournament v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Wallet:', State.wallet, '| Filter:', State.filter);
+    console.log('Tournaments loaded:', State.tournaments.length);
+    console.log('Visible:', Tournament.filtered().length);
+    console.log('Current detail:', State.current?.name || '—');
+    console.log('==================================');
+  },
+  reset(){
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_tournaments');
+    sessionStorage.clear();
+    location.href = 'login.html';
+  }
+};
+</script>
+</body>
+</html>
