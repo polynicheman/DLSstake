@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Notifications — DLS Stake</title>
+<meta name="description" content="Your DLS Stake notifications — match invites, results, payouts, and account updates." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:860px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--primary)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer;position:relative}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:36px 0 80px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:22px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.8rem;font-weight:900;letter-spacing:-.035em;line-height:1.1;display:flex;align-items:center;gap:12px}
+.page-title .unread-pill{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:var(--radius-full);background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* FILTER TABS */
+.filters{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{padding:9px 16px;border-radius:var(--radius-full);background:var(--surface-2);border:1px solid var(--border);font-size:.8rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.15s;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.filter:hover{border-color:var(--border-2);color:var(--text-2)}
+.filter.active{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.4);color:var(--primary)}
+.filter .cnt{font-family:var(--ff-mono);font-size:.68rem;padding:1px 6px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border)}
+.filter.active .cnt{background:rgba(0,217,126,.2);border-color:rgba(0,217,126,.4)}
+
+/* NOTIFICATION LIST */
+.list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.notif{display:flex;gap:14px;padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;position:relative;text-decoration:none;color:inherit}
+.notif:last-child{border-bottom:none}
+.notif:hover{background:var(--surface-2)}
+.notif.unread{background:rgba(0,217,126,.035)}
+.notif.unread::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary)}
+.notif.read{opacity:.78}
+.notif-ico{width:44px;height:44px;min-width:44px;border-radius:13px;display:grid;place-items:center;font-size:1.15rem;position:relative}
+.notif-ico.invite{background:rgba(47,128,237,.12);border:1px solid rgba(47,128,237,.28);color:#7cb4ff}
+.notif-ico.result{background:rgba(0,217,126,.12);border:1px solid rgba(0,217,126,.28);color:var(--primary)}
+.notif-ico.payout{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.28);color:#c4b5fd}
+.notif-ico.kyc{background:rgba(255,176,32,.12);border:1px solid rgba(255,176,32,.28);color:var(--warn)}
+.notif-ico.dispute{background:rgba(255,107,53,.12);border:1px solid rgba(255,107,53,.28);color:var(--fire)}
+.notif-ico.system{background:var(--surface-3);border:1px solid var(--border-2);color:var(--muted)}
+.notif-ico .dot{position:absolute;top:-3px;right:-3px;width:11px;height:11px;border-radius:50%;background:var(--primary);border:2px solid var(--surface);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.85)}}
+.notif-body{flex:1;min-width:0}
+.notif-body h4{font-size:.9rem;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.notif-body h4 .tag{font-size:.56rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:var(--radius-full);background:var(--surface-3);color:var(--muted-2);border:1px solid var(--border)}
+.notif-body h4 .tag.urgent{background:rgba(255,77,94,.14);color:var(--danger);border-color:rgba(255,77,94,.3)}
+.notif-body p{font-size:.82rem;color:var(--text-2);line-height:1.55;margin-bottom:6px}
+.notif-meta{font-size:.7rem;color:var(--muted-2);font-family:var(--ff-mono);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.notif-meta .amount{color:var(--primary);font-weight:800}
+.notif-meta .amount.neg{color:var(--danger)}
+.notif-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.notif-actions button{font-size:.68rem;font-weight:800;color:var(--muted);padding:4px 8px;border-radius:var(--radius-sm);transition:.15s}
+.notif-actions button:hover{background:var(--surface-3);color:var(--text)}
+
+/* EMPTY */
+.empty{padding:70px 24px;text-align:center;background:var(--surface);border:1px dashed var(--border-2);border-radius:var(--radius-lg)}
+.empty .ico{font-size:2.6rem;margin-bottom:14px;opacity:.7}
+.empty h3{font-size:1.05rem;font-weight:800;margin-bottom:8px}
+.empty p{font-size:.86rem;color:var(--muted);max-width:400px;margin:0 auto 20px;line-height:1.6}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:var(--radius-full);font-weight:800;font-size:.86rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-sm{padding:9px 14px;font-size:.8rem}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOADING */
+.loading-card{padding:60px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="create-match.html">Create</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Inbox</div>
+      <h1 class="page-title" id="pageTitle">Notifications</h1>
+      <div class="page-sub">Match invites, results, payouts, and account updates all land here.</div>
+    </div>
+    <div class="head-actions">
+      <button class="btn btn-ghost btn-sm" id="markAllBtn" onclick="Inbox.markAllRead()">✓ Mark all read</button>
+      <button class="btn btn-ghost btn-sm" onclick="Inbox.reload()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading notifications…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="wallet.html">Wallet</a>
+        <a href="settings.html">Settings</a>
+        <a href="profile.html">Profile</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  SETTINGS_PAGE:     'settings.html',
+  CURRENCY:          '₦',
+  PAGE_SIZE:         100,
+  POLL_INTERVAL_MS:  30000,
+  DEBUG:             true
+};
+
+const FILTERS = [
+  { id:'all',      label:'All',      icon:'📬' },
+  { id:'unread',   label:'Unread',   icon:'●'  },
+  { id:'invites',  label:'Invites',  icon:'⚔️' },
+  { id:'results',  label:'Results',  icon:'🏆' },
+  { id:'money',    label:'Money',    icon:'💰' },
+  { id:'account',  label:'Account',  icon:'🔐' }
+];
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:0,maximumFractionDigits:0}); },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 30) return 'just now';
+    if (s < 60) return s + 's ago';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    if (s < 604800) return Math.floor(s/86400)+'d ago';
+    try { return new Date(iso).toLocaleDateString('en-NG',{day:'2-digit',month:'short'}); }
+    catch { return '—'; }
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  notifications: [],
+  filter: 'all',
+  loading: true,
+  unsub: null,
+  poll: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   NOTIFICATIONS DB
+   ============================================================================ */
+const Notifs = {
+  async list(userId){
+    if (!Supa.HAS) return Demo.list();
+    try {
+      const { data, error } = await Supa.client
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(CONFIG.PAGE_SIZE);
+      if (error) throw error;
+      return data || [];
+    } catch(e){ warn('list:', e.message); return []; }
+  },
+
+  async markRead(id){
+    if (!Supa.HAS) return Demo.markRead(id);
+    try {
+      const { error } = await Supa.client
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() })
+        .eq('id', id);
+      return { error };
+    } catch(e){ return { error: e }; }
+  },
+
+  async markAllRead(userId){
+    if (!Supa.HAS) return Demo.markAllRead();
+    try {
+      const { error } = await Supa.client
+        .from('notifications')
+        .update({ read_at: new Date().toISOString() })
+        .eq('user_id', userId)
+        .is('read_at', null);
+      return { error };
+    } catch(e){ return { error: e }; }
+  },
+
+  async remove(id){
+    if (!Supa.HAS) return Demo.remove(id);
+    try {
+      const { error } = await Supa.client.from('notifications').delete().eq('id', id);
+      return { error };
+    } catch(e){ return { error: e }; }
+  },
+
+  subscribe(userId, cb){
+    if (!Supa.HAS) return () => {};
+    try {
+      const ch = Supa.client.channel('notifs:' + userId)
+        .on('postgres_changes',
+            { event:'INSERT', schema:'public', table:'notifications', filter:`user_id=eq.${userId}` },
+            cb)
+        .on('postgres_changes',
+            { event:'UPDATE', schema:'public', table:'notifications', filter:`user_id=eq.${userId}` },
+            cb)
+        .subscribe();
+      return () => Supa.client.removeChannel(ch);
+    } catch { return () => {}; }
+  }
+};
+
+/* ============================================================================
+   DEMO BACKEND
+   ============================================================================ */
+const Demo = (() => {
+  const KEY = 'dls_demo_notifs';
+
+  function seed(userId){
+    const now = Date.now();
+    const m = (min) => new Date(now - min * 60000).toISOString();
+    const h = (hr) => new Date(now - hr * 3600000).toISOString();
+    const d = (dy) => new Date(now - dy * 86400000).toISOString();
+
+    return [
+      {
+        id: 'n1', user_id: userId, type: 'invite',
+        title: 'New match challenge',
+        body: 'ChidiThunder challenged you to a real-money match. Pot ₦5,000.',
+        link: 'lobby.html', read_at: null, created_at: m(2),
+        meta: { amount: 5000, match_id: 'demo-match-1' }
+      },
+      {
+        id: 'n2', user_id: userId, type: 'result',
+        title: 'You won your match',
+        body: 'KunleStrikes 2 – 3 You. ₦4,800 credited to your real wallet.',
+        link: 'match.html?id=demo-match-2', read_at: null, created_at: m(38),
+        meta: { amount: 4800, match_id: 'demo-match-2', won: true }
+      },
+      {
+        id: 'n3', user_id: userId, type: 'payout',
+        title: 'Withdrawal approved',
+        body: 'Your withdrawal of ₦15,000 to GTBank ****4821 was approved and sent.',
+        link: 'wallet.html', read_at: null, created_at: h(5),
+        meta: { amount: 15000 }
+      },
+      {
+        id: 'n4', user_id: userId, type: 'kyc',
+        title: 'KYC verification received',
+        body: 'We received your documents. Review usually takes under 24 hours.',
+        link: 'kyc.html', read_at: h(20), created_at: h(20),
+        meta: {}
+      },
+      {
+        id: 'n5', user_id: userId, type: 'result',
+        title: 'Match settled — you lost',
+        body: 'You 1 – 2 AmakaGoals. Better luck next time.',
+        link: 'match.html?id=demo-match-3', read_at: h(28), created_at: h(28),
+        meta: { amount: 2500, match_id: 'demo-match-3', won: false }
+      },
+      {
+        id: 'n6', user_id: userId, type: 'payout',
+        title: 'Deposit confirmed',
+        body: '₦10,000 deposited into your real wallet via Paystack.',
+        link: 'wallet.html', read_at: d(1), created_at: d(1),
+        meta: { amount: 10000 }
+      },
+      {
+        id: 'n7', user_id: userId, type: 'dispute',
+        title: 'Dispute resolved in your favour',
+        body: 'Your arbitration case was reviewed. The pot was released to you.',
+        link: 'match.html?id=demo-match-4', read_at: d(2), created_at: d(2),
+        meta: { amount: 7500, match_id: 'demo-match-4', won: true }
+      },
+      {
+        id: 'n8', user_id: userId, type: 'system',
+        title: 'Welcome to DLS Stake',
+        body: 'Your demo wallet has been funded with ₦10,000. Try a friendly match first.',
+        link: 'dashboard.html', read_at: d(4), created_at: d(4),
+        meta: {}
+      },
+      {
+        id: 'n9', user_id: userId, type: 'invite',
+        title: 'Challenge accepted',
+        body: 'TundeBlaze accepted your challenge. Match code: DLS-4K9X.',
+        link: 'match.html?id=demo-match-5', read_at: d(3), created_at: d(3),
+        meta: { match_id: 'demo-match-5' }
+      },
+      {
+        id: 'n10', user_id: userId, type: 'account',
+        title: 'New sign-in detected',
+        body: 'Chrome on Android from Lagos, Nigeria. If this wasn\'t you, change your password.',
+        link: 'settings.html', read_at: d(5), created_at: d(5),
+        meta: {}
+      }
+    ];
+  }
+
+  function read(){
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch { return null; }
+  }
+
+  function write(rows){
+    try { localStorage.setItem(KEY, JSON.stringify(rows)); } catch {}
+  }
+
+  return {
+    list(){
+      const userId = State.session?.user?.id || 'demo';
+      let rows = read();
+      if (!rows || !rows.length){
+        rows = seed(userId);
+        write(rows);
+      }
+      return rows;
+    },
+    markRead(id){
+      const rows = read() || [];
+      const r = rows.find(x => x.id === id);
+      if (r && !r.read_at) r.read_at = new Date().toISOString();
+      write(rows);
+      return { error: null };
+    },
+    markAllRead(){
+      const rows = (read() || []).map(r => r.read_at ? r : { ...r, read_at: new Date().toISOString() });
+      write(rows);
+      return { error: null };
+    },
+    remove(id){
+      const rows = (read() || []).filter(x => x.id !== id);
+      write(rows);
+      return { error: null };
+    }
+  };
+})();
+
+/* ============================================================================
+   INBOX
+   ============================================================================ */
+const Inbox = {
+
+  async init(){
+    log('Inbox init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 600);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id);
+    this.renderNav();
+    this.renderFilters();
+
+    await this.reload();
+
+    /* Real-time + polling */
+    State.unsub = Notifs.subscribe(State.session.user.id, () => {
+      log('Notification realtime event');
+      this.reload(true);
+    });
+    State.poll = setInterval(() => this.reload(true), CONFIG.POLL_INTERVAL_MS);
+
+    window.addEventListener('focus', () => this.reload(true));
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  async reload(silent){
+    State.notifications = await Notifs.list(State.session.user.id);
+    State.loading = false;
+    this.renderFilters();
+    this.render();
+    if (!silent) log('Inbox loaded —', State.notifications.length, 'items');
+  },
+
+  filtered(){
+    const n = State.notifications;
+    if (State.filter === 'all')      return n;
+    if (State.filter === 'unread')   return n.filter(x => !x.read_at);
+    if (State.filter === 'invites')  return n.filter(x => x.type === 'invite' || x.type === 'challenge');
+    if (State.filter === 'results')  return n.filter(x => x.type === 'result' || x.type === 'dispute');
+    if (State.filter === 'money')    return n.filter(x => x.type === 'payout' || x.type === 'deposit' || x.type === 'withdrawal');
+    if (State.filter === 'account')  return n.filter(x => x.type === 'kyc' || x.type === 'account' || x.type === 'system');
+    return n;
+  },
+
+  renderFilters(){
+    const el = $('#filters');
+    if (!el) return;
+    const n = State.notifications;
+    const unread = n.filter(x => !x.read_at).length;
+
+    const counts = {
+      all: n.length,
+      unread,
+      invites: n.filter(x => x.type === 'invite' || x.type === 'challenge').length,
+      results: n.filter(x => x.type === 'result' || x.type === 'dispute').length,
+      money:   n.filter(x => x.type === 'payout' || x.type === 'deposit' || x.type === 'withdrawal').length,
+      account: n.filter(x => x.type === 'kyc' || x.type === 'account' || x.type === 'system').length
+    };
+
+    el.innerHTML = FILTERS.map(f => `
+      <button class="filter ${State.filter === f.id ? 'active' : ''}" onclick="Inbox.setFilter('${f.id}')">
+        <span>${f.icon}</span>
+        <span>${f.label}</span>
+        <span class="cnt">${counts[f.id] || 0}</span>
+      </button>
+    `).join('');
+
+    /* Page title unread badge */
+    const title = $('#pageTitle');
+    if (title) title.innerHTML = `Notifications ${unread > 0 ? `<span class="unread-pill">${unread} unread</span>` : ''}`;
+
+    /* Mark all button visibility */
+    const ma = $('#markAllBtn');
+    if (ma) ma.style.display = unread > 0 ? 'inline-flex' : 'none';
+  },
+
+  setFilter(id){
+    State.filter = id;
+    this.renderFilters();
+    this.render();
+  },
+
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.loading){
+      body.innerHTML = `<div class="loading-card"><span class="spin"></span> Loading notifications…</div>`;
+      return;
+    }
+
+    const list = this.filtered();
+
+    if (!list.length){
+      body.innerHTML = this.emptyHtml();
+      return;
+    }
+
+    body.innerHTML = `<div class="list">${list.map(n => this.notifHtml(n)).join('')}</div>`;
+
+    /* Wire clicks */
+    $$('.notif').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('[data-action]')) return;
+        Inbox.open(el.dataset.id);
+      });
+    });
+  },
+
+  emptyHtml(){
+    const map = {
+      all:      { ico:'📭', title:'No notifications yet', sub:'Match invites, results, and payouts will appear here as you play.' },
+      unread:   { ico:'✓',  title:'You\'re all caught up', sub:'No unread notifications. Nice and tidy.' },
+      invites:  { ico:'⚔️', title:'No match invites', sub:'When someone challenges you or accepts your challenge, you\'ll see it here.' },
+      results:  { ico:'🏆', title:'No match results yet', sub:'Play a match and the outcome will show up here.' },
+      money:    { ico:'💰', title:'No money activity', sub:'Deposits, withdrawals, and payouts land here.' },
+      account:  { ico:'🔐', title:'No account updates', sub:'KYC and security notices will appear here when something changes.' }
+    };
+    const m = map[State.filter] || map.all;
+    return `
+      <div class="empty">
+        <div class="ico">${m.ico}</div>
+        <h3>${m.title}</h3>
+        <p>${m.sub}</p>
+        <button class="btn btn-ghost btn-sm" onclick="location.href='lobby.html'">Go to lobby</button>
+      </div>`;
+  },
+
+  notifHtml(n){
+    const isUnread = !n.read_at;
+    const type = this.iconType(n.type);
+    const tag = this.typeTag(n.type);
+    const amount = this.amountHtml(n);
+    const urgent = this.isUrgent(n);
+
+    return `
+      <div class="notif ${isUnread ? 'unread' : 'read'}" data-id="${n.id}">
+        <div class="notif-ico ${type}">
+          ${this.iconFor(n.type)}
+          ${isUnread ? '<span class="dot"></span>' : ''}
+        </div>
+        <div class="notif-body">
+          <h4>
+            ${UI.escape(n.title || 'Notification')}
+            ${tag ? `<span class="tag ${urgent ? 'urgent' : ''}">${tag}</span>` : ''}
+          </h4>
+          <p>${UI.escape(n.body || '')}</p>
+          <div class="notif-meta">
+            <span>${UI.timeAgo(n.created_at)}</span>
+            ${amount}
+          </div>
+        </div>
+        <div class="notif-actions">
+          ${isUnread ? `<button data-action="read" title="Mark as read">✓ Read</button>` : ''}
+          <button data-action="remove" title="Remove">✕</button>
+        </div>
+      </div>
+    `;
+  },
+
+  iconType(type){
+    if (type === 'invite' || type === 'challenge') return 'invite';
+    if (type === 'result') return 'result';
+    if (type === 'payout' || type === 'deposit' || type === 'withdrawal') return 'payout';
+    if (type === 'kyc') return 'kyc';
+    if (type === 'dispute') return 'dispute';
+    return 'system';
+  },
+
+  iconFor(type){
+    if (type === 'invite' || type === 'challenge') return '⚔️';
+    if (type === 'result') return '🏆';
+    if (type === 'payout' || type === 'deposit' || type === 'withdrawal') return '💰';
+    if (type === 'kyc') return '🪪';
+    if (type === 'dispute') return '⚖️';
+    return '🔔';
+  },
+
+  typeTag(type){
+    if (type === 'invite')     return 'Invite';
+    if (type === 'challenge')  return 'Challenge';
+    if (type === 'result')     return 'Result';
+    if (type === 'payout')     return 'Payout';
+    if (type === 'deposit')    return 'Deposit';
+    if (type === 'withdrawal') return 'Withdrawal';
+    if (type === 'kyc')        return 'KYC';
+    if (type === 'dispute')    return 'Dispute';
+    if (type === 'account')    return 'Account';
+    if (type === 'system')     return 'System';
+    return '';
+  },
+
+  isUrgent(n){
+    if (n.type === 'dispute') return true;
+    if (n.type === 'kyc' && !n.read_at) return true;
+    return false;
+  },
+
+  amountHtml(n){
+    const amt = n.meta?.amount;
+    if (!amt) return '';
+    const isNeg = n.type === 'withdrawal' || (n.type === 'result' && n.meta?.won === false);
+    const sign = isNeg ? '−' : '+';
+    const cls = isNeg ? 'amount neg' : 'amount';
+    return `<span class="${cls}">${sign}${UI.money(Math.abs(amt))}</span>`;
+  },
+
+  /* ── Actions ───────────────────────────────────────────────── */
+  async open(id){
+    const n = State.notifications.find(x => x.id === id);
+    if (!n) return;
+
+    /* Mark as read first */
+    if (!n.read_at){
+      await this.markRead(id, true);
+    }
+
+    /* Deep link */
+    if (n.link){
+      log('Navigating to', n.link);
+      location.href = n.link;
+    }
+  },
+
+  async markRead(id, silent){
+    const n = State.notifications.find(x => x.id === id);
+    if (!n || n.read_at) return;
+
+    n.read_at = new Date().toISOString();   // optimistic
+    this.renderFilters();
+    this.render();
+
+    const { error } = await Notifs.markRead(id);
+    if (error){
+      warn('markRead failed:', error.message);
+      if (!silent) UI.toast('Could not update notification.', 'err');
+      await this.reload(true);
+    }
+  },
+
+  async markAllRead(){
+    const unread = State.notifications.filter(x => !x.read_at);
+    if (!unread.length){ UI.toast('Nothing to mark.', 'info'); return; }
+
+    const now = new Date().toISOString();
+    State.notifications.forEach(n => { if (!n.read_at) n.read_at = now; });
+    this.renderFilters();
+    this.render();
+
+    const { error } = await Notifs.markAllRead(State.session.user.id);
+    if (error){
+      warn('markAllRead failed:', error.message);
+      UI.toast('Could not mark all as read.', 'err');
+      await this.reload(true);
+      return;
+    }
+    UI.toast(`${unread.length} notification${unread.length > 1 ? 's' : ''} marked as read.`, 'ok');
+  },
+
+  async remove(id){
+    const n = State.notifications.find(x => x.id === id);
+    if (!n) return;
+
+    State.notifications = State.notifications.filter(x => x.id !== id);
+    this.renderFilters();
+    this.render();
+
+    const { error } = await Notifs.remove(id);
+    if (error){
+      warn('remove failed:', error.message);
+      UI.toast('Could not remove notification.', 'err');
+      await this.reload(true);
+      return;
+    }
+    UI.toast('Notification removed.', 'info', 2200);
+  }
+};
+
+/* Wire the per-row action buttons after each render */
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const row = btn.closest('.notif');
+  if (!row) return;
+  e.stopPropagation();
+  const id = row.dataset.id;
+  const action = btn.dataset.action;
+  if (action === 'read') Inbox.markRead(id);
+  if (action === 'remove') Inbox.remove(id);
+});
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Inbox boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Notifications (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Notifications (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Inbox.init(); }
+  catch(e){ err('Inbox init failed:', e); UI.toast('Failed to load notifications.', 'err'); }
+
+  window.addEventListener('beforeunload', () => {
+    if (State.unsub) try { State.unsub(); } catch {}
+    if (State.poll) clearInterval(State.poll);
+  });
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'notifications-1.0.0',
+  async debug(){
+    console.log('======== DLS Notifications v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Filter:', State.filter);
+    console.log('Total:', State.notifications.length);
+    console.log('Unread:', State.notifications.filter(x => !x.read_at).length);
+    console.log('Visible:', Inbox.filtered().length);
+    console.log('=====================================');
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    localStorage.removeItem('dls_demo_notifs');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
