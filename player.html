@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Player profile — DLS Stake</title>
+<meta name="description" content="View a player's stats, form, and head-to-head record on DLS Stake." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:30px 0 80px}
+
+/* LOADING / NOT FOUND */
+.state-card{padding:70px 26px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+.state-card .ico{font-size:2.6rem;margin-bottom:14px;opacity:.6}
+.state-card h3{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:8px}
+.state-card p{font-size:.86rem;color:var(--muted);line-height:1.6;max-width:400px;margin:0 auto 20px}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,var(--surface-3),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);padding:28px;margin-bottom:22px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-90px;right:-90px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(0,217,126,.12),transparent 65%);pointer-events:none}
+.hero-inner{display:flex;gap:22px;align-items:center;flex-wrap:wrap;position:relative;z-index:1}
+.hero-avatar{width:96px;height:96px;min-width:96px;border-radius:26px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-size:2.2rem;font-weight:900;color:#04140c;box-shadow:0 12px 34px var(--primary-glow);position:relative}
+.hero-avatar .online-dot{position:absolute;bottom:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--primary);border:3px solid var(--surface-3);box-shadow:0 0 10px var(--primary-glow)}
+.hero-info{flex:1;min-width:220px}
+.hero-info h1{font-size:1.6rem;font-weight:900;letter-spacing:-.035em;line-height:1.15;margin-bottom:4px}
+.hero-info .dls-name{font-family:var(--ff-mono);font-size:.88rem;color:var(--muted);margin-bottom:12px}
+.hero-info .dls-name span{color:var(--primary);font-weight:800}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 11px;border-radius:var(--radius-full);background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
+.badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge.verified{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.32);color:var(--primary)}
+.badge.pending{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.32);color:var(--warn)}
+.badge.trust{background:rgba(47,128,237,.12);border-color:rgba(47,128,237,.32);color:#7cb4ff}
+.badge.trust.low{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.32);color:var(--warn)}
+.badge.trust.bad{background:rgba(255,77,94,.12);border-color:rgba(255,77,94,.32);color:var(--danger)}
+.badge.online{background:rgba(0,217,126,.12);border-color:rgba(0,217,126,.32);color:var(--primary)}
+.badge.joined{background:var(--surface-2)}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;position:relative;z-index:1}
+
+/* H2H STRIP */
+.h2h{background:linear-gradient(180deg,rgba(139,92,246,.08),var(--bg-2));border:1px solid rgba(139,92,246,.32);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:22px}
+.h2h-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#c4b5fd}
+.h2h-head .ico{font-size:1.1rem}
+.h2h-body{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:center}
+@media(max-width:640px){.h2h-body{grid-template-columns:1fr;gap:10px}}
+.h2h-cell{text-align:center}
+.h2h-cell .v{font-family:var(--ff-mono);font-size:1.55rem;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.h2h-cell .v.win{color:var(--primary)}
+.h2h-cell .v.loss{color:var(--fire)}
+.h2h-cell .v.draw{color:var(--warn)}
+.h2h-cell .k{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.h2h-sep{color:var(--muted-2);font-weight:900;font-size:1.2rem}
+@media(max-width:640px){.h2h-sep{display:none}}
+
+/* SECTION TITLE */
+.section-title{font-size:1.05rem;font-weight:900;letter-spacing:-.02em;margin:26px 0 14px;display:flex;align-items:center;gap:12px}
+.section-title .line{flex:1;height:1px;background:var(--border)}
+
+/* WALLET SWITCHER */
+.wallet-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);padding:5px;margin-bottom:18px;max-width:420px}
+.wallet-opt{padding:11px 18px;border-radius:var(--radius-full);font-size:.85rem;font-weight:800;color:var(--muted);cursor:pointer;transition:.18s;text-align:center}
+.wallet-opt:hover{color:var(--text-2)}
+.wallet-opt.active{background:var(--surface-3);color:var(--text);box-shadow:var(--shadow-sm)}
+.wallet-opt.demo.active{background:linear-gradient(180deg,rgba(47,128,237,.16),rgba(47,128,237,.08));color:#7cb4ff}
+
+/* STATS GRID */
+.stats-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:22px}
+@media(min-width:640px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-align:center;transition:.15s}
+.stat-card:hover{border-color:var(--border-2)}
+.stat-card .k{font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stat-card .v{font-family:var(--ff-mono);font-size:1.5rem;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.stat-card .v.green{color:var(--primary)}
+.stat-card .v.blue{color:#7cb4ff}
+.stat-card .v.warn{color:var(--warn)}
+.stat-card .v.fire{color:var(--fire)}
+.stat-card .v.purple{color:#c4b5fd}
+.stat-card .sub{font-size:.66rem;color:var(--muted-2);margin-top:6px}
+
+/* FORM */
+.form-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:22px}
+.form-dots{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.form-dot{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-family:var(--ff-mono);font-weight:900;font-size:.86rem;transition:.15s;border:1px solid transparent;cursor:default}
+.form-dot.win{background:rgba(0,217,126,.14);color:var(--primary);border-color:rgba(0,217,126,.32)}
+.form-dot.loss{background:rgba(255,107,53,.14);color:var(--fire);border-color:rgba(255,107,53,.32)}
+.form-dot.draw{background:rgba(255,176,32,.14);color:var(--warn);border-color:rgba(255,176,32,.32)}
+.form-dot.empty{background:var(--surface-2);color:var(--muted-2);border-color:var(--border)}
+.form-note{font-size:.76rem;color:var(--muted);margin-top:12px;font-family:var(--ff-mono)}
+
+/* PRIVACY NOTICE */
+.privacy-notice{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:var(--radius);background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.28);color:#ffd08a;font-size:.84rem;line-height:1.6;margin-bottom:18px}
+.privacy-notice .ico{font-size:1.05rem;line-height:1.3;flex-shrink:0}
+.privacy-notice b{font-weight:800}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap;text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-sm{padding:10px 18px;font-size:.82rem}
+.btn-lg{padding:15px 26px;font-size:.96rem}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,14,.85);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .18s}
+.modal{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);max-width:460px;width:100%;padding:26px;box-shadow:var(--shadow);animation:popIn .22s cubic-bezier(.2,.9,.3,1.2)}
+.modal h3{font-size:1.12rem;font-weight:900;margin-bottom:10px}
+.modal p{font-size:.86rem;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.modal select,.modal textarea{width:100%;padding:12px 14px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.9rem;outline:none;margin-bottom:14px;font-family:inherit}
+.modal select:focus,.modal textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.modal textarea{min-height:100px;resize:vertical;line-height:1.6}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .btn{flex:1;min-width:120px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="create-match.html">Create</a>
+      <a href="history.html">History</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div id="body">
+    <div class="state-card"><span class="spin"></span> Loading player…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="lobby.html">Lobby</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="support.html">Support</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  PROFILE_PAGE:      'profile.html',
+  CREATE_MATCH_PAGE: 'create-match.html',
+  LOBBY_PAGE:        'lobby.html',
+  DEBUG:             true
+};
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  date(iso){
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('en-NG',{month:'short',year:'numeric'}); }
+    catch { return '—'; }
+  },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    if (s < 604800) return Math.floor(s/86400)+'d ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  me: null,
+  targetId: null,
+  player: null,
+  matches: [],
+  h2h: [],
+  wallet: 'real',
+  loading: true,
+  notFound: false,
+  isSelf: false
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   PLAYER DATA
+   ============================================================================ */
+const Players = {
+  async get(id){
+    if (!Supa.HAS) return Demo.getPlayer(id);
+    try {
+      const { data, error } = await Supa.client
+        .from('profiles')
+        .select('id, username, dls_username, created_at, trust_score, kyc_status, account_type, matches_played, matches_won, best_streak, win_streak, demo_played, demo_won, demo_best_streak, bio, privacy_prefs, last_seen_at')
+        .eq('id', id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    } catch(e){ warn('get player:', e.message); return null; }
+  },
+
+  async recentMatches(userId, limit = 20){
+    if (!Supa.HAS) return Demo.getRecent(userId, limit);
+    try {
+      const { data, error } = await Supa.client
+        .from('matches')
+        .select('id, creator_id, opponent_id, creator_score, opponent_score, winner_id, status, game_type, created_at, settled_at')
+        .or(`creator_id.eq.${userId},opponent_id.eq.${userId}`)
+        .eq('status', 'settled')
+        .order('settled_at', { ascending:false })
+        .limit(limit);
+      if (error) throw error;
+      return data || [];
+    } catch(e){ warn('recent matches:', e.message); return []; }
+  },
+
+  async headToHead(meId, themId){
+    if (!Supa.HAS) return Demo.getH2H(meId, themId);
+    try {
+      const { data, error } = await Supa.client
+        .from('matches')
+        .select('id, creator_id, opponent_id, winner_id, status, game_type, settled_at')
+        .or(`and(creator_id.eq.${meId},opponent_id.eq.${themId}),and(creator_id.eq.${themId},opponent_id.eq.${meId})`)
+        .eq('status', 'settled')
+        .order('settled_at', { ascending:false })
+        .limit(50);
+      if (error) throw error;
+      return data || [];
+    } catch(e){ warn('h2h:', e.message); return []; }
+  }
+};
+
+/* ============================================================================
+   DEMO BACKEND
+   ============================================================================ */
+const Demo = {
+  getPlayer(id){
+    const users = (() => { try { return JSON.parse(localStorage.getItem('dls_demo_users') || '[]'); } catch { return []; } })();
+
+    /* Self check */
+    if (users.some(u => u.id === id)) return users.find(u => u.id === id);
+
+    /* Seeded fake players */
+    const seed = {
+      'o1': { id:'o1', username:'ChidiThunder', dls_username:'chidi_tt', created_at: new Date(Date.now() - 90*864e5).toISOString(), trust_score: 92, kyc_status:'verified', matches_played: 55, matches_won: 34, best_streak: 11, win_streak: 3, demo_played: 28, demo_won: 19, demo_best_streak: 7, bio: 'Lagos boy. Counter-attack specialist.', last_seen_at: new Date(Date.now() - 8*60000).toISOString() },
+      'o2': { id:'o2', username:'KunleStrikes', dls_username:'kunle_dls', created_at: new Date(Date.now() - 45*864e5).toISOString(), trust_score: 88, kyc_status:'verified', matches_played: 41, matches_won: 27, best_streak: 7, win_streak: 1, demo_played: 32, demo_won: 24, demo_best_streak: 9, bio: 'Striker. Give me space and I punish you.', last_seen_at: new Date(Date.now() - 2*3600000).toISOString() },
+      'o3': { id:'o3', username:'AmakaGoals', dls_username:'amaka_g', created_at: new Date(Date.now() - 120*864e5).toISOString(), trust_score: 100, kyc_status:'verified', matches_played: 33, matches_won: 22, best_streak: 5, win_streak: 2, demo_played: 24, demo_won: 17, demo_best_streak: 6, bio: 'Possession football.', last_seen_at: new Date(Date.now() - 30*60000).toISOString() },
+      'o4': { id:'o4', username:'TundeBlaze', dls_username:'tunde_bz', created_at: new Date(Date.now() - 200*864e5).toISOString(), trust_score: 74, kyc_status:'pending', matches_played: 62, matches_won: 38, best_streak: 14, win_streak: 0, demo_played: 21, demo_won: 13, demo_best_streak: 4, bio: '', last_seen_at: null },
+      'o5': { id:'o5', username:'NgoziQueen', dls_username:'ngozi_q', created_at: new Date(Date.now() - 60*864e5).toISOString(), trust_score: 96, kyc_status:'verified', matches_played: 27, matches_won: 17, best_streak: 6, win_streak: 4, demo_played: 19, demo_won: 14, demo_best_streak: 5, bio: 'Defending is an art.', last_seen_at: new Date(Date.now() - 15*60000).toISOString() },
+      'o6': { id:'o6', username:'IbrahimKing', dls_username:'ibra_king', created_at: new Date(Date.now() - 150*864e5).toISOString(), trust_score: 85, kyc_status:'verified', matches_played: 48, matches_won: 29, best_streak: 8, win_streak: 1, demo_played: 18, demo_won: 11, demo_best_streak: 3, bio: 'Abuja rep.', last_seen_at: null }
+    };
+    return seed[id] || null;
+  },
+
+  getRecent(userId, limit){
+    const outcomes = ['win','loss','win','win','loss','draw','win','loss','win','win','draw','loss'];
+    const now = Date.now();
+    return outcomes.slice(0, limit).map((o, i) => ({
+      id: 'm' + i,
+      creator_id: userId,
+      opponent_id: 'opp' + i,
+      winner_id: o === 'win' ? userId : o === 'loss' ? 'opp' + i : null,
+      status: 'settled',
+      game_type: i % 3 === 0 ? 'demo' : 'real',
+      settled_at: new Date(now - i * 3600000 * 4).toISOString(),
+      created_at: new Date(now - i * 3600000 * 4).toISOString()
+    }));
+  },
+
+  getH2H(meId, themId){
+    /* Give a small realistic H2H */
+    if (!meId || !themId) return [];
+    const outcomes = ['win','loss','win','draw','loss'];
+    const now = Date.now();
+    return outcomes.map((o, i) => ({
+      id: 'h2h' + i,
+      creator_id: meId,
+      opponent_id: themId,
+      winner_id: o === 'win' ? meId : o === 'loss' ? themId : null,
+      status: 'settled',
+      game_type: 'real',
+      settled_at: new Date(now - (i + 1) * 86400000).toISOString()
+    }));
+  }
+};
+
+/* ============================================================================
+   PLAYER PAGE
+   ============================================================================ */
+const PlayerPage = {
+
+  async init(){
+    log('Player page init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in to view player profiles.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 700);
+      return;
+    }
+
+    const params = new URLSearchParams(location.search);
+    State.targetId = params.get('id');
+
+    if (!State.targetId){
+      this.renderNotFound('No player specified');
+      return;
+    }
+
+    /* If they're viewing themselves, redirect to their own profile editor */
+    if (State.targetId === State.session.user.id){
+      log('Self view — redirect to profile page');
+      location.replace(CONFIG.PROFILE_PAGE);
+      return;
+    }
+
+    /* Load my profile (for h2h + nav) */
+    State.me = await Auth.fetchProfile(State.session.user.id);
+    this.renderNav();
+
+    /* Load the target player */
+    State.player = await Players.get(State.targetId);
+
+    if (!State.player){
+      this.renderNotFound('Player not found');
+      return;
+    }
+
+    /* Default wallet — from my account type */
+    State.wallet = State.me?.account_type === 'demo' ? 'demo' : 'real';
+
+    /* Load their recent matches + head-to-head */
+    const [recent, h2h] = await Promise.all([
+      Players.recentMatches(State.targetId, 20),
+      Players.headToHead(State.session.user.id, State.targetId)
+    ]);
+    State.matches = recent;
+    State.h2h = h2h;
+
+    State.loading = false;
+    this.render();
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.me;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  /* ── Privacy helpers ──────────────────────────────────────── */
+  privacy(){
+    const defaults = { show_stats:true, show_online:true, show_on_leaderboard:true, allow_challenges:true, allow_dm:false };
+    return { ...defaults, ...(State.player?.privacy_prefs || {}) };
+  },
+
+  isOnline(){
+    const p = State.player;
+    if (!p?.last_seen_at) return false;
+    const mins = (Date.now() - new Date(p.last_seen_at).getTime()) / 60000;
+    return mins < 10;
+  },
+
+  trustClass(trust){
+    if (trust >= 80) return '';
+    if (trust >= 50) return 'low';
+    return 'bad';
+  },
+
+  /* ── Stats from the current wallet view ───────────────────── */
+  stats(){
+    const p = State.player || {};
+    const isDemo = State.wallet === 'demo';
+
+    const played = Number(isDemo ? p.demo_played : p.matches_played) || 0;
+    const won    = Number(isDemo ? p.demo_won    : p.matches_won)    || 0;
+    const lost   = Math.max(0, played - won);
+    const streak = Number(isDemo ? (p.demo_best_streak || 0) : (p.win_streak || 0)) || 0;
+    const best   = Number(isDemo ? p.demo_best_streak : p.best_streak) || 0;
+    const winrate = played > 0 ? (won / played) * 100 : 0;
+
+    return { played, won, lost, streak, best, winrate };
+  },
+
+  /* ── Recent form (last 5 W/L/D in the current wallet view) ── */
+  form(){
+    const p = State.player;
+    const isDemo = State.wallet === 'demo';
+    const rows = State.matches
+      .filter(m => (isDemo ? m.game_type === 'demo' : m.game_type !== 'demo'))
+      .slice(0, 5);
+
+    return rows.map(m => {
+      if (!m.winner_id) return 'draw';
+      return m.winner_id === p.id ? 'win' : 'loss';
+    });
+  },
+
+  /* ── Head-to-head record with me ───────────────────────────── */
+  h2hRecord(){
+    const meId = State.session?.user?.id;
+    let meWins = 0, themWins = 0, draws = 0;
+
+    State.h2h.forEach(m => {
+      if (!m.winner_id){ draws++; return; }
+      if (m.winner_id === meId) meWins++;
+      else themWins++;
+    });
+
+    return { meWins, themWins, draws, total: State.h2h.length };
+  },
+
+  /* ── Render ────────────────────────────────────────────────── */
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    const p = State.player;
+    if (!p){ this.renderNotFound('Player not found'); return; }
+
+    const priv = this.privacy();
+    const s = this.stats();
+    const form = this.form();
+    const h2h = this.h2hRecord();
+    const online = priv.show_online && this.isOnline();
+    const kycBadge = p.kyc_status === 'verified'
+      ? `<span class="badge verified"><i></i> Verified</span>`
+      : p.kyc_status === 'pending'
+        ? `<span class="badge pending"><i></i> KYC pending</span>`
+        : '';
+
+    const walletCount = {
+      real: (p.matches_played || 0),
+      demo: (p.demo_played || 0)
+    };
+
+    body.innerHTML = `
+      <!-- HERO -->
+      <div class="hero">
+        <div class="hero-inner">
+          <div class="hero-avatar">
+            ${UI.escape(UI.initials(p.username))}
+            ${online ? '<span class="online-dot"></span>' : ''}
+          </div>
+          <div class="hero-info">
+            <h1>${UI.escape(p.username || 'Player')}</h1>
+            <div class="dls-name">DLS: <span>${UI.escape(p.dls_username || '—')}</span></div>
+            <div class="hero-badges">
+              ${online ? `<span class="badge online"><i></i> Online</span>` : ''}
+              ${kycBadge}
+              ${priv.show_stats ? `<span class="badge trust ${this.trustClass(p.trust_score)}"><i></i> Trust ${p.trust_score ?? 100}</span>` : ''}
+              <span class="badge joined"><i></i> Joined ${UI.escape(UI.date(p.created_at))}</span>
+            </div>
+            ${p.bio ? `<p style="font-size:.86rem;color:var(--text-2);margin-top:14px;line-height:1.6;max-width:520px">${UI.escape(p.bio)}</p>` : ''}
+          </div>
+        </div>
+        <div class="hero-actions">
+          ${this.actionButtons(priv)}
+        </div>
+      </div>
+
+      ${!priv.show_stats ? `
+        <div class="privacy-notice">
+          <span class="ico">🔒</span>
+          <div><b>This player keeps their stats private.</b> You can still challenge them if they allow it, but their match history and win rate aren't visible.</div>
+        </div>
+      ` : ''}
+
+      ${priv.show_stats ? `
+        <!-- H2H -->
+        ${h2h.total > 0 ? `
+          <div class="h2h">
+            <div class="h2h-head">
+              <span class="ico">⚔️</span>
+              <span>Your record against ${UI.escape(p.username)}</span>
+            </div>
+            <div class="h2h-body">
+              <div class="h2h-cell">
+                <div class="v win">${h2h.meWins}</div>
+                <div class="k">You won</div>
+              </div>
+              <div class="h2h-sep">·</div>
+              <div class="h2h-cell">
+                <div class="v draw">${h2h.draws}</div>
+                <div class="k">Drawn</div>
+              </div>
+              <div class="h2h-sep">·</div>
+              <div class="h2h-cell">
+                <div class="v loss">${h2h.themWins}</div>
+                <div class="k">They won</div>
+              </div>
+            </div>
+          </div>
+        ` : `
+          <div class="h2h">
+            <div class="h2h-head">
+              <span class="ico">⚔️</span>
+              <span>First meeting</span>
+            </div>
+            <div style="font-size:.86rem;color:var(--text-2);line-height:1.6">
+              You've never played ${UI.escape(p.username)} before. A clean slate.
+            </div>
+          </div>
+        `}
+
+        <!-- WALLET SWITCHER -->
+        <div class="wallet-switch">
+          <button class="wallet-opt ${State.wallet==='real'?'active':''}" onclick="PlayerPage.setWallet('real')">
+            💰 Real · ${walletCount.real} played
+          </button>
+          <button class="wallet-opt demo ${State.wallet==='demo'?'active':''}" onclick="PlayerPage.setWallet('demo')">
+            🎮 Demo · ${walletCount.demo} played
+          </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="k">Played</div>
+            <div class="v blue">${s.played}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Won</div>
+            <div class="v green">${s.won}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Lost</div>
+            <div class="v fire">${s.lost}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Win rate</div>
+            <div class="v ${s.winrate >= 50 ? 'green' : 'warn'}">${s.played > 0 ? s.winrate.toFixed(0) : 0}%</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Current streak</div>
+            <div class="v ${s.streak >= 3 ? 'green' : 'warn'}">${s.streak}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Best streak</div>
+            <div class="v purple">${s.best}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">Trust score</div>
+            <div class="v ${p.trust_score >= 80 ? 'green' : p.trust_score >= 50 ? 'warn' : 'fire'}">${p.trust_score ?? 100}</div>
+          </div>
+          <div class="stat-card">
+            <div class="k">KYC</div>
+            <div class="v" style="font-size:1rem;color:${p.kyc_status === 'verified' ? 'var(--primary)' : p.kyc_status === 'pending' ? 'var(--warn)' : 'var(--muted)'}">
+              ${(p.kyc_status || 'unverified').charAt(0).toUpperCase() + (p.kyc_status || 'unverified').slice(1)}
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-panel">
+          <div class="section-title" style="margin-top:0">
+            <span>Recent form</span>
+            <span class="line"></span>
+          </div>
+          ${form.length ? `
+            <div class="form-dots">
+              ${form.map(o => `
+                <div class="form-dot ${o}" title="${o === 'win' ? 'Win' : o === 'loss' ? 'Loss' : 'Draw'}">
+                  ${o === 'win' ? 'W' : o === 'loss' ? 'L' : 'D'}
+                </div>
+              `).join('')}
+            </div>
+            <div class="form-note">Last ${form.length} ${State.wallet === 'demo' ? 'demo' : 'real'} matches</div>
+          ` : `<div style="font-size:.86rem;color:var(--muted)">No ${State.wallet} matches played yet.</div>`}
+        </div>
+      ` : ''}
+    `;
+  },
+
+  actionButtons(priv){
+    const p = State.player;
+    const canChallenge = priv.allow_challenges !== false;
+
+    const challengeBtn = canChallenge
+      ? `<button class="btn btn-primary" onclick="PlayerPage.challenge()">⚔️ Challenge ${UI.escape(p.username)}</button>`
+      : `<button class="btn btn-ghost" disabled title="This player has disabled challenges">🚫 Challenges disabled</button>`;
+
+    const dmBtn = priv.allow_dm
+      ? `<button class="btn btn-ghost" onclick="PlayerPage.message()">💬 Message</button>`
+      : '';
+
+    return `
+      ${challengeBtn}
+      ${dmBtn}
+      <button class="btn btn-outline" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+      <button class="btn btn-danger btn-sm" style="margin-left:auto" onclick="PlayerPage.report()">Report</button>
+    `;
+  },
+
+  setWallet(w){
+    State.wallet = w;
+    this.render();
+  },
+
+  renderNotFound(reason){
+    State.loading = false;
+    $('#body').innerHTML = `
+      <div class="state-card">
+        <div class="ico">🔍</div>
+        <h3>${UI.escape(reason || 'Player not found')}</h3>
+        <p>This player either doesn't exist, has deactivated their account, or the link is broken.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+          <button class="btn btn-ghost" onclick="location.href='${CONFIG.PROFILE_PAGE}'">Your profile</button>
+        </div>
+      </div>`;
+  },
+
+  /* ── Actions ──────────────────────────────────────────────── */
+  challenge(){
+    const p = State.player;
+    if (!p) return;
+
+    /* Pass the opponent id into the create-match page */
+    location.href = `${CONFIG.CREATE_MATCH_PAGE}?opponent=${encodeURIComponent(p.id)}`;
+  },
+
+  message(){
+    UI.toast('Direct messages are coming in the next release.', 'info', 5000);
+  },
+
+  report(){
+    const p = State.player;
+    if (!p) return;
+
+    const root = $('#modalRoot');
+    root.innerHTML = `
+      <div class="modal-back" onclick="PlayerPage.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>Report ${UI.escape(p.username)}</h3>
+          <p>Our team reviews every report. False reports may affect your own account standing.</p>
+          <select id="reportReason">
+            <option value="">Select a reason…</option>
+            <option value="cheating">Suspected cheating / screenshot fraud</option>
+            <option value="abuse">Abusive or offensive behaviour</option>
+            <option value="impersonation">Impersonation</option>
+            <option value="spam">Spam or soliciting</option>
+            <option value="other">Something else</option>
+          </select>
+          <textarea id="reportNote" placeholder="Describe what happened (optional but helpful)…" maxlength="500"></textarea>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="PlayerPage.closeModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="PlayerPage.submitReport()">Submit report</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  closeModal(e){
+    if (e && e.target && e.target.className !== 'modal-back') return;
+    $('#modalRoot').innerHTML = '';
+  },
+
+  async submitReport(){
+    const reason = ($('#reportReason')?.value || '').trim();
+    const note   = ($('#reportNote')?.value   || '').trim();
+
+    if (!reason){ UI.toast('Select a reason for the report.', 'err'); return; }
+
+    const p = State.player;
+
+    try {
+      if (Supa.HAS){
+        const payload = {
+          reporter_id: State.session.user.id,
+          reported_id: p.id,
+          reason,
+          note: note || null,
+          status: 'open',
+          created_at: new Date().toISOString()
+        };
+        let done = false;
+        try {
+          const { error } = await Supa.client.rpc('submit_report', { p_payload: payload });
+          if (!error) done = true;
+        } catch(e){ warn('submit_report rpc unavailable:', e.message); }
+
+        if (!done){
+          await Supa.client.from('reports').insert(payload);
+        }
+      }
+
+      this.closeModal();
+      UI.toast('Report submitted. Our team will review it.', 'ok', 5000);
+    } catch(e){
+      err('submitReport:', e);
+      UI.toast('Could not submit the report. Try again.', 'err');
+    }
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Player page boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Player (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Player (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await PlayerPage.init(); }
+  catch(e){ err('Player page init failed:', e); UI.toast('Failed to load player.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'player-1.0.0',
+  debug(){
+    console.log('======== DLS Player v1 ========');
+    console.log('Me:', State.me?.username);
+    console.log('Target ID:', State.targetId);
+    console.log('Target:', State.player?.username);
+    console.log('Wallet view:', State.wallet);
+    console.log('Recent matches:', State.matches.length);
+    console.log('H2H:', State.h2h.length);
+    console.log('Privacy:', PlayerPage.privacy());
+    console.log('=============================');
+  },
+  reset(){
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    sessionStorage.clear();
+    location.href = 'login.html';
+  }
+};
+</script>
+</body>
+</html>
