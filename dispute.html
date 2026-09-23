@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>File a dispute — DLS Stake</title>
+<meta name="description" content="File a dispute on a DLS Stake match and track its arbitration status." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(255,107,53,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.10), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:900px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:30px 0 80px}
+.page-head{margin-bottom:22px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--fire);margin-bottom:6px}
+.page-title{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.15}
+.page-sub{font-size:.88rem;color:var(--muted);margin-top:6px;max-width:560px}
+
+/* LOADING / STATES */
+.state-card{padding:60px 24px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+.state-card .ico{font-size:2.6rem;margin-bottom:14px;opacity:.65}
+.state-card h3{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:8px}
+.state-card p{font-size:.86rem;color:var(--muted);line-height:1.6;max-width:420px;margin:0 auto 20px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* COUNTDOWN BANNER */
+.window-banner{display:flex;gap:16px;align-items:center;padding:18px 22px;border-radius:var(--radius);margin-bottom:22px;flex-wrap:wrap}
+.window-banner.ok{background:rgba(0,217,126,.08);border:1px solid rgba(0,217,126,.32)}
+.window-banner.warn{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.32)}
+.window-banner.danger{background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.32)}
+.window-banner.closed{background:var(--surface-2);border:1px solid var(--border-2)}
+.window-banner .ico{font-size:1.5rem;line-height:1;flex-shrink:0}
+.window-banner .body{flex:1;min-width:200px}
+.window-banner .body h3{font-size:.98rem;font-weight:900;margin-bottom:4px}
+.window-banner.ok .body h3{color:#6ee7b0}
+.window-banner.warn .body h3{color:#ffd08a}
+.window-banner.danger .body h3{color:#ff97a4}
+.window-banner.closed .body h3{color:var(--muted)}
+.window-banner .body p{font-size:.84rem;line-height:1.6;color:var(--text-2)}
+.window-banner .clock{font-family:var(--ff-mono);font-size:1.5rem;font-weight:900;letter-spacing:-.02em}
+.window-banner.ok .clock{color:var(--primary)}
+.window-banner.warn .clock{color:var(--warn)}
+.window-banner.danger .clock{color:var(--danger)}
+.window-banner.closed .clock{color:var(--muted)}
+
+/* MATCH SUMMARY */
+.match-summary{background:linear-gradient(180deg,var(--surface-2),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:22px}
+.ms-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.ms-code{font-family:var(--ff-mono);font-size:.72rem;color:var(--muted);letter-spacing:.06em}
+.ms-type{font-size:.62rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-full)}
+.ms-type.real{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
+.ms-type.demo{background:rgba(47,128,237,.14);color:#7cb4ff;border:1px solid rgba(47,128,237,.3)}
+.ms-body{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.ms-player{display:flex;align-items:center;gap:11px;min-width:0}
+.ms-player.right{flex-direction:row-reverse;text-align:right}
+.ms-player .av{width:42px;height:42px;min-width:42px;border-radius:12px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.82rem}
+.ms-player .av.opp{background:linear-gradient(140deg,#2f80ed,#1f66c9);color:#fff}
+.ms-player .txt{min-width:0}
+.ms-player .txt h4{font-size:.9rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-player .txt p{font-size:.7rem;color:var(--muted);font-family:var(--ff-mono)}
+.ms-score{text-align:center}
+.ms-score .nums{font-family:var(--ff-mono);font-size:1.6rem;font-weight:900;letter-spacing:-.02em;line-height:1;display:flex;gap:8px;align-items:center}
+.ms-score .nums .sep{color:var(--muted-2);font-size:1.1rem}
+.ms-score .nums .w{color:var(--primary)}
+.ms-score .nums .l{color:var(--text-2)}
+.ms-score .nums .d{color:var(--warn)}
+.ms-score .lbl{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);margin-top:4px}
+.ms-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:.76rem;color:var(--muted)}
+.ms-meta .it{display:flex;flex-direction:column;gap:2px}
+.ms-meta .it .k{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+.ms-meta .it .v{font-family:var(--ff-mono);color:var(--text-2);font-weight:700}
+
+/* PANEL */
+.panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;margin-bottom:22px}
+.panel-head{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.panel-head .ico{width:46px;height:46px;min-width:46px;border-radius:14px;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.24);display:grid;place-items:center;font-size:1.2rem}
+.panel-head h2{font-size:1.08rem;font-weight:900;letter-spacing:-.02em}
+.panel-head p{font-size:.78rem;color:var(--muted);margin-top:3px}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.field label{font-size:.82rem;font-weight:800;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.74rem;color:var(--muted-2);margin-top:-2px;line-height:1.5}
+.input-text,.input-area{width:100%;padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:border-color .15s,box-shadow .15s;font-family:inherit}
+.input-text:focus,.input-area:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid,.input-area.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-area{min-height:140px;resize:vertical;line-height:1.65}
+.input-text::placeholder,.input-area::placeholder{color:var(--muted-2)}
+
+/* REASON CHIPS */
+.reasons{display:grid;gap:10px;grid-template-columns:1fr;margin-bottom:18px}
+@media(min-width:600px){.reasons{grid-template-columns:1fr 1fr}}
+.reason{position:relative;display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.15s}
+.reason:hover{border-color:var(--border-2);background:var(--surface-3)}
+.reason.active{border-color:rgba(255,107,53,.5);background:rgba(255,107,53,.06);box-shadow:0 0 0 3px rgba(255,107,53,.12)}
+.reason .box{width:20px;height:20px;min-width:20px;border-radius:6px;border:2px solid var(--border-2);display:grid;place-items:center;font-size:.7rem;font-weight:900;color:transparent;transition:.15s;margin-top:2px}
+.reason.active .box{background:var(--fire);border-color:var(--fire);color:#fff}
+.reason .txt{flex:1;min-width:0}
+.reason .txt h4{font-size:.86rem;font-weight:800;margin-bottom:3px}
+.reason .txt p{font-size:.74rem;color:var(--muted);line-height:1.5}
+
+/* EVIDENCE UPLOAD */
+.evidence-grid{display:grid;gap:12px;grid-template-columns:repeat(2,1fr);margin-bottom:18px}
+@media(min-width:600px){.evidence-grid{grid-template-columns:repeat(3,1fr)}}
+.ev-slot{position:relative;min-height:130px;border-radius:var(--radius);border:2px dashed var(--border-2);background:var(--surface-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;text-align:center;cursor:pointer;transition:.18s;overflow:hidden}
+.ev-slot:hover{border-color:var(--primary);background:var(--surface-3)}
+.ev-slot.filled{border-style:solid;border-color:rgba(0,217,126,.5);background:rgba(0,217,126,.04);cursor:default}
+.ev-slot input{display:none}
+.ev-slot .drop-ico{font-size:1.4rem;opacity:.85}
+.ev-slot .drop-lbl{font-size:.74rem;font-weight:700;color:var(--text-2)}
+.ev-slot .drop-sub{font-size:.62rem;color:var(--muted-2);font-family:var(--ff-mono)}
+.ev-slot img{width:100%;height:100%;object-fit:cover;border-radius:calc(var(--radius) - 2px);background:#000}
+.ev-slot .remove{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(255,77,94,.15);border:1px solid rgba(255,77,94,.4);color:var(--danger);font-weight:900;font-size:.72rem;display:grid;place-items:center}
+.ev-slot .remove:hover{background:rgba(255,77,94,.3)}
+.ev-slot .ev-tag{position:absolute;top:8px;left:8px;font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);background:rgba(0,217,126,.2);color:var(--primary)}
+
+/* CHECKBOX */
+.check{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.15s;margin-bottom:12px}
+.check:hover{border-color:var(--border-2)}
+.check.checked{border-color:rgba(0,217,126,.4);background:rgba(0,217,126,.05)}
+.check input{display:none}
+.check .box{width:20px;height:20px;min-width:20px;border-radius:6px;border:2px solid var(--border-2);display:grid;place-items:center;font-size:.72rem;font-weight:900;color:transparent;transition:.15s;margin-top:1px}
+.check.checked .box{background:var(--primary);border-color:var(--primary);color:#04140c}
+.check .txt{font-size:.83rem;line-height:1.6;color:var(--text-2)}
+.check .txt b{color:var(--text);font-weight:800}
+
+/* ERR */
+.err{font-size:.82rem;color:var(--danger);display:none;margin-bottom:16px;padding:12px 14px;border-radius:var(--radius-sm);background:rgba(255,77,94,.07);border:1px solid rgba(255,77,94,.28);line-height:1.55}
+.err.show{display:block}
+.err .strong{display:block;font-weight:800;margin-bottom:2px;color:#ff97a4}
+
+/* INFO */
+.info{display:flex;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:.83rem;line-height:1.6;margin-bottom:18px}
+.info .ico{font-size:1.05rem;line-height:1.3;flex-shrink:0}
+.info.info-blue{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.info.info-warn{background:rgba(255,176,32,.09);border:1px solid rgba(255,176,32,.28);color:#ffd08a}
+.info.info-danger{background:rgba(255,77,94,.09);border:1px solid rgba(255,77,94,.28);color:#ff97a4}
+.info.info-ok{background:rgba(0,217,126,.09);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.info b{font-weight:800}
+
+/* ARBITRATION TIMELINE */
+.timeline{position:relative;padding-left:32px;margin:22px 0}
+.timeline::before{content:'';position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding-bottom:22px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-26px;top:3px;width:20px;height:20px;border-radius:50%;background:var(--surface-3);border:2px solid var(--border-2);display:grid;place-items:center;font-size:.62rem;font-weight:900;color:var(--muted-2)}
+.tl-item.done .tl-dot{background:var(--primary);border-color:var(--primary);color:#04140c}
+.tl-item.active .tl-dot{background:var(--warn);border-color:var(--warn);color:#1a1000;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.88)}}
+.tl-body h4{font-size:.9rem;font-weight:800;margin-bottom:4px}
+.tl-item.done .tl-body h4{color:var(--text)}
+.tl-item.active .tl-body h4{color:var(--warn)}
+.tl-item:not(.done):not(.active) .tl-body h4{color:var(--muted)}
+.tl-body p{font-size:.78rem;color:var(--muted);line-height:1.6}
+.tl-time{font-size:.68rem;color:var(--muted-2);font-family:var(--ff-mono);margin-top:4px}
+
+/* VERDICT CARD */
+.verdict{padding:32px 26px;text-align:center;border-radius:var(--radius-lg);margin-bottom:22px}
+.verdict.win{background:linear-gradient(180deg,rgba(0,217,126,.14),rgba(0,217,126,.03));border:1px solid rgba(0,217,126,.35)}
+.verdict.lose{background:linear-gradient(180deg,rgba(255,77,94,.1),rgba(255,77,94,.02));border:1px solid rgba(255,77,94,.3)}
+.verdict.pending{background:linear-gradient(180deg,rgba(255,176,32,.12),rgba(255,176,32,.03));border:1px solid rgba(255,176,32,.3)}
+.verdict .ico{font-size:2.4rem;margin-bottom:12px}
+.verdict .verdict-lbl{font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px}
+.verdict.win .verdict-lbl{color:var(--primary)}
+.verdict.lose .verdict-lbl{color:var(--danger)}
+.verdict.pending .verdict-lbl{color:var(--warn)}
+.verdict h2{font-size:1.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:10px;line-height:1.2}
+.verdict p{font-size:.88rem;color:var(--text-2);line-height:1.7;max-width:480px;margin:0 auto}
+.verdict .amount{font-family:var(--ff-mono);font-size:1.8rem;font-weight:900;letter-spacing:-.03em;margin:14px 0 6px}
+.verdict.win .amount{color:var(--primary)}
+.verdict.lose .amount{color:var(--danger)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:var(--radius-full);font-weight:800;font-size:.92rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap;text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-danger{background:linear-gradient(180deg,var(--danger),var(--danger-dark));color:#fff;box-shadow:0 6px 20px rgba(255,77,94,.25)}
+.btn-danger:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-block{width:100%}
+.btn-lg{padding:16px 28px;font-size:1rem}
+.btn-sm{padding:10px 16px;font-size:.82rem}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap}
+.btn-row .btn{flex:1;min-width:140px}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,0,0,.25);border-top-color:currentColor;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,14,.85);backdrop-filter:blur(6px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s}
+.modal{background:var(--surface);border:1px solid var(--border-2);border-radius:var(--radius-lg);max-width:480px;width:100%;padding:28px;box-shadow:var(--shadow);animation:popIn .24s cubic-bezier(.2,.9,.3,1.2)}
+.modal h3{font-size:1.15rem;font-weight:900;margin-bottom:10px}
+.modal p{font-size:.86rem;color:var(--muted);line-height:1.65;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .btn{flex:1;min-width:120px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="lobby.html">Lobby</a>
+      <a href="discover.html">Discover</a>
+      <a href="history.html">History</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="profile.html">Profile</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="page-head">
+    <div class="eyebrow">Dispute</div>
+    <h1 class="page-title" id="pageTitle">File a dispute</h1>
+    <div class="page-sub" id="pageSub">If a match was settled incorrectly, you have 48 hours to report it. A human reviewer examines both sides within 24 hours.</div>
+  </div>
+
+  <div id="body">
+    <div class="state-card"><span class="spin"></span> Loading match…</div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="history.html">Match history</a>
+        <a href="support.html">Support</a>
+        <a href="terms.html">Legal</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  HISTORY_PAGE:      'history.html',
+  MATCH_PAGE:        'match.html',
+  SUPPORT_PAGE:      'support.html',
+  SUPPORT_BUCKET:    'dispute-evidence',
+  DISPUTE_WINDOW_H:  48,
+  MAX_EVIDENCE:      3,
+  MAX_FILE_MB:       5,
+  CURRENCY:          '₦',
+  DEBUG:             true
+};
+
+const REASONS = [
+  { id:'wrong_score',   title:'Wrong score recorded',       desc:'The final score shown isn\'t what actually happened in the match.' },
+  { id:'fake_screenshot', title:'Fake or doctored screenshot', desc:'The opponent\'s screenshot looks edited, borrowed, or from a different match.' },
+  { id:'wrong_opponent', title:'Wrong opponent or team',     desc:'The opponent playing wasn\'t the person on the match card.' },
+  { id:'no_show',       title:'Opponent never played',      desc:'The opponent claimed a win but didn\'t actually play the match.' },
+  { id:'abandoned',     title:'Match abandoned mid-game',   desc:'The opponent quit partway through, but a result was still recorded.' },
+  { id:'other',         title:'Something else',             desc:'None of the above. Describe the issue in the box below.' }
+];
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  money(n){ return CONFIG.CURRENCY + Number(n||0).toLocaleString('en-NG',{minimumFractionDigits:0,maximumFractionDigits:0}); },
+  date(iso){
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleString('en-NG',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+    catch { return '—'; }
+  },
+  timeAgo(iso){
+    if (!iso) return '';
+    const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.floor(s/60)+'m ago';
+    if (s < 86400) return Math.floor(s/3600)+'h ago';
+    return Math.floor(s/86400)+'d ago';
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  matchId: null,
+  match: null,
+  existing: null,       // existing dispute row, if any
+  walletView: 'real',
+  loading: true,
+  notFound: false,
+  windowOpen: false,
+  secondsLeft: 0,
+  /* form */
+  reason: '',
+  description: '',
+  evidence: [],          // up to MAX_EVIDENCE files
+  declaration: false,
+  busy: false,
+  timer: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ err('fetchProfile:', e); return null; }
+  }
+};
+
+/* ============================================================================
+   DATA LAYER
+   ============================================================================ */
+const Disputes = {
+  async getMatch(id, userId){
+    if (!Supa.HAS) return Demo.getMatch(id, userId);
+    try {
+      const { data, error } = await Supa.client
+        .from('matches')
+        .select(`
+          *,
+          creator:profiles!matches_creator_id_fkey(id, username, dls_username),
+          opponent:profiles!matches_opponent_id_fkey(id, username, dls_username)
+        `)
+        .eq('id', id)
+        .maybeSingle();
+      if (error) throw error;
+      return data || null;
+    } catch(e){ warn('getMatch:', e.message); return null; }
+  },
+
+  async existingDispute(matchId, userId){
+    if (!Supa.HAS) return Demo.getExisting(matchId, userId);
+    try {
+      const { data, error } = await Supa.client
+        .from('disputes')
+        .select('*')
+        .eq('match_id', matchId)
+        .eq('reporter_id', userId)
+        .order('created_at', { ascending:false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data || null;
+    } catch(e){ warn('existingDispute:', e.message); return null; }
+  },
+
+  async uploadEvidence(userId, file){
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2,7)}.${ext}`;
+
+    if (!Supa.HAS){
+      const dataUrl = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.onerror = rej;
+        r.readAsDataURL(file);
+      });
+      return { data: { url: dataUrl, path }, error: null };
+    }
+
+    try {
+      const { error: upErr } = await Supa.client.storage
+        .from(CONFIG.SUPPORT_BUCKET)
+        .upload(path, file, { upsert:false, contentType:file.type || 'image/jpeg', cacheControl:'3600' });
+      if (upErr) return { error: upErr };
+
+      const { data: signed, error: sErr } = await Supa.client.storage
+        .from(CONFIG.SUPPORT_BUCKET)
+        .createSignedUrl(path, 60 * 60 * 24 * 30);
+      if (sErr) return { data:{ url: path, path }, error: null };
+      return { data:{ url: signed.signedUrl, path }, error: null };
+    } catch(e){ return { error:{ message: e.message } }; }
+  },
+
+  async submit(payload){
+    if (!Supa.HAS) return Demo.submit(payload);
+    try {
+      /* Prefer a dedicated RPC that also flips the match to 'disputed' and notifies
+         both players + admin. Falls back to a direct insert. */
+      let done = false;
+      try {
+        const { error } = await Supa.client.rpc('submit_dispute', { p_payload: payload });
+        if (!error) done = true;
+        else warn('submit_dispute rpc unavailable:', error.message);
+      } catch(e){ warn('submit_dispute rpc threw:', e.message); }
+
+      if (!done){
+        const { error } = await Supa.client.from('disputes').insert(payload);
+        if (error) throw error;
+        /* Flip the match to disputed (best-effort) */
+        try {
+          await Supa.client.from('matches').update({ status: 'disputed' }).eq('id', payload.match_id);
+        } catch(e){ warn('match status update:', e.message); }
+      }
+
+      return { error: null };
+    } catch(e){ return { error: e }; }
+  },
+
+  async withdraw(disputeId){
+    if (!Supa.HAS) return Demo.withdraw(disputeId);
+    try {
+      const { error } = await Supa.client
+        .from('disputes')
+        .update({ status: 'withdrawn', withdrawn_at: new Date().toISOString() })
+        .eq('id', disputeId);
+      return { error };
+    } catch(e){ return { error: e }; }
+  }
+};
+
+/* ============================================================================
+   DEMO BACKEND
+   ============================================================================ */
+const Demo = {
+  getMatch(id, userId){
+    const matches = (() => { try { return JSON.parse(localStorage.getItem('dls_demo_matches') || '[]'); } catch { return []; } })();
+    const stored = matches.find(m => m.id === id);
+    if (stored) return stored;
+
+    /* Fallback seed so the page is usable without a backend */
+    const users = (() => { try { return JSON.parse(localStorage.getItem('dls_demo_users') || '[]'); } catch { return []; } })();
+    const me = users.find(u => u.id === userId) || { id: userId, username:'You', dls_username:'you_dls' };
+    const opp = { id:'o2', username:'KunleStrikes', dls_username:'kunle_dls' };
+
+    return {
+      id,
+      match_code: 'DLS-' + String(id).slice(-4).toUpperCase(),
+      creator_id: me.id,
+      opponent_id: opp.id,
+      creator: me,
+      opponent: opp,
+      creator_score: 2,
+      opponent_score: 3,
+      winner_id: opp.id,
+      stake_amount: 2500,
+      pot_amount: 5000,
+      platform_fee: 200,
+      game_type: 'real',
+      status: 'settled',
+      settled_at: new Date(Date.now() - 12 * 3600 * 1000).toISOString(),
+      created_at: new Date(Date.now() - 13 * 3600 * 1000).toISOString()
+    };
+  },
+
+  getExisting(matchId, userId){
+    try {
+      const all = JSON.parse(localStorage.getItem('dls_demo_disputes') || '[]');
+      return all.find(d => d.match_id === matchId && d.reporter_id === userId) || null;
+    } catch { return null; }
+  },
+
+  submit(payload){
+    try {
+      const all = JSON.parse(localStorage.getItem('dls_demo_disputes') || '[]');
+      const row = { id: 'demo-dispute-' + Date.now(), ...payload, status:'under_review', created_at: new Date().toISOString() };
+      all.unshift(row);
+      localStorage.setItem('dls_demo_disputes', JSON.stringify(all));
+      return { error: null, data: row };
+    } catch(e){ return { error: e }; }
+  },
+
+  withdraw(disputeId){
+    try {
+      const all = JSON.parse(localStorage.getItem('dls_demo_disputes') || '[]');
+      const r = all.find(d => d.id === disputeId);
+      if (r){ r.status = 'withdrawn'; r.withdrawn_at = new Date().toISOString(); }
+      localStorage.setItem('dls_demo_disputes', JSON.stringify(all));
+      return { error: null };
+    } catch(e){ return { error: e }; }
+  }
+};
+
+/* ============================================================================
+   DISPUTE PAGE
+   ============================================================================ */
+const Page = {
+
+  async init(){
+    log('Dispute page init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 700);
+      return;
+    }
+
+    const params = new URLSearchParams(location.search);
+    State.matchId = params.get('match') || params.get('id');
+
+    if (!State.matchId){
+      State.loading = false;
+      this.renderNotFound('No match specified');
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id);
+    this.renderNav();
+
+    /* Load the match */
+    State.match = await Disputes.getMatch(State.matchId, State.session.user.id);
+    if (!State.match){
+      State.loading = false;
+      this.renderNotFound('Match not found');
+      return;
+    }
+
+    /* Viewer must be one of the two players */
+    const uid = State.session.user.id;
+    if (State.match.creator_id !== uid && State.match.opponent_id !== uid){
+      State.loading = false;
+      this.renderForbidden();
+      return;
+    }
+
+    /* If already settled/disputed, decide which flow to show */
+    State.existing = await Disputes.existingDispute(State.matchId, uid);
+
+    /* Compute the dispute window */
+    this.computeWindow();
+
+    State.loading = false;
+    this.render();
+
+    /* Live countdown */
+    if (State.windowOpen){
+      State.timer = setInterval(() => this.tick(), 1000);
+    }
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  /* ── Dispute window ────────────────────────────────────────── */
+  computeWindow(){
+    const m = State.match;
+    const settled = m.settled_at || m.updated_at || m.created_at;
+
+    /* Can only dispute a settled match (not pending, cancelled, or already disputed
+       without an existing report) */
+    if (!settled || m.status === 'cancelled'){
+      State.windowOpen = false;
+      State.secondsLeft = 0;
+      return;
+    }
+
+    const deadline = new Date(settled).getTime() + CONFIG.DISPUTE_WINDOW_H * 3600 * 1000;
+    const diff = (deadline - Date.now()) / 1000;
+    State.secondsLeft = Math.max(0, diff);
+    State.windowOpen = diff > 0;
+  },
+
+  tick(){
+    const prev = State.windowOpen;
+    this.computeWindow();
+    if (prev !== State.windowOpen || State.secondsLeft <= 0){
+      this.render();
+      if (!State.windowOpen && State.timer){
+        clearInterval(State.timer);
+        State.timer = null;
+      }
+      return;
+    }
+    const el = document.getElementById('windowClock');
+    if (el) el.textContent = this.clock(State.secondsLeft);
+  },
+
+  clock(secs){
+    const s = Math.max(0, Math.floor(secs));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const ss = s % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  },
+
+  /* ── Render ────────────────────────────────────────────────── */
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.loading){
+      body.innerHTML = `<div class="state-card"><span class="spin"></span> Loading match…</div>`;
+      return;
+    }
+
+    if (State.notFound){ this.renderNotFound(); return; }
+
+    /* If a dispute already exists, show the status flow */
+    if (State.existing){
+      this.renderStatus();
+      return;
+    }
+
+    /* If the window is closed and no dispute exists, lock the form */
+    if (!State.windowOpen){
+      this.renderClosed();
+      return;
+    }
+
+    /* Otherwise: the form */
+    this.renderForm();
+  },
+
+  /* ── Form view ─────────────────────────────────────────────── */
+  renderForm(){
+    const body = $('#body');
+    const m = State.match;
+    const bannerCls = State.secondsLeft <= 6 * 3600 ? 'danger' : State.secondsLeft <= 24 * 3600 ? 'warn' : 'ok';
+
+    body.innerHTML = `
+      <!-- Window banner -->
+      <div class="window-banner ${bannerCls}">
+        <span class="ico">⏱️</span>
+        <div class="body">
+          <h3>Dispute window open</h3>
+          <p>You have ${CONFIG.DISPUTE_WINDOW_H} hours from settlement to file a dispute. A human reviewer will handle it within 24 hours.</p>
+        </div>
+        <div class="clock" id="windowClock">${this.clock(State.secondsLeft)}</div>
+      </div>
+
+      <!-- Match summary -->
+      ${this.matchSummaryHtml()}
+
+      <!-- Info -->
+      <div class="info info-blue">
+        <span class="ico">ℹ</span>
+        <div><b>Only file a dispute if something is genuinely wrong.</b> False disputes affect your trust score and can result in a permanent ban.</div>
+      </div>
+
+      <!-- Form -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🚩</div>
+          <div style="flex:1">
+            <h2>What went wrong?</h2>
+            <p>Pick the reason that best fits, then describe the issue</p>
+          </div>
+        </div>
+
+        <div class="err" id="formErr"></div>
+
+        <div class="reasons" id="reasons">
+          ${REASONS.map(r => `
+            <div class="reason ${State.reason === r.id ? 'active' : ''}" data-reason="${r.id}" onclick="Page.pickReason('${r.id}')">
+              <span class="box">✓</span>
+              <div class="txt">
+                <h4>${UI.escape(r.title)}</h4>
+                <p>${UI.escape(r.desc)}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="field">
+          <label for="f_desc">Describe what happened <span class="req">*</span></label>
+          <textarea class="input-area" id="f_desc" maxlength="1500"
+                    placeholder="Include: what you expected to see, what actually happened, and any specific timestamps that help. Write at least 30 characters.">${UI.escape(State.description)}</textarea>
+          <div class="hint"><span id="descCount">${State.description.length}</span>/1500 · min 30 characters</div>
+        </div>
+      </div>
+
+      <!-- Evidence -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">📎</div>
+          <div style="flex:1">
+            <h2>Evidence (recommended)</h2>
+            <p>Up to ${CONFIG.MAX_EVIDENCE} screenshots · max ${CONFIG.MAX_FILE_MB} MB each</p>
+          </div>
+        </div>
+
+        <div class="info info-warn">
+          <span class="ico">💡</span>
+          <div>The strongest evidence is a full screen recording of the match or the pre-match lobby. If you don't have one, upload whatever you have — even partial evidence helps the reviewer.</div>
+        </div>
+
+        <div class="evidence-grid" id="evidenceGrid">
+          ${this.evidenceSlotsHtml()}
+        </div>
+      </div>
+
+      <!-- Declaration -->
+      <label class="check ${State.declaration ? 'checked' : ''}" id="chkDeclare" onclick="Page.toggleDeclare(event)">
+        <input type="checkbox" ${State.declaration ? 'checked' : ''}>
+        <span class="box">✓</span>
+        <span class="txt">
+          I confirm this dispute is filed in good faith and everything I've submitted is true.
+          I understand that a fraudulent dispute may result in a permanent ban and forfeiture of my balance.
+        </span>
+      </label>
+
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn btn-ghost" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Cancel</button>
+        <button class="btn btn-danger btn-lg" id="submitBtn" onclick="Page.submit()">File dispute</button>
+      </div>
+    `;
+  },
+
+  matchSummaryHtml(){
+    const m = State.match;
+    const uid = State.session.user.id;
+    const isCreator = m.creator_id === uid;
+    const me  = isCreator ? m.creator  : m.opponent;
+    const opp = isCreator ? m.opponent : m.creator;
+    const meScore  = isCreator ? m.creator_score  : m.opponent_score;
+    const oppScore = isCreator ? m.opponent_score : m.creator_score;
+
+    const outcome = !m.winner_id ? 'draw' : m.winner_id === uid ? 'win' : 'loss';
+    const meCls   = outcome === 'win' ? 'w' : outcome === 'loss' ? 'l' : 'd';
+    const oppCls  = outcome === 'win' ? 'l' : outcome === 'loss' ? 'w' : 'd';
+
+    const pot = Number(m.pot_amount || (m.stake_amount || 0) * 2);
+
+    return `
+      <div class="match-summary">
+        <div class="ms-head">
+          <span class="ms-code">${UI.escape(m.match_code || m.id.slice(0,8))}</span>
+          <span class="ms-type ${m.game_type === 'demo' ? 'demo' : 'real'}">
+            ${m.game_type === 'demo' ? 'Demo' : 'Real money'}
+          </span>
+        </div>
+
+        <div class="ms-body">
+          <div class="ms-player">
+            <div class="av">${UI.escape(UI.initials(me?.username || '?'))}</div>
+            <div class="txt">
+              <h4>${UI.escape(me?.username || 'You')}</h4>
+              <p>${UI.escape(me?.dls_username || '—')}</p>
+            </div>
+          </div>
+
+          <div class="ms-score">
+            <div class="nums">
+              <span class="${meCls}">${meScore ?? '–'}</span>
+              <span class="sep">–</span>
+              <span class="${oppCls}">${oppScore ?? '–'}</span>
+            </div>
+            <div class="lbl">Final</div>
+          </div>
+
+          <div class="ms-player right">
+            <div class="av opp">${UI.escape(UI.initials(opp?.username || '?'))}</div>
+            <div class="txt">
+              <h4>${UI.escape(opp?.username || 'Opponent')}</h4>
+              <p>${UI.escape(opp?.dls_username || '—')}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ms-meta">
+          <div class="it">
+            <span class="k">Settled</span>
+            <span class="v">${UI.escape(UI.date(m.settled_at) || '—')}</span>
+          </div>
+          <div class="it">
+            <span class="k">Pot</span>
+            <span class="v">${UI.money(pot)}</span>
+          </div>
+          <div class="it">
+            <span class="k">Stake</span>
+            <span class="v">${UI.money(Number(m.stake_amount || pot / 2))}</span>
+          </div>
+          <div class="it">
+            <span class="k">Verdict</span>
+            <span class="v">${UI.escape(m.verification_verdict || 'matched')}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  evidenceSlotsHtml(){
+    const slots = [];
+    for (let i = 0; i < CONFIG.MAX_EVIDENCE; i++){
+      const file = State.evidence[i];
+      if (file){
+        slots.push(`
+          <div class="ev-slot filled">
+            <div class="ev-tag">Attached</div>
+            <button class="remove" onclick="Page.clearEvidence(${i}); event.stopPropagation()">✕</button>
+            <img src="${file.dataUrl}" alt="">
+          </div>
+        `);
+      } else {
+        slots.push(`
+          <label class="ev-slot" for="ev_${i}">
+            <span class="drop-ico">📤</span>
+            <span class="drop-lbl">Add screenshot</span>
+            <span class="drop-sub">PNG · JPG · max ${CONFIG.MAX_FILE_MB}MB</span>
+            <input type="file" id="ev_${i}" accept="image/*" onchange="Page.pickEvidence(${i}, this.files[0])">
+          </label>
+        `);
+      }
+    }
+    return slots.join('');
+  },
+
+  /* ── Status view (existing dispute) ───────────────────────── */
+  renderStatus(){
+    const d = State.existing;
+    const m = State.match;
+    const status = d.status || 'under_review';
+    const verdict = d.verdict || null;
+
+    /* Base header changes if a verdict has been reached */
+    let verdictHtml = '';
+    if (status === 'resolved' && verdict){
+      const cls = verdict === 'upheld' ? 'win' : verdict === 'rejected' ? 'lose' : 'pending';
+      const label = verdict === 'upheld' ? 'Dispute upheld' : verdict === 'rejected' ? 'Dispute rejected' : 'Verdict issued';
+      const copy = verdict === 'upheld'
+        ? 'The reviewer found in your favour. The pot has been released to you and the platform fee was waived.'
+        : verdict === 'rejected'
+          ? 'The reviewer agreed with the original settlement. The result stands and no refund is due.'
+          : 'The reviewer has issued a decision on this match.';
+
+      verdictHtml = `
+        <div class="verdict ${cls}">
+          <div class="ico">${verdict === 'upheld' ? '✅' : verdict === 'rejected' ? '✕' : '⚖️'}</div>
+          <div class="verdict-lbl">${label}</div>
+          <h2>${verdict === 'upheld' ? 'In your favour' : verdict === 'rejected' ? 'Original result stands' : 'Reviewed'}</h2>
+          <p>${copy}</p>
+          ${verdict === 'upheld' ? `<div class="amount">+${UI.money(m.pot_amount || 0)}</div>` : ''}
+          <div style="font-size:.72rem;color:var(--muted-2);font-family:var(--ff-mono);margin-top:8px">
+            Resolved ${UI.escape(UI.date(d.resolved_at || d.updated_at))}
+          </div>
+        </div>
+      `;
+    } else if (status === 'withdrawn'){
+      verdictHtml = `
+        <div class="verdict pending">
+          <div class="ico">↩️</div>
+          <div class="verdict-lbl">Withdrawn</div>
+          <h2>You withdrew this dispute</h2>
+          <p>The original settlement stands and no further action is needed.</p>
+        </div>
+      `;
+    } else {
+      verdictHtml = `
+        <div class="verdict pending">
+          <div class="ico">⏳</div>
+          <div class="verdict-lbl">Under review</div>
+          <h2>Arbitration in progress</h2>
+          <p>A human reviewer is examining both sides. This usually takes under 24 hours. You'll get a notification the moment a verdict lands.</p>
+          <div style="font-size:.72rem;color:var(--muted-2);font-family:var(--ff-mono);margin-top:14px">
+            Filed ${UI.escape(UI.date(d.created_at))} · Reference ${UI.escape(String(d.id).slice(0,10).toUpperCase())}
+          </div>
+        </div>
+      `;
+    }
+
+    const steps = [
+      { label: 'Dispute filed',       time: d.created_at, done: true },
+      { label: 'Screenshots locked',  time: null, done: true },
+      { label: 'Under review',        time: d.reviewed_at || null, done: status !== 'under_review', active: status === 'under_review' },
+      { label: 'Verdict issued',      time: d.resolved_at || null, done: status === 'resolved' || status === 'withdrawn' }
+    ];
+
+    $('#body').innerHTML = `
+      ${verdictHtml}
+      ${this.matchSummaryHtml()}
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">📋</div>
+          <div style="flex:1">
+            <h2>What you filed</h2>
+            <p>Reference ${UI.escape(String(d.id).slice(0,10).toUpperCase())}</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Reason</label>
+          <div style="padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.88rem;color:var(--text-2);font-weight:700">
+            ${UI.escape((REASONS.find(r => r.id === d.reason)?.title) || d.reason || 'Other')}
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Description</label>
+          <div style="padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:.86rem;color:var(--text-2);line-height:1.7;white-space:pre-wrap">
+            ${UI.escape(d.description || '(no description)')}
+          </div>
+        </div>
+
+        ${(d.evidence_urls && d.evidence_urls.length) ? `
+          <div class="field">
+            <label>Evidence you attached</label>
+            <div class="evidence-grid">
+              ${d.evidence_urls.map(url => `
+                <div class="ev-slot filled">
+                  <div class="ev-tag">Attached</div>
+                  <img src="${UI.escape(url)}" alt="">
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="ico">🕒</div>
+          <div style="flex:1">
+            <h2>Timeline</h2>
+            <p>Every step of your dispute</p>
+          </div>
+        </div>
+
+        <div class="timeline">
+          ${steps.map(s => {
+            const cls = s.done ? 'done' : s.active ? 'active' : '';
+            return `
+              <div class="tl-item ${cls}">
+                <div class="tl-dot">${s.done ? '✓' : s.active ? '●' : ''}</div>
+                <div class="tl-body">
+                  <h4>${UI.escape(s.label)}</h4>
+                  ${s.time ? `<div class="tl-time">${UI.escape(UI.date(s.time))}</div>` : ''}
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+
+      ${status === 'under_review' ? `
+        <div class="info info-blue">
+          <span class="ico">ℹ</span>
+          <div>You can withdraw this dispute any time before the reviewer issues a verdict. Withdrawing restores the original settlement and does not affect your trust score.</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Back to history</button>
+          <button class="btn btn-outline" onclick="Page.withdrawConfirm()">Withdraw dispute</button>
+        </div>
+      ` : `
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Back to match history</button>
+          <button class="btn btn-ghost" onclick="location.href='${CONFIG.SUPPORT_PAGE}'">Contact support</button>
+        </div>
+      `}
+    `;
+  },
+
+  /* ── Closed window view (no dispute filed) ────────────────── */
+  renderClosed(){
+    $('#body').innerHTML = `
+      <div class="window-banner closed">
+        <span class="ico">🔒</span>
+        <div class="body">
+          <h3>Dispute window closed</h3>
+          <p>The ${CONFIG.DISPUTE_WINDOW_H}-hour window from settlement has passed. The result is now final and cannot be disputed.</p>
+        </div>
+      </div>
+
+      ${this.matchSummaryHtml()}
+
+      <div class="info info-warn">
+        <span class="ico">⚠</span>
+        <div>If you believe the platform itself made an error (not the match result), <a href="${CONFIG.SUPPORT_PAGE}#contact" style="color:#ffd08a;font-weight:800;border-bottom:1px solid rgba(255,176,32,.5)">contact support directly</a>. This is a separate process from match disputes.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Back to match history</button>
+        <button class="btn btn-ghost" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Go to lobby</button>
+      </div>
+    `;
+  },
+
+  /* ── Not found / forbidden ─────────────────────────────────── */
+  renderNotFound(reason){
+    $('#body').innerHTML = `
+      <div class="state-card">
+        <div class="ico">🔍</div>
+        <h3>${UI.escape(reason || 'Match not found')}</h3>
+        <p>We couldn't find that match. It may have been removed, or the link may be broken.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Match history</button>
+          <button class="btn btn-ghost" onclick="location.href='${CONFIG.LOBBY_PAGE}'">Back to lobby</button>
+        </div>
+      </div>`;
+  },
+
+  renderForbidden(){
+    $('#body').innerHTML = `
+      <div class="state-card">
+        <div class="ico">🚫</div>
+        <h3>You're not a participant in this match</h3>
+        <p>Only the two players who played this match can file a dispute on it.</p>
+        <button class="btn btn-primary" onclick="location.href='${CONFIG.HISTORY_PAGE}'">Back to your matches</button>
+      </div>`;
+  },
+
+  /* ── Form interactions ────────────────────────────────────── */
+  pickReason(id){
+    State.reason = id;
+    $$('.reason').forEach(el => el.classList.toggle('active', el.dataset.reason === id));
+    $('#formErr')?.classList.remove('show');
+  },
+
+  toggleDeclare(e){
+    if (e) e.preventDefault();
+    State.declaration = !State.declaration;
+    const el = $('#chkDeclare');
+    if (el) el.classList.toggle('checked', State.declaration);
+    const box = el?.querySelector('input');
+    if (box) box.checked = State.declaration;
+  },
+
+  async pickEvidence(slot, file){
+    if (!file) return;
+    if (!file.type.startsWith('image/')){ UI.toast('Only image files are accepted.', 'err'); return; }
+    if (file.size > CONFIG.MAX_FILE_MB * 1024 * 1024){ UI.toast(`File must be under ${CONFIG.MAX_FILE_MB} MB.`, 'err'); return; }
+
+    const dataUrl = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+
+    State.evidence[slot] = { file, dataUrl, name: file.name, size: file.size };
+    this.renderForm();
+    UI.toast('Evidence attached.', 'ok', 2200);
+  },
+
+  clearEvidence(slot){
+    State.evidence[slot] = null;
+    this.renderForm();
+  },
+
+  /* ── Submit ───────────────────────────────────────────────── */
+  async submit(){
+    if (State.busy) return;
+
+    const errEl = $('#formErr');
+    errEl?.classList.remove('show');
+
+    const desc = ($('#f_desc')?.value || '').trim();
+    State.description = desc;
+
+    const fail = (msg, elId) => {
+      if (errEl){ errEl.innerHTML = `<span class="strong">Can't file this dispute</span>${UI.escape(msg)}`; errEl.classList.add('show'); errEl.scrollIntoView({behavior:'smooth', block:'center'}); }
+      if (elId){ const el = document.getElementById(elId); el?.classList.add('invalid'); el?.focus(); }
+      UI.toast(msg, 'err');
+    };
+
+    if (!State.reason) return fail('Pick a reason for the dispute.');
+    if (desc.length < 30) return fail('Please describe the issue in at least 30 characters.', 'f_desc');
+    if (!State.declaration) return fail('Please confirm the declaration to continue.');
+
+    State.busy = true;
+    const btn = $('#submitBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Uploading evidence…';
+
+    try {
+      /* Upload evidence (best-effort) */
+      const urls = [];
+      const paths = [];
+      const files = State.evidence.filter(Boolean);
+      for (const item of files){
+        const res = await Disputes.uploadEvidence(State.session.user.id, item.file);
+        if (res.error){ warn('evidence upload failed:', res.error.message); continue; }
+        if (res.data?.url) urls.push(res.data.url);
+        if (res.data?.path) paths.push(res.data.path);
+      }
+
+      btn.innerHTML = '<span class="spin"></span> Filing dispute…';
+
+      const payload = {
+        match_id: State.matchId,
+        reporter_id: State.session.user.id,
+        accused_id: State.match.creator_id === State.session.user.id ? State.match.opponent_id : State.match.creator_id,
+        reason: State.reason,
+        description: desc,
+        evidence_urls: urls,
+        evidence_paths: paths,
+        status: 'under_review',
+        created_at: new Date().toISOString()
+      };
+
+      const { error } = await Disputes.submit(payload);
+      if (error) throw error;
+
+      UI.toast('Dispute filed. We\'ll review it within 24 hours.', 'ok', 6000);
+
+      /* Reload into status view */
+      State.existing = { id: 'temp-' + Date.now(), ...payload };
+      this.render();
+
+    } catch(e){
+      err('submit:', e);
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      fail(e.message || 'Could not file the dispute. Please try again.');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  /* ── Withdraw dispute ─────────────────────────────────────── */
+  withdrawConfirm(){
+    const root = $('#modalRoot');
+    root.innerHTML = `
+      <div class="modal-back" onclick="Page.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>Withdraw your dispute?</h3>
+          <p>The original settlement will stand and no reviewer will look at this match. You can't re-file a dispute on the same match after withdrawing.</p>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Page.closeModal()">Keep it open</button>
+            <button class="btn btn-danger" onclick="Page.doWithdraw()">Yes, withdraw</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  async doWithdraw(){
+    const d = State.existing;
+    if (!d?.id) return;
+
+    try {
+      const { error } = await Disputes.withdraw(d.id);
+      if (error) throw error;
+      this.closeModal();
+      State.existing = { ...d, status: 'withdrawn', withdrawn_at: new Date().toISOString() };
+      this.render();
+      UI.toast('Dispute withdrawn.', 'info');
+    } catch(e){
+      err('withdraw:', e);
+      UI.toast('Could not withdraw. Try again.', 'err');
+    }
+  },
+
+  closeModal(e){
+    if (e && e.target && e.target.className !== 'modal-back') return;
+    $('#modalRoot').innerHTML = '';
+  }
+};
+
+/* ============================================================================
+   WIRE: description counter
+   ============================================================================ */
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'f_desc'){
+    const c = document.getElementById('descCount');
+    if (c) c.textContent = e.target.value.length;
+    State.description = e.target.value;
+  }
+});
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Dispute boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Dispute (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Dispute (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Page.init(); }
+  catch(e){ err('Dispute init failed:', e); UI.toast('Failed to load dispute page.', 'err'); }
+
+  window.addEventListener('beforeunload', () => {
+    if (State.timer) clearInterval(State.timer);
+  });
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'dispute-1.0.0',
+  debug(){
+    console.log('======== DLS Dispute v1 ========');
+    console.log('Match ID:', State.matchId);
+    console.log('Match status:', State.match?.status);
+    console.log('Window open:', State.windowOpen);
+    console.log('Seconds left:', Math.round(State.secondsLeft));
+    console.log('Existing dispute:', State.existing);
+    console.log('Reason:', State.reason);
+    console.log('Description length:', State.description.length);
+    console.log('Evidence:', State.evidence.filter(Boolean).length);
+    console.log('Declaration:', State.declaration);
+    console.log('===============================');
+  },
+  reset(){
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_disputes');
+    sessionStorage.clear();
+    location.href = 'login.html';
+  }
+};
+</script>
+</body>
+</html>
