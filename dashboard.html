@@ -1998,4 +1998,309 @@ const Dashboard = {
         <div class="h-item">
           <div class="h-ico ${cls}">${icon}</div>
           <div class="h-txt">
-            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs
+            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}</h4>
+            <p>${UI.timeAgo(m.settled_at || m.created_at)}</p>
+          </div>
+          <div class="h-amt ${amtCls}">${amt}</div>
+        </div>`;
+    }).join('');
+  },
+
+  renderTransactions(list){
+    const container = $('#txList');
+    if (!list.length){
+      container.innerHTML = `
+        <div class="empty">
+          <div class="ico-big">💳</div>
+          <h3>No transactions yet</h3>
+          <p>Deposits, withdrawals, and match payouts appear here.</p>
+          <button class="btn btn-primary btn-sm" onclick="location.href='wallet.html'">Open wallet</button>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = list.slice(0, 5).map(t => {
+      let cls = 'tx', icon = '•', sign = '', amtCls = 'neu';
+      if (t.type === 'deposit'){ cls='dep'; icon='↓'; sign='+'; amtCls='pos'; }
+      else if (t.type === 'withdrawal'){ cls='wd'; icon='↑'; sign='−'; amtCls='neg'; }
+      else if (t.type === 'stake_lock'){ cls='tx'; icon='🔒'; }
+      else if (t.type === 'stake_release'){ cls='win'; icon='★'; sign='+'; amtCls='pos'; }
+      else if (t.type === 'refund'){ cls='draw'; icon='↩'; }
+      else if (t.type === 'fee'){ cls='wd'; icon='⚙'; sign='−'; amtCls='neg'; }
+
+      return `
+        <div class="h-item">
+          <div class="h-ico ${cls}">${icon}</div>
+          <div class="h-txt">
+            <h4>${UI.escape(t.note || t.type)}</h4>
+            <p>${UI.timeAgo(t.created_at)}</p>
+          </div>
+          <div class="h-amt ${amtCls}">${sign}${UI.moneyShort(Math.abs(Number(t.amount||0)))}</div>
+        </div>`;
+    }).join('');
+  },
+
+  renderTournaments(list){
+    const container = $('#tournamentsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🏆</div><p>No tournaments open right now.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(t => {
+      const n = (t.participants || t.tournament_participants || []).length;
+      const slots = t.max_players - n;
+      const prize = Math.round(n * Number(t.entry_fee || 0) * 0.9);
+      const tag = t.status === 'open' ? 'Open' : 'Live';
+      return `
+        <a class="tour-mini" href="tournament.html?id=${UI.escape(t.id)}">
+          <div class="head">
+            <h4>${UI.escape(t.name)}</h4>
+            <span class="tag ${t.status}">${tag}</span>
+          </div>
+          <div class="meta">
+            <span>${slots > 0 ? slots + ' slots left' : 'Full'} · ${UI.moneyShort(t.entry_fee)} entry</span>
+            <span class="prize">${UI.moneyShort(prize)}</span>
+          </div>
+        </a>
+      `;
+    }).join('');
+  },
+
+  renderAchievements(list){
+    const container = $('#achievementsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🎖️</div><p>No badges yet — play matches to unlock them.</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div class="ach-preview">
+        ${list.map(a => {
+          const meta = ACH_CATALOG[a.achievement_id] || { icon:'🏅', title:a.achievement_id };
+          return `
+            <a class="ach-mini" href="achievements.html">
+              <span class="ico">${meta.icon}</span>
+              <div class="n">${UI.escape(meta.title)}</div>
+              <div class="s">${UI.timeAgo(a.claimed_at)}</div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+      <div style="font-size:.74rem;color:var(--muted);text-align:center;padding:4px 0">
+        You've claimed ${list.length} badge${list.length === 1 ? '' : 's'}. Keep going.
+      </div>
+    `;
+  },
+
+  renderNotifications(list){
+    const container = $('#notifsList');
+    if (!container) return;
+    if (!list.length){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📭</div><p>You're all caught up.</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(n => {
+      const isUnread = !n.read_at;
+      return `
+        <a class="notif-row ${isUnread ? 'unread' : 'read'}" href="${UI.escape(n.link || 'notifications.html')}">
+          <span class="n-ico">${this.notifIcon(n.type)}</span>
+          <div class="n-body">
+            <h4>${UI.escape(n.title || 'Notification')}</h4>
+            <p>${UI.escape(n.body || '')}</p>
+          </div>
+          <span class="n-time">${UI.timeAgo(n.created_at)}</span>
+        </a>
+      `;
+    }).join('');
+  },
+
+  notifIcon(type){
+    if (type === 'invite' || type === 'challenge') return '⚔️';
+    if (type === 'result') return '🏆';
+    if (type === 'payout' || type === 'deposit' || type === 'withdrawal') return '💰';
+    if (type === 'kyc') return '🪪';
+    if (type === 'dispute') return '⚖️';
+    return '🔔';
+  },
+
+  renderRank(rank){
+    const container = $('#leaderboardRank');
+    if (!container) return;
+    if (!rank){
+      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📊</div><p>Play a few more matches to enter the leaderboard.</p></div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div style="text-align:center;padding:16px 8px">
+        <div style="font-family:var(--ff-mono);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--gold);line-height:1">
+          #${Number(rank.position || 0)}
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin-top:6px;font-family:var(--ff-mono)">
+          out of ${Number(rank.total || 0).toLocaleString()} players
+        </div>
+        <a class="btn btn-ghost btn-sm" href="leaderboard.html" style="margin-top:12px">View leaderboard</a>
+      </div>
+    `;
+  },
+
+  tick(){
+    const d = State.data;
+    if (!d) return;
+
+    (d.invites_received || []).forEach(m => {
+      const el = document.getElementById('inv-' + m.id);
+      if (!el) return;
+      const u = UI.until(m.expires_at);
+      el.textContent = u ? u.text : '—';
+    });
+
+    (d.active || []).forEach(m => {
+      if (m.status === 'accepted'){
+        const timeEl = document.getElementById('timer-' + m.id + '-time');
+        const wrapEl = document.getElementById('timer-' + m.id);
+        const barEl  = document.getElementById('timerbar-' + m.id);
+        if (!timeEl || !wrapEl) return;
+
+        const endsAt = State.activeEndsAt[m.id];
+        if (!endsAt) return;
+
+        const remaining = Math.max(0, Math.floor((endsAt - Date.now()) / 1000));
+        timeEl.textContent = UI.clock(remaining);
+
+        const total = CONFIG.MATCH_DURATION_SEC;
+        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
+        if (barEl){
+          const i = barEl.querySelector('i');
+          if (i) i.style.width = pct + '%';
+        }
+
+        wrapEl.classList.remove('warn','danger');
+        if (remaining <= 30) wrapEl.classList.add('danger');
+        else if (remaining <= 60) wrapEl.classList.add('warn');
+
+        if (remaining <= 0 && !State.transitioning[m.id]){
+          State.transitioning[m.id] = true;
+          this.autoStartSubmission(m.id);
+        }
+      }
+      else if (m.status === 'awaiting_submission' && m.submission_started_at){
+        const timeEl = document.getElementById('timer-' + m.id + '-time');
+        const wrapEl = document.getElementById('timer-' + m.id);
+        const barEl  = document.getElementById('timerbar-' + m.id);
+        if (!timeEl || !wrapEl) return;
+
+        const deadline = new Date(m.submission_started_at).getTime() + CONFIG.SUBMIT_WINDOW_SEC * 1000;
+        const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+        timeEl.textContent = UI.clock(remaining);
+
+        const total = CONFIG.SUBMIT_WINDOW_SEC;
+        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
+        if (barEl){
+          const i = barEl.querySelector('i');
+          if (i) i.style.width = pct + '%';
+        }
+
+        wrapEl.classList.remove('warn','danger');
+        if (remaining <= 30) wrapEl.classList.add('danger');
+        else if (remaining <= 60) wrapEl.classList.add('warn');
+      }
+    });
+  },
+
+  async autoStartSubmission(matchId){
+    log('Timer hit zero for', matchId, '— transitioning to submission phase');
+    try {
+      if (!Supa.HAS){
+        const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
+        const match = matches.find(x => x.id === matchId);
+        if (match && match.status === 'accepted'){
+          match.status = 'awaiting_submission';
+          match.submission_started_at = new Date().toISOString();
+          localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
+        }
+      } else {
+        const { error } = await Supa.client.rpc('start_submission', { p_match_id: matchId });
+        if (error) warn('start_submission error:', error.message);
+      }
+
+      UI.toast('Time! Upload your match screenshot now.', 'info', 6000);
+      await this.reload(true);
+    } catch(e){
+      err('autoStartSubmission:', e);
+    } finally {
+      setTimeout(() => { State.transitioning[matchId] = false; }, 15000);
+    }
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Dashboard boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Dashboard (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Dashboard (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Dashboard.init(); }
+  catch(e){ err('Dashboard init failed:', e); UI.toast('Failed to load dashboard.', 'err'); }
+
+  window.addEventListener('beforeunload', () => {
+    if (State._poll)   clearInterval(State._poll);
+    if (State._ticker) clearInterval(State._ticker);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') Drawer.close();
+  });
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'dashboard-12.0.0',
+  async debug(){
+    console.log('======== DLS Dashboard v12 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Wallet view:', State.walletView);
+    console.log('Profile:', State.data?.profile);
+    console.log('Active matches:', State.data?.active?.length);
+    console.log('Invites:', State.data?.invites_received?.length);
+    console.log('Tournaments:', State.extra.tournaments.length);
+    console.log('Achievements:', State.extra.achievements.length);
+    console.log('Notifications:', State.extra.notifications.length, '·', State.extra.unreadCount, 'unread');
+    console.log('Rank:', State.extra.rank);
+    console.log('===================================');
+  },
+  async testOCR(url){
+    console.log('Fetching test image…');
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const file = new File([blob], 'Screenshot_test.png', { type: blob.type });
+    const result = await ScreenshotReader.readFile(file);
+    console.log('OCR result:', result);
+    return result;
+  },
+  async reset(){
+    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_matches');
+    localStorage.removeItem('dls_demo_kyc');
+    localStorage.removeItem('dls_demo_notifs');
+    localStorage.removeItem('dls_demo_banks');
+    localStorage.removeItem('dls_demo_claims');
+    localStorage.removeItem('dls_demo_tournaments');
+    sessionStorage.clear();
+    location.reload();
+  }
+};
+</script>
+</body>
+</html>
