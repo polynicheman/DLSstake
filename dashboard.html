@@ -818,81 +818,803 @@ const Supa = (() => {
    ============================================================================ */
 const ScreenshotReader = {
 
-  async readFile(file){
-    log('OCR start on', file.name);
-    const img = await this._loadImage(file);
+  /*
+   * SCOREBOARD OCR v17
+   * ------------------
+   * The old reader sent a large, thresholded header image to OCR and then
+   * tried to infer the two scores from whatever text Tesseract returned.
+   * That is fragile for the stylized DLS score font.
+   *
+   * This reader uses two independent paths:
+   *   1. targeted OCR of the LEFT and RIGHT score boxes (digits only)
+   *   2. normal OCR of the scoreboard header for team names + a cross-check
+   *
+   * A 0–0 result is accepted only when the evidence supports it. If targeted
+   * OCR says 0–0 but the header OCR says 6–5, the non-zero header result wins.
+   */
 
-    if (!window.Tesseract){
-      return { ok:false, error:'Tesseract.js failed to load.' };
+  _workerPromise: null,
+
+  async _getWorker(){
+    if (!window.Tesseract) throw new Error('Tesseract.js failed to load.');
+    if (!this._workerPromise){
+      this._workerPromise = window.Tesseract.createWorker('eng');
     }
+    return await this._workerPromise;
+  },
 
-    const attempts = [
-      { ratio: 0.34, th: 140 },
-      { ratio: 0.34, th: 100 },
-      { ratio: 0.34, th: 180 },
-      { ratio: 0.34, th: 0   },
-      { ratio: 0.22, th: 140 },
-      { ratio: 0.45, th: 140 }
-    ];
+  async _ocr(canvas, params = {}){
+    const worker = await this._getWorker();
 
-    const tried = [];
+    const base = {
+      user_defined_dpi: '300',
+      load_system_dawg: '0',
+      load_freq_dawg: '0'
+    };
 
-    for (const a of attempts){
-      try {
-        const cropped = this._cropTopRegion(img, a.ratio, a.th);
-        const dataUrl = cropped.toDataURL('image/png');
-        const ocr = await window.Tesseract.recognize(dataUrl, 'eng');
-        const text = (ocr?.data?.text || '').trim();
-        const conf = ocr?.data?.confidence ?? 0;
-        const parsed = this._parseScoreboard(text);
+    await worker.setParameters({
+      ...base,
+      ...params
+    });
 
-        tried.push({
-          ratio: a.ratio, threshold: a.th,
-          parsed, text, conf,
-          scores: parsed ? [parsed.leftScore, parsed.rightScore] : null
-        });
+    const result = await worker.recognize(canvas);
+    return {
+      text: String(result?.data?.text || '').trim(),
+      confidence: Number(result?.data?.confidence || 0)
+    };
+  },
 
-        if (parsed && (parsed.leftScore > 0 || parsed.rightScore > 0)){
-          return {
-            ok: true,
-            ...parsed,
-            raw: text,
-            confidence: conf,
-            threshold: a.th,
-            ratio: a.ratio,
-            attempts: tried,
-            filename: file.name,
-            fileModified: file.lastModified
-          };
-        }
-      } catch(e){
-        warn('OCR attempt failed:', e);
+  _makeCanvas(img, x, y, w, h, scale = 3){
+    const srcW = img.naturalWidth || img.width;
+    const srcH = img.naturalHeight || img.height;
+
+    const sx = Math.max(0, Math.floor(srcW * x));
+    const sy = Math.max(0, Math.floor(srcH * y));
+    const sw = Math.max(1, Math.min(srcW - sx, Math.floor(srcW * w)));
+    const sh = Math.max(1, Math.min(srcH - sy, Math.floor(srcH * h)));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.floor(sw * scale));
+    canvas.height = Math.max(1, Math.floor(sh * scale));
+
+    const ctx = canvas.getContext('2d', { willReadFrequently:true });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+    return canvas;
+  },
+
+  _cloneCanvas(source){
+    const c = document.createElement('canvas');
+    c.width = source.width;
+    c.height = source.height;
+    const ctx = c.getContext('2d', { willReadFrequently:true });
+    ctx.drawImage(source, 0, 0);
+    return c;
+  },
+
+  _processCanvas(source, threshold = 0){
+    const c = this._cloneCanvas(source);
+    const ctx = c.getContext('2d', { willReadFrequently:true });
+    const data = ctx.getImageData(0, 0, c.width, c.height);
+    const d = data.data;
+
+    for (let i = 0; i < d.length; i += 4){
+      const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+
+      if (threshold > 0){
+        const v = lum >= threshold ? 255 : 0;
+        d[i] = d[i+1] = d[i+2] = v;
+      } else {
+        d[i] = d[i+1] = d[i+2] = lum;
       }
     }
 
-    const anyParse = tried.find(t => t.parsed);
-    if (anyParse){
+    ctx.putImageData(data, 0, 0);
+    return c;
+  },
+
+  async _readDigitCandidates(source){
+    /*
+     * DLS uses a stylized score font. PSM 8 and 13 tend to be more stable
+     * for this type of isolated digit than treating the whole header as text.
+     */
+    const attempts = [];
+    const variants = [
+      { name:'raw', threshold:0 },
+      { name:'threshold-110', threshold:110 },
+      { name:'threshold-160', threshold:160 }
+    ];
+    const psms = [8, 13, 10];
+
+    for (const v of variants){
+      const processed = this._processCanvas(source, v.threshold);
+
+      for (const psm of psms){
+        try {
+          const r = await this._ocr(processed, {
+            tessedit_char_whitelist: '0123456789',
+            tessedit_pageseg_mode: String(psm)
+          });
+
+          const m = r.text.match(/(?:^|\D)(\d{1,2})(?:\D|$)/);
+          const value = m ? Number(m[1]) : null;
+
+          attempts.push({
+            variant: v.name,
+            threshold: v.threshold,
+            psm,
+            text: r.text,
+            value: Number.isFinite(value) && value >= 0 && value <= 99 ? value : null,
+            confidence: r.confidence
+          });
+        } catch(e){
+          attempts.push({
+            variant: v.name,
+            threshold: v.threshold,
+            psm,
+            text: '',
+            value: null,
+            confidence: 0,
+            error: e.message
+          });
+        }
+      }
+    }
+
+    return attempts;
+  },
+
+  _chooseDigit(attempts){
+    const usable = attempts.filter(a => Number.isFinite(a.value));
+
+    if (!usable.length) return null;
+
+    /*
+     * Give repeated agreement more weight than a single high-confidence
+     * hallucination. PSM 8/13 are also slightly preferred for isolated
+     * digits. This is important for the right-hand 5 in the sample image,
+     * where one OCR mode can mistake the glyph for 3.
+     */
+    const buckets = new Map();
+
+    for (const a of usable){
+      const key = String(a.value);
+      const b = buckets.get(key) || {
+        value: a.value,
+        votes: 0,
+        confidenceTotal: 0,
+        confidenceMax: 0,
+        preferredVotes: 0
+      };
+
+      b.votes += 1;
+      b.confidenceTotal += Math.max(0, Number(a.confidence) || 0);
+      b.confidenceMax = Math.max(b.confidenceMax, Number(a.confidence) || 0);
+      if (a.psm === 8 || a.psm === 13) b.preferredVotes += 1;
+
+      buckets.set(key, b);
+    }
+
+    const ranked = [...buckets.values()].sort((a,b) => {
+      const scoreA =
+        a.votes * 100 +
+        a.preferredVotes * 18 +
+        a.confidenceTotal * 0.35 +
+        a.confidenceMax * 0.15;
+
+      const scoreB =
+        b.votes * 100 +
+        b.preferredVotes * 18 +
+        b.confidenceTotal * 0.35 +
+        b.confidenceMax * 0.15;
+
+      return scoreB - scoreA;
+    });
+
+    const best = ranked[0];
+
+    return {
+      value: best.value,
+      votes: best.votes,
+      confidence: best.confidenceTotal / Math.max(1, best.votes),
+      maxConfidence: best.confidenceMax,
+      preferredVotes: best.preferredVotes,
+      ranked
+    };
+  },
+
+  _parseDigit(text){
+    const m = String(text || '').match(/(?:^|\D)(\d{1,2})(?:\D|$)/);
+    if (!m) return null;
+    const n = Number(m[1]);
+    return Number.isFinite(n) && n >= 0 && n <= 99 ? n : null;
+  },
+
+  async _readTargetedScores(img){
+    /*
+     * These ratios are relative to the full DLS result screenshot.
+     * The sample screenshot is 826×371 and the two large score glyphs sit
+     * at roughly x=0.43 and x=0.56, y=0.05–0.20.
+     *
+     * The boxes are deliberately wider than the glyph itself so minor
+     * scaling/cropping differences do not cut off the digit.
+     */
+    const leftBox  = this._makeCanvas(img, 0.39, 0.045, 0.10, 0.18, 6);
+    const rightBox = this._makeCanvas(img, 0.51, 0.045, 0.10, 0.18, 6);
+
+    const leftAttempts = await this._readDigitCandidates(leftBox);
+    const rightAttempts = await this._readDigitCandidates(rightBox);
+
+    const left = this._chooseDigit(leftAttempts);
+    const right = this._chooseDigit(rightAttempts);
+
+    return {
+      left,
+      right,
+      leftAttempts,
+      rightAttempts
+    };
+  },
+
+  _stripBracket(s){
+    return String(s || '')
+      .replace(/\[[^\]]*\]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  _isPlausibleTeamName(tok){
+    if (!tok) return false;
+    const t = String(tok).trim();
+    if (t.length < 2 || t.length > 32) return false;
+    if (/^\d+$/.test(t)) return false;
+    if (!/[A-Za-z]/.test(t)) return false;
+    return true;
+  },
+
+  _nums(line){
+    const out = [];
+    const re = /\b(\d{1,3})\b/g;
+    let m;
+    while ((m = re.exec(line)) !== null){
+      out.push({ v:parseInt(m[1],10), at:m.index });
+    }
+    return out;
+  },
+
+  _clean(line){
+    return String(line || '')
+      .replace(/[|]/g, 'I')
+      .replace(/[“”]/g, '')
+      .replace(/[‘’]/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  _stripClock(line){
+    return String(line || '')
+      .replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' ');
+  },
+
+  _parseScoreboard(text){
+    if (!text) return null;
+
+    const lines = String(text)
+      .split(/\r?\n/)
+      .map(l => this._clean(l))
+      .filter(Boolean);
+
+    log('OCR cleaned lines:', lines);
+
+    /*
+     * Pass 1: exact scoreboard structure:
+     * TEAM  SCORE  90:00  SCORE  TEAM
+     */
+    for (const line of lines){
+      const m = line.match(
+        /^(.{2,32}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,32}?)$/
+      );
+
+      if (m){
+        const left  = this._stripBracket(m[1]);
+        const right = this._stripBracket(m[4]);
+
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:left,
+            leftScore:Number(m[2]),
+            rightScore:Number(m[3]),
+            rightTeam:right,
+            matchType:'primary'
+          };
+        }
+      }
+    }
+
+    /*
+     * Pass 2: same structure without requiring the entire line to end
+     * exactly at the right team name.
+     */
+    for (const line of lines){
+      const m = line.match(
+        /(.{2,32}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,32}?)(?:\s|$)/
+      );
+
+      if (m){
+        const left  = this._stripBracket(m[1]);
+        const right = this._stripBracket(m[4]);
+
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:left,
+            leftScore:Number(m[2]),
+            rightScore:Number(m[3]),
+            rightTeam:right,
+            matchType:'primary-loose'
+          };
+        }
+      }
+    }
+
+    /*
+     * Pass 3: OCR may put the team names and clock on separate lines.
+     */
+    const timeIdx = lines.findIndex(l => /\d{1,3}\s*[:.]\s*\d{2}/.test(l));
+
+    if (timeIdx >= 0){
+      const clockLine = lines[timeIdx];
+      const around = clockLine.match(
+        /(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})/
+      );
+
+      if (around){
+        const teamLines = [];
+
+        for (let i = 0; i < lines.length; i++){
+          if (i === timeIdx) continue;
+
+          const l = lines[i];
+
+          if (
+            /[A-Za-z]{2,}/.test(l) &&
+            !/\d{1,3}\s*[:.]\s*\d{2}/.test(l)
+          ){
+            teamLines.push({
+              idx:i,
+              name:this._stripBracket(l)
+            });
+          }
+        }
+
+        const above = [...teamLines].reverse().find(t => t.idx < timeIdx);
+        const below = teamLines.find(t => t.idx > timeIdx);
+
+        const left = above?.name || '';
+        const right = below?.name || '';
+
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:left,
+            leftScore:Number(around[1]),
+            rightScore:Number(around[2]),
+            rightTeam:right,
+            matchType:'split-lines'
+          };
+        }
+      }
+    }
+
+    /*
+     * Pass 4: if the clock was read correctly but the two score digits were
+     * separated from it, use the first two small numbers near the scoreboard.
+     */
+    for (const line of lines){
+      const cleaned = this._stripClock(line);
+      const nums = this._nums(cleaned);
+      const small = nums.filter(n => n.v >= 0 && n.v <= 99);
+
+      if (small.length >= 2){
+        const names = lines.filter(l =>
+          /[A-Za-z]{2,}/.test(l) &&
+          this._nums(this._stripClock(l)).length === 0
+        );
+
+        const leftName  = this._stripBracket(names[0] || '');
+        const rightName = this._stripBracket(names[names.length - 1] || '');
+
+        if (
+          this._isPlausibleTeamName(leftName) &&
+          this._isPlausibleTeamName(rightName)
+        ){
+          return {
+            leftTeam:leftName,
+            leftScore:small[0].v,
+            rightScore:small[1].v,
+            rightTeam:rightName,
+            matchType:'middle-numbers'
+          };
+        }
+      }
+    }
+
+    /*
+     * Pass 5: last-resort global scan.
+     */
+    const joined = lines.join(' ');
+
+    const globalM = joined.match(
+      /([A-Za-z][A-Za-z0-9_\-\.]{1,24})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z][A-Za-z0-9_\-\.]{1,24})/
+    );
+
+    if (globalM){
+      const left  = this._stripBracket(globalM[1]);
+      const right = this._stripBracket(globalM[4]);
+
+      if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+        return {
+          leftTeam:left,
+          leftScore:Number(globalM[2]),
+          rightScore:Number(globalM[3]),
+          rightTeam:right,
+          matchType:'global-scan'
+        };
+      }
+    }
+
+    return null;
+  },
+
+  _norm(s){
+    return String(s || '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .trim();
+  },
+
+  _levenshtein(a, b){
+    a = String(a || '');
+    b = String(b || '');
+
+    if (!a) return b.length;
+    if (!b) return a.length;
+
+    const prev = new Array(b.length + 1);
+    const cur = new Array(b.length + 1);
+
+    for (let j = 0; j <= b.length; j++) prev[j] = j;
+
+    for (let i = 1; i <= a.length; i++){
+      cur[0] = i;
+
+      for (let j = 1; j <= b.length; j++){
+        const cost = a[i-1] === b[j-1] ? 0 : 1;
+
+        cur[j] = Math.min(
+          cur[j-1] + 1,
+          prev[j] + 1,
+          prev[j-1] + cost
+        );
+      }
+
+      for (let j = 0; j <= b.length; j++) prev[j] = cur[j];
+    }
+
+    return prev[b.length];
+  },
+
+  _nameMatchScore(a, b){
+    const A = this._norm(a);
+    const B = this._norm(b);
+
+    if (!A || !B) return 0;
+    if (A === B) return 1;
+    if (A.includes(B) || B.includes(A)) return 0.92;
+
+    const maxLen = Math.max(A.length, B.length);
+    if (maxLen < 4) return 0;
+
+    const distance = this._levenshtein(A, B);
+    return Math.max(0, 1 - distance / maxLen);
+  },
+
+  resolveSides(parsed, myDls, oppDls){
+    if (!parsed) return null;
+
+    const L = this._norm(parsed.leftTeam);
+    const R = this._norm(parsed.rightTeam);
+    const M = this._norm(myDls);
+    const O = this._norm(oppDls);
+
+    const lm = this._nameMatchScore(L, M);
+    const lo = this._nameMatchScore(L, O);
+    const rm = this._nameMatchScore(R, M);
+    const ro = this._nameMatchScore(R, O);
+
+    /*
+     * Prefer the two-sided assignment when both names are readable.
+     * The 0.62 threshold allows small OCR errors but avoids assigning a
+     * completely unrelated team name.
+     */
+    const threshold = 0.62;
+
+    if (lm >= threshold && ro >= threshold && lm + ro >= lo + rm){
       return {
-        ok: true,
-        ...anyParse.parsed,
-        raw: anyParse.text,
-        confidence: anyParse.conf,
-        threshold: anyParse.threshold,
-        ratio: anyParse.ratio,
-        attempts: tried,
-        zeroZeroWarning: true,
-        filename: file.name,
-        fileModified: file.lastModified
+        leftIsYou:true,
+        rightIsYou:false,
+        youScore:parsed.leftScore,
+        oppScore:parsed.rightScore
       };
     }
 
+    if (rm >= threshold && lo >= threshold){
+      return {
+        leftIsYou:false,
+        rightIsYou:true,
+        youScore:parsed.rightScore,
+        oppScore:parsed.leftScore
+      };
+    }
+
+    if (lm >= threshold && lm > lo){
+      return {
+        leftIsYou:true,
+        rightIsYou:false,
+        youScore:parsed.leftScore,
+        oppScore:parsed.rightScore
+      };
+    }
+
+    if (rm >= threshold && rm > ro){
+      return {
+        leftIsYou:false,
+        rightIsYou:true,
+        youScore:parsed.rightScore,
+        oppScore:parsed.leftScore
+      };
+    }
+
+    if (lo >= threshold && lo > lm){
+      return {
+        leftIsYou:false,
+        rightIsYou:true,
+        youScore:parsed.rightScore,
+        oppScore:parsed.leftScore
+      };
+    }
+
+    if (ro >= threshold && ro > rm){
+      return {
+        leftIsYou:true,
+        rightIsYou:false,
+        youScore:parsed.leftScore,
+        oppScore:parsed.rightScore
+      };
+    }
+
+    return null;
+  },
+
+  async readFile(file){
+    log('OCR start on', file.name);
+
+    const img = await this._loadImage(file);
+
+    if (!window.Tesseract){
+      return {
+        ok:false,
+        error:'Tesseract.js failed to load.'
+      };
+    }
+
+    const headerVariants = [
+      { ratio:0.34, threshold:0 },
+      { ratio:0.34, threshold:110 },
+      { ratio:0.34, threshold:160 },
+      { ratio:0.28, threshold:0 }
+    ];
+
+    const headerAttempts = [];
+
+    /*
+     * Header OCR is for names and an independent score cross-check.
+     * It is NOT the primary source for the score digits anymore.
+     */
+    for (const a of headerVariants){
+      try {
+        const crop = this._makeCanvas(img, 0, 0, 1, a.ratio, 3);
+        const processed = this._processCanvas(crop, a.threshold);
+
+        const r = await this._ocr(processed, {
+          tessedit_pageseg_mode:'6'
+        });
+
+        const parsed = this._parseScoreboard(r.text);
+
+        headerAttempts.push({
+          ratio:a.ratio,
+          threshold:a.threshold,
+          text:r.text,
+          conf:r.confidence,
+          parsed,
+          scores:parsed
+            ? [parsed.leftScore, parsed.rightScore]
+            : null
+        });
+      } catch(e){
+        headerAttempts.push({
+          ratio:a.ratio,
+          threshold:a.threshold,
+          text:'',
+          conf:0,
+          parsed:null,
+          scores:null,
+          error:e.message
+        });
+      }
+    }
+
+    /*
+     * Primary score extraction.
+     */
+    let targeted = null;
+
+    try {
+      targeted = await this._readTargetedScores(img);
+    } catch(e){
+      warn('Targeted score OCR failed:', e);
+    }
+
+    const left = targeted?.left || null;
+    const right = targeted?.right || null;
+
+    const targetedPair =
+      left && right &&
+      Number.isFinite(left.value) &&
+      Number.isFinite(right.value)
+        ? [left.value, right.value]
+        : null;
+
+    /*
+     * Find the strongest header pair.
+     */
+    const headerPairs = headerAttempts
+      .filter(a => a.parsed)
+      .map(a => ({
+        leftScore:Number(a.parsed.leftScore),
+        rightScore:Number(a.parsed.rightScore),
+        parsed:a.parsed,
+        conf:Number(a.conf || 0)
+      }));
+
+    let bestHeader = null;
+
+    if (headerPairs.length){
+      bestHeader = [...headerPairs].sort((a,b) => {
+        const aNonZero = (a.leftScore !== 0 || a.rightScore !== 0) ? 1 : 0;
+        const bNonZero = (b.leftScore !== 0 || b.rightScore !== 0) ? 1 : 0;
+
+        return (
+          bNonZero - aNonZero ||
+          b.conf - a.conf
+        );
+      })[0];
+    }
+
+    /*
+     * Choose scores using evidence from BOTH OCR paths.
+     *
+     * Important: a targeted 0–0 read is not automatically trusted. If the
+     * normal header OCR independently sees 6–5, that is strong evidence that
+     * the stylized glyphs were misread as zero.
+     */
+    let finalLeft = null;
+    let finalRight = null;
+    let scoreSource = 'none';
+
+    if (targetedPair){
+      finalLeft = targetedPair[0];
+      finalRight = targetedPair[1];
+      scoreSource = 'targeted';
+
+      if (
+        bestHeader &&
+        (finalLeft === 0 && finalRight === 0) &&
+        (bestHeader.leftScore !== 0 || bestHeader.rightScore !== 0)
+      ){
+        finalLeft = bestHeader.leftScore;
+        finalRight = bestHeader.rightScore;
+        scoreSource = 'header-cross-check';
+      }
+    } else if (bestHeader){
+      finalLeft = bestHeader.leftScore;
+      finalRight = bestHeader.rightScore;
+      scoreSource = 'header-fallback';
+    }
+
+    if (!Number.isFinite(finalLeft) || !Number.isFinite(finalRight)){
+      return {
+        ok:false,
+        raw:headerAttempts
+          .map(a => `[th=${a.threshold} ratio=${a.ratio}]\n${a.text}`)
+          .join('\n\n---\n\n') || '(no OCR output)',
+        confidence:0,
+        attempts:headerAttempts,
+        targetedAttempts:targeted || null,
+        filename:file.name,
+        fileModified:file.lastModified
+      };
+    }
+
+    /*
+     * Pick the header parse that agrees with the selected score pair.
+     * This avoids returning team names from an unrelated line.
+     */
+    let parsed = null;
+
+    const matchingHeader = headerPairs.find(p =>
+      p.leftScore === finalLeft &&
+      p.rightScore === finalRight
+    );
+
+    if (matchingHeader){
+      parsed = matchingHeader.parsed;
+    } else if (bestHeader){
+      parsed = bestHeader.parsed;
+    }
+
+    /*
+     * If the score OCR is good but the header OCR missed the team names,
+     * return the scores anyway. The UI will then explain that name matching
+     * needs attention instead of silently converting the score to 0–0.
+     */
+    const scoreConfidence =
+      left && right
+        ? (Number(left.confidence || 0) + Number(right.confidence || 0)) / 2
+        : Number(bestHeader?.conf || 0);
+
+    const headerConfidence = Number(bestHeader?.conf || 0);
+
+    const confidence =
+      scoreSource === 'targeted'
+        ? Math.max(scoreConfidence, headerConfidence * 0.65)
+        : headerConfidence;
+
+    const combinedAttempts = headerAttempts.map(a => ({
+      ...a,
+      scores:a.scores
+    }));
+
+    if (targeted){
+      combinedAttempts.push({
+        ratio:'targeted-left/right',
+        threshold:'multi',
+        text:
+          `LEFT: ${left?.value ?? '?'} ` +
+          `(votes=${left?.votes ?? 0}, conf=${Math.round(left?.confidence ?? 0)}%) | ` +
+          `RIGHT: ${right?.value ?? '?'} ` +
+          `(votes=${right?.votes ?? 0}, conf=${Math.round(right?.confidence ?? 0)}%)`,
+        conf:scoreConfidence,
+        scores:targetedPair
+      });
+    }
+
     return {
-      ok: false,
-      raw: tried.map(t => `[th=${t.threshold} ratio=${t.ratio}]\n${t.text}`).join('\n\n---\n\n') || '(no OCR output)',
-      confidence: 0,
-      attempts: tried,
-      filename: file.name,
-      fileModified: file.lastModified
+      ok:true,
+      leftTeam:parsed?.leftTeam || '',
+      leftScore:finalLeft,
+      rightScore:finalRight,
+      rightTeam:parsed?.rightTeam || '',
+      matchType:parsed?.matchType || scoreSource,
+      raw:headerAttempts.map(a => a.text).filter(Boolean).join('\n\n---\n\n'),
+      confidence,
+      threshold:scoreSource,
+      ratio:parsed?.matchType || 'targeted-score-boxes',
+      attempts:combinedAttempts,
+      targetedAttempts:targeted,
+      filename:file.name,
+      fileModified:file.lastModified
     };
   },
 
@@ -900,168 +1622,29 @@ const ScreenshotReader = {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
       const img = new Image();
-      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not load image.')); };
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Could not load image.'));
+      };
+
       img.src = url;
     });
   },
 
-  _cropTopRegion(img, ratio, threshold = 140){
-    const w = img.naturalWidth || img.width;
-    const h = img.naturalHeight || img.height;
-    const cropH = Math.max(80, Math.floor(h * ratio));
-    const scale = 2;
-    const canvas = document.createElement('canvas');
-    canvas.width  = w * scale;
-    canvas.height = cropH * scale;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, 0, 0, w, cropH, 0, 0, canvas.width, canvas.height);
+  async shutdown(){
+    try {
+      const worker = await this._workerPromise;
+      if (worker) await worker.terminate();
+    } catch {}
 
-    if (threshold > 0){
-      try {
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const d = imgData.data;
-        for (let i = 0; i < d.length; i += 4){
-          const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-          const v = lum > threshold ? 255 : 0;
-          d[i] = d[i+1] = d[i+2] = v;
-        }
-        ctx.putImageData(imgData, 0, 0);
-      } catch(e){ warn('binarization skipped:', e); }
-    }
-
-    return canvas;
+    this._workerPromise = null;
   },
-
-  _stripBracket(s){ return String(s || '').replace(/\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim(); },
-  _isPlausibleTeamName(tok){
-    if (!tok) return false;
-    const t = String(tok).trim();
-    if (t.length < 2 || t.length > 24) return false;
-    if (/^\d+$/.test(t)) return false;
-    if (!/[A-Za-z]/.test(t)) return false;
-    return true;
-  },
-  _nums(line){
-    const out = []; const re = /\b(\d{1,3})\b/g; let m;
-    while ((m = re.exec(line)) !== null) out.push({ v: parseInt(m[1],10), at: m.index });
-    return out;
-  },
-  _clean(line){
-    return String(line || '').replace(/[|]/g, 'I').replace(/[“”]/g, '').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
-  },
-  _stripClock(line){ return String(line || '').replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' '); },
-
-  _parseScoreboard(text){
-    if (!text) return null;
-    const lines = text.split(/\r?\n/).map(l => this._clean(l)).filter(Boolean);
-    log('OCR cleaned lines:', lines);
-
-    for (const line of lines){
-      const m = line.match(/^(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)$/);
-      if (m){
-        const left  = this._stripBracket(m[1]);
-        const right = this._stripBracket(m[4]);
-        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'primary' };
-        }
-      }
-    }
-    for (const line of lines){
-      const m = line.match(/(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)/);
-      if (m){
-        const left  = this._stripBracket(m[1]);
-        const right = this._stripBracket(m[4]);
-        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'primary-loose' };
-        }
-      }
-    }
-    const timeIdx = lines.findIndex(l => /\d{1,3}\s*[:.]\s*\d{2}/.test(l));
-    if (timeIdx >= 0){
-      const clockLine = lines[timeIdx];
-      const around = clockLine.match(/(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})/);
-      if (around){
-        const teamLines = [];
-        for (let i = 0; i < lines.length; i++){
-          if (i === timeIdx) continue;
-          const l = lines[i];
-          if (/[A-Za-z]{2,}/.test(l) && !/\d{1,3}\s*[:.]\s*\d{2}/.test(l)){
-            teamLines.push({ idx:i, name: this._stripBracket(l) });
-          }
-        }
-        const above = [...teamLines].reverse().find(t => t.idx < timeIdx);
-        const below = teamLines.find(t => t.idx > timeIdx);
-        const left  = (above?.name) || '';
-        const right = (below?.name) || '';
-        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return { leftTeam:left, leftScore:parseInt(around[1],10), rightScore:parseInt(around[2],10), rightTeam:right, matchType:'split-lines' };
-        }
-      }
-    }
-    for (let i = 0; i < lines.length; i++){
-      const line = lines[i];
-      const cleaned = this._stripClock(line);
-      const nums = this._nums(cleaned);
-      if (nums.length >= 2){
-        const small = nums.filter(n => n.v >= 0 && n.v <= 99);
-        if (small.length >= 2){
-          const names = lines.filter(l => /[A-Za-z]{2,}/.test(l) && !this._nums(this._stripClock(l)).length);
-          const leftName  = this._stripBracket(names[0] || '');
-          const rightName = this._stripBracket(names[names.length-1] || '');
-          if (this._isPlausibleTeamName(leftName) && this._isPlausibleTeamName(rightName)){
-            return { leftTeam:leftName, leftScore:small[0].v, rightScore:small[1].v, rightTeam:rightName, matchType:'middle-numbers' };
-          }
-        }
-      }
-    }
-    for (const line of lines){
-      const cleaned = this._stripClock(line);
-      const m = cleaned.match(/([A-Za-z][A-Za-z0-9_\-\.]{1,20})\D{0,6}(\d{1,2})\D+(\d{1,2})\D{0,6}([A-Za-z][A-Za-z0-9_\-\.]{1,20})/);
-      if (m){
-        const left  = this._stripBracket(m[1]);
-        const right = this._stripBracket(m[4]);
-        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'loose' };
-        }
-      }
-    }
-    const joined = lines.join(' ');
-    const globalM = joined.match(/([A-Za-z][A-Za-z0-9_\-\.]{2,20})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z][A-Za-z0-9_\-\.]{2,20})/);
-    if (globalM){
-      const left  = this._stripBracket(globalM[1]);
-      const right = this._stripBracket(globalM[4]);
-      if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-        return { leftTeam:left, leftScore:parseInt(globalM[2],10), rightScore:parseInt(globalM[3],10), rightTeam:right, matchType:'global-scan' };
-      }
-    }
-    log('All parse passes failed. Raw text:', text);
-    return null;
-  },
-
-  _norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'').trim(); },
-
-  resolveSides(parsed, myDls, oppDls){
-    if (!parsed) return null;
-    const L = this._norm(parsed.leftTeam);
-    const R = this._norm(parsed.rightTeam);
-    const M = this._norm(myDls);
-    const O = this._norm(oppDls);
-    const matches = (a,b) => a && b && (a === b || a.includes(b) || b.includes(a));
-    const Lme = matches(L, M),  Lop = matches(L, O);
-    const Rme = matches(R, M),  Rop = matches(R, O);
-
-    if (Lme && Rop) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    if (Rme && Lop) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-    if (Lme)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    if (Rme)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-    if (Lop)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-    if (Rop)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    return null;
-  },
-
   validateFileDetail(file, acceptedAtIso, windowMinutes = 60){
     const fname = String(file.name || '').trim();
     const lower = fname.toLowerCase();
@@ -1989,7 +2572,7 @@ const Dashboard = {
         <div class="uz-title">${busy ? 'Reading screenshot…' : 'Upload match screenshot'}</div>
         <div class="uz-sub">
           ${busy
-            ? '<span class="ocr-spin"></span> Running OCR on the scoreboard (multiple attempts)'
+            ? '<span class="ocr-spin"></span> Running targeted OCR on both score boxes + scoreboard cross-check'
             : 'File must be named <code>Screenshot_YYYYMMDD-HHMMSS.jpg</code>'}
         </div>
       </div>
@@ -2101,7 +2684,7 @@ const Dashboard = {
     State.ocrBusy[matchId] = true;
     delete State.ocrPreview[matchId];
     this.renderActive(State.data?.active || [], State.session?.user?.id);
-    UI.toast('Reading screenshot (6 attempts)…', 'info', 2500);
+    UI.toast('Reading screenshot with targeted score OCR…', 'info', 2500);
 
     try {
       const fileCheck = ScreenshotReader.validateFileDetail(
@@ -2139,8 +2722,8 @@ const Dashboard = {
           error: 'The team names on the scoreboard could not be matched to your DLS username or your opponent\'s. Names found: "'
             + (result.leftTeam || '?') + '" and "' + (result.rightTeam || '?')
             + '". Your registered DLS name is "' + (myDls || 'not set') + '".',
-          youScore: 0,
-          oppScore: 0
+          youScore: Number.isFinite(Number(result.leftScore)) ? Number(result.leftScore) : null,
+          oppScore: Number.isFinite(Number(result.rightScore)) ? Number(result.rightScore) : null
         };
         State.ocrBusy[matchId] = false;
         this.renderActive(State.data?.active || [], State.session?.user?.id);
@@ -2729,7 +3312,7 @@ const Dashboard = {
 })();
 
 window.DLS = {
-  version: 'dashboard-16.0.0',
+  version: 'dashboard-17.0.0',
   async debug(){
     console.log('======== DLS Dashboard v16 ========');
     console.log('Session:', State.session?.user?.email);
