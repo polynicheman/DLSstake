@@ -1041,11 +1041,46 @@ const ScreenshotReader = {
      * The boxes are deliberately wider than the glyph itself so minor
      * scaling/cropping differences do not cut off the digit.
      */
-    const leftBox  = this._makeCanvas(img, 0.39, 0.045, 0.10, 0.18, 6);
-    const rightBox = this._makeCanvas(img, 0.51, 0.045, 0.10, 0.18, 6);
+    /*
+     * IMPORTANT: do NOT make these boxes wide. The old v17 boxes included
+     * part of the 90:00 clock, so Tesseract could read the clock instead of
+     * the score digit. On the supplied 826x371 DLS screenshot the glyphs are
+     * approximately:
+     *   LEFT  x=355..381, y=31..67
+     *   RIGHT x=451..478, y=31..67
+     *
+     * We use several tight boxes around those positions. The small offsets
+     * make the reader tolerant of slightly different screenshots.
+     */
+    const boxes = [
+      {
+        left: [
+          [0.415,0.075,0.042,0.115],
+          [0.425,0.065,0.045,0.125],
+          [0.410,0.065,0.050,0.135]
+        ],
+        right: [
+          [0.545,0.075,0.042,0.115],
+          [0.555,0.065,0.045,0.125],
+          [0.540,0.065,0.050,0.135]
+        ]
+      }
+    ][0];
 
-    const leftAttempts = await this._readDigitCandidates(leftBox);
-    const rightAttempts = await this._readDigitCandidates(rightBox);
+    const leftAttempts = [];
+    const rightAttempts = [];
+
+    for (const b of boxes.left){
+      const canvas = this._makeCanvas(img, b[0], b[1], b[2], b[3], 8);
+      const a = await this._readDigitCandidates(canvas);
+      leftAttempts.push(...a.map(x => ({...x, box:b})));
+    }
+
+    for (const b of boxes.right){
+      const canvas = this._makeCanvas(img, b[0], b[1], b[2], b[3], 8);
+      const a = await this._readDigitCandidates(canvas);
+      rightAttempts.push(...a.map(x => ({...x, box:b})));
+    }
 
     const left = this._chooseDigit(leftAttempts);
     const right = this._chooseDigit(rightAttempts);
@@ -1096,6 +1131,73 @@ const ScreenshotReader = {
   _stripClock(line){
     return String(line || '')
       .replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' ');
+  },
+
+  _extractClockScorePair(text){
+    /*
+     * Direct score extraction from the OCR text.
+     *
+     * This deliberately does NOT require team names. The screenshot's score
+     * is visually arranged as:
+     *
+     *       LEFT_SCORE  90:00  RIGHT_SCORE
+     *
+     * Team-name OCR can fail even when the three central values are perfectly
+     * readable. That failure must never turn a real score into 0-0.
+     */
+    const raw = String(text || '')
+      .replace(/[Oo]/g, '0')
+      .replace(/[Il|]/g, '1')
+      .replace(/[Ss]/g, '5')
+      .replace(/[Gg]/g, '6')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!raw) return null;
+
+    const clock = /(\d{1,3})\s*[:.]\s*(\d{2})/g;
+    let m;
+
+    while ((m = clock.exec(raw)) !== null){
+      const before = raw.slice(Math.max(0, m.index - 14), m.index);
+      const after  = raw.slice(m.index + m[0].length, m.index + m[0].length + 14);
+
+      const leftNums = [...before.matchAll(/(?:^|\D)(\d{1,2})(?=\D*$|\s*$)/g)]
+        .map(x => Number(x[1]))
+        .filter(n => n >= 0 && n <= 99);
+
+      const rightNums = [...after.matchAll(/(?:^|\D)(\d{1,2})(?=\D|$)/g)]
+        .map(x => Number(x[1]))
+        .filter(n => n >= 0 && n <= 99);
+
+      const leftScore = leftNums.length ? leftNums[leftNums.length - 1] : null;
+      const rightScore = rightNums.length ? rightNums[0] : null;
+
+      if (Number.isFinite(leftScore) && Number.isFinite(rightScore)){
+        return {
+          leftScore,
+          rightScore,
+          clock: `${m[1]}:${m[2]}`,
+          source:'clock-neighborhood'
+        };
+      }
+    }
+
+    /*
+     * Common Tesseract output for this exact layout:
+     *   DHIBOSS 6 90:00 5 KRAFF
+     */
+    const direct = raw.match(/(?:^|\s)(\d{1,2})\s+(\d{1,3})\s*[:.]\s*(\d{2})\s+(\d{1,2})(?:\s|$)/);
+    if (direct){
+      return {
+        leftScore:Number(direct[1]),
+        rightScore:Number(direct[4]),
+        clock:`${direct[2]}:${direct[3]}`,
+        source:'direct-clock-pattern'
+      };
+    }
+
+    return null;
   },
 
   _parseScoreboard(text){
@@ -1431,6 +1533,21 @@ const ScreenshotReader = {
         });
 
         const parsed = this._parseScoreboard(r.text);
+        const clockPair = this._extractClockScorePair(r.text);
+
+        /*
+         * If the structured parser misses the scoreboard but OCR plainly
+         * returned "6 90:00 5", preserve that score evidence.
+         */
+        const evidence = clockPair || (
+          parsed
+            ? {
+                leftScore:Number(parsed.leftScore),
+                rightScore:Number(parsed.rightScore),
+                source:'structured-parser'
+              }
+            : null
+        );
 
         headerAttempts.push({
           ratio:a.ratio,
@@ -1438,8 +1555,9 @@ const ScreenshotReader = {
           text:r.text,
           conf:r.confidence,
           parsed,
-          scores:parsed
-            ? [parsed.leftScore, parsed.rightScore]
+          clockPair,
+          scores:evidence
+            ? [evidence.leftScore, evidence.rightScore]
             : null
         });
       } catch(e){
@@ -1450,6 +1568,39 @@ const ScreenshotReader = {
           conf:0,
           parsed:null,
           scores:null,
+          error:e.message
+        });
+      }
+    }
+
+    /*
+     * Primary score extraction.
+     *
+     * Also run a full-width OCR pass with sparse-text segmentation. This is
+     * intentionally independent of the team-name parser and is very useful
+     * when the scoreboard OCR returns the central values but not clean team
+     * names.
+     */
+    const sparseAttempts = [];
+    for (const psm of ['11','12']){
+      try {
+        const full = this._makeCanvas(img, 0, 0, 1, 0.28, 4);
+        const r = await this._ocr(this._processCanvas(full, 0), {
+          tessedit_pageseg_mode:psm
+        });
+        const pair = this._extractClockScorePair(r.text);
+        sparseAttempts.push({
+          psm,
+          text:r.text,
+          conf:r.confidence,
+          pair
+        });
+      } catch(e){
+        sparseAttempts.push({
+          psm,
+          text:'',
+          conf:0,
+          pair:null,
           error:e.message
         });
       }
@@ -1480,23 +1631,45 @@ const ScreenshotReader = {
      * Find the strongest header pair.
      */
     const headerPairs = headerAttempts
-      .filter(a => a.parsed)
+      .filter(a => a.parsed || a.clockPair)
       .map(a => ({
-        leftScore:Number(a.parsed.leftScore),
-        rightScore:Number(a.parsed.rightScore),
+        leftScore:Number((a.clockPair || a.parsed).leftScore),
+        rightScore:Number((a.clockPair || a.parsed).rightScore),
         parsed:a.parsed,
+        clockPair:a.clockPair,
         conf:Number(a.conf || 0)
       }));
+
+    for (const a of sparseAttempts){
+      if (a.pair){
+        headerPairs.push({
+          leftScore:Number(a.pair.leftScore),
+          rightScore:Number(a.pair.rightScore),
+          parsed:null,
+          clockPair:a.pair,
+          conf:Number(a.conf || 0)
+        });
+      }
+    }
 
     let bestHeader = null;
 
     if (headerPairs.length){
+      const counts = new Map();
+      for (const h of headerPairs){
+        const key = `${h.leftScore}-${h.rightScore}`;
+        counts.set(key, (counts.get(key) || 0) + 1);
+      }
+
       bestHeader = [...headerPairs].sort((a,b) => {
         const aNonZero = (a.leftScore !== 0 || a.rightScore !== 0) ? 1 : 0;
         const bNonZero = (b.leftScore !== 0 || b.rightScore !== 0) ? 1 : 0;
+        const aVotes = counts.get(`${a.leftScore}-${a.rightScore}`) || 0;
+        const bVotes = counts.get(`${b.leftScore}-${b.rightScore}`) || 0;
 
         return (
           bNonZero - aNonZero ||
+          bVotes - aVotes ||
           b.conf - a.conf
         );
       })[0];
@@ -1585,6 +1758,16 @@ const ScreenshotReader = {
       ...a,
       scores:a.scores
     }));
+
+    for (const a of sparseAttempts){
+      combinedAttempts.push({
+        ratio:'full-width-sparse',
+        threshold:0,
+        text:`PSM ${a.psm}: ${a.text}`,
+        conf:a.conf,
+        scores:a.pair ? [a.pair.leftScore, a.pair.rightScore] : null
+      });
+    }
 
     if (targeted){
       combinedAttempts.push({
@@ -3312,7 +3495,7 @@ const Dashboard = {
 })();
 
 window.DLS = {
-  version: 'dashboard-17.0.0',
+  version: 'dashboard-18.0.0',
   async debug(){
     console.log('======== DLS Dashboard v16 ========');
     console.log('Session:', State.session?.user?.email);
