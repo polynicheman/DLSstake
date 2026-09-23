@@ -250,6 +250,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verify-step .txt .hl{color:#7cb4ff;font-weight:800}
 .verify-step .txt .hl-loss{color:var(--danger);font-weight:800}
 .verify-step .txt .hl-draw{color:var(--warn);font-weight:800}
+.verify-step .txt code{font-family:var(--ff-mono);font-size:.72em;background:var(--bg-2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:#7cb4ff}
 
 /* INFO STRIP (rules summary above active matches) */
 .rules-strip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(47,128,237,.06);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius);margin-bottom:16px;font-size:.82rem;line-height:1.55;color:#9cc4ff}
@@ -257,6 +258,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .rules-strip b{color:#bfd9ff;font-weight:800}
 .rules-strip .em{color:#ffd08a;font-weight:800}
 .rules-strip .em-bad{color:#ff97a4;font-weight:800}
+.rules-strip code{font-family:var(--ff-mono);font-size:.82em;background:rgba(7,13,22,.5);border:1px solid rgba(47,128,237,.35);padding:1px 6px;border-radius:4px;color:#bfd9ff}
 
 /* VERDICT CHIPS (recent matches) */
 .verdict{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);margin-left:8px}
@@ -265,6 +267,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verdict.low-score{background:rgba(255,107,53,.14);color:var(--fire);border:1px solid rgba(255,107,53,.3)}
 .verdict.both-mismatch{background:rgba(255,176,32,.14);color:var(--warn);border:1px solid rgba(255,176,32,.3)}
 .verdict.arbitration{background:rgba(139,92,246,.14);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
+.verdict.metadata-bad{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.verdict.logo-mismatch{background:rgba(255,107,53,.14);color:var(--fire);border:1px solid rgba(255,107,53,.3)}
 
 /* HISTORY */
 .history-list{display:grid;gap:0}
@@ -574,10 +578,12 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
           <div class="rules-strip">
             <span class="ico">🛡️</span>
             <div>
-              <b>Screenshot verification.</b> Both screenshots must show at least one of the two players' usernames
-              (the other can just be "DLS"). If your name doesn't appear on your own screenshot, or your score is lower, the
-              <span class="em-bad">opponent takes the pot</span>. If <span class="em">neither</span> name matches,
-              the match is declared a <span class="em">draw</span> and both stakes are refunded.
+              <b>How screenshot verification works.</b>
+              Each player's <b>Dream League Soccer username</b> must appear on their <b>own</b> screenshot.
+              The app then compares the <b>club logos</b> across both screenshots — they must match.
+              If either username is missing, the logos don't match, or your score is lower,
+              the <span class="em-bad">opponent takes the pot</span>.
+              If <span class="em">both</span> sides fail, the match settles as a <span class="em">draw</span> and both stakes refund.
             </div>
           </div>
 
@@ -866,29 +872,54 @@ const ACH_CATALOG = {
    Maps a verification_verdict string from the DB to a friendly label.
    ============================================================================ */
 const VERDICT_MAP = {
-  matched:           { cls:'verified',     label:'✓ Names matched' },
-  clean:             { cls:'verified',     label:'✓ Verified' },
-  name_mismatch:     { cls:'name-mismatch',label:'✕ Name mismatch' },
-  screenshot_missing_name: { cls:'name-mismatch', label:'✕ No name found' },
-  low_score:         { cls:'low-score',    label:'↓ Low score' },
-  both_mismatch:     { cls:'both-mismatch',label:'≈ Both mismatched' },
-  both_name_missing: { cls:'both-mismatch',label:'≈ No names found' },
-  conflict:          { cls:'arbitration',  label:'⚖ In arbitration' },
-  metadata_dispute:  { cls:'arbitration',  label:'⚖ Under review' },
-  arbitration:       { cls:'arbitration',  label:'⚖ Arbitration' },
-  pending:           { cls:'arbitration',  label:'⏳ Verifying' }
+  /* Both sides passed every check */
+  matched:                 { cls:'verified',       label:'✓ Verified' },
+  clean:                   { cls:'verified',       label:'✓ Verified' },
+
+  /* DLS username on own screenshot */
+  name_mismatch:           { cls:'name-mismatch',  label:'✕ No DLS name' },
+  screenshot_missing_name: { cls:'name-mismatch',  label:'✕ No DLS name' },
+  dls_name_missing:        { cls:'name-mismatch',  label:'✕ No DLS name' },
+
+  /* Logo comparison between both screenshots */
+  logo_mismatch:           { cls:'logo-mismatch',  label:'✕ Logo mismatch' },
+  logos_do_not_match:      { cls:'logo-mismatch',  label:'✕ Logo mismatch' },
+
+  /* Score comparison */
+  low_score:               { cls:'low-score',      label:'↓ Low score' },
+
+  /* Both sides failed */
+  both_mismatch:           { cls:'both-mismatch',  label:'≈ Both mismatched' },
+  both_name_missing:       { cls:'both-mismatch',  label:'≈ No DLS names' },
+  both_logo_mismatch:      { cls:'both-mismatch',  label:'≈ Both logos invalid' },
+
+  /* Arbitration */
+  conflict:                { cls:'arbitration',    label:'⚖ In arbitration' },
+  metadata_dispute:        { cls:'arbitration',    label:'⚖ Under review' },
+  arbitration:             { cls:'arbitration',    label:'⚖ Arbitration' },
+  pending:                 { cls:'arbitration',    label:'⏳ Verifying' }
 };
 
 const VERDICT_RULES = {
-  matched:           'Both usernames appeared on their screenshots and scores matched.',
-  name_mismatch:     'Uploader\'s username was not on their own screenshot — opponent awarded the pot.',
-  screenshot_missing_name: 'No recognizable player name was found in the uploader\'s screenshot — opponent awarded the pot.',
-  low_score:         'Uploader claimed a lower score than the opponent — opponent awarded the pot.',
-  both_mismatch:     'Neither side\'s username matched their screenshot — settled as a draw.',
-  both_name_missing: 'Neither screenshot showed a recognizable username — settled as a draw.',
-  conflict:          'Screenshots contradicted each other and are under human review.',
-  metadata_dispute:  'Suspicious metadata detected — under review.',
-  arbitration:       'Under human review.'
+  matched:                 'Both DLS usernames appeared on their screenshots, logos matched, and scores agreed.',
+  clean:                   'Both screenshots passed every verification check.',
+
+  name_mismatch:           'Uploader\'s DLS username was not on their own screenshot — opponent awarded the pot.',
+  screenshot_missing_name: 'No DLS username was found on the uploader\'s screenshot — opponent awarded the pot.',
+  dls_name_missing:        'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
+
+  logo_mismatch:           'The club logos across the two screenshots did not match — opponent awarded the pot.',
+  logos_do_not_match:      'Club logos did not match between the two screenshots — opponent awarded the pot.',
+
+  low_score:               'Uploader claimed a lower score than the opponent — opponent awarded the pot.',
+
+  both_mismatch:           'Neither side\'s DLS username, logo, or score passed verification — settled as a draw.',
+  both_name_missing:       'Neither screenshot showed a recognizable DLS username — settled as a draw.',
+  both_logo_mismatch:      'Neither screenshot\'s club logo could be validated — settled as a draw.',
+
+  conflict:                'Screenshots contradicted each other and are under human review.',
+  metadata_dispute:        'Suspicious metadata detected — under review.',
+  arbitration:             'Under human review.'
 };
 
 /* ============================================================================
@@ -1384,8 +1415,8 @@ const Dashboard = {
     const myScore  = isCreator ? m.creator_score  : m.opponent_score;
     const oppScore = isCreator ? m.opponent_score : m.creator_score;
 
-    const myName = myDls || 'you';
-    const oppName = oppDls || 'opponent';
+    const myName = myDls || 'your DLS username';
+    const oppName = oppDls || 'opponent DLS username';
 
     return `
       <div class="verify-panel">
@@ -1394,27 +1425,38 @@ const Dashboard = {
           <div class="verify-step">
             <span class="dot">1</span>
             <div class="txt">
-              Your screenshot must show the username <b>${UI.escape(myName)}</b> —
-              the other player's name can just say "DLS". Otherwise the opponent takes the pot.
+              <b>Your DLS name check.</b> Your screenshot must show
+              <b>${UI.escape(myName)}</b> — the username registered on your DLS Stake profile.
+              If it's missing, the <span class="hl-loss">opponent takes the pot</span>.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">2</span>
-            Opponent's screenshot must show <b>${UI.escape(oppName)}</b>.
-            Same rule applies to them.
+            <div class="txt">
+              <b>Opponent DLS name check.</b> Their screenshot must show
+              <b>${UI.escape(oppName)}</b>. Same rule applies to them.
+            </div>
           </div>
           <div class="verify-step">
             <span class="dot">3</span>
             <div class="txt">
-              Scores are compared next. Whoever's screenshot shows the
-              <span class="hl">higher score</span> wins the pot.
-              A lower-than-claimed score means the <span class="hl-loss">opponent takes the pot</span>.
+              <b>Club logo match.</b> Both screenshots show a club crest.
+              We compare the two crests — they must be the <span class="hl">same club</span>.
+              A logo mismatch means the <span class="hl-loss">opponent takes the pot</span>.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">4</span>
             <div class="txt">
-              If <b>neither</b> name appears on either screenshot, the match settles as a
+              <b>Score check.</b> Whoever's screenshot shows the
+              <span class="hl">higher score</span> wins the pot.
+              A lower-than-claimed score means the <span class="hl-loss">opponent takes the pot</span>.
+            </div>
+          </div>
+          <div class="verify-step">
+            <span class="dot">5</span>
+            <div class="txt">
+              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name or logo checks, the match settles as a
               <span class="hl-draw">draw</span> and both stakes are refunded.
             </div>
           </div>
@@ -1826,9 +1868,9 @@ const Dashboard = {
    DEBUG
    ============================================================================ */
 window.DLS = {
-  version: 'dashboard-8.0.0',
+  version: 'dashboard-10.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v8 ========');
+    console.log('======== DLS Dashboard v10 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
@@ -1839,7 +1881,7 @@ window.DLS = {
     console.log('Achievements:', State.extra.achievements.length);
     console.log('Notifications:', State.extra.notifications.length, '·', State.extra.unreadCount, 'unread');
     console.log('Rank:', State.extra.rank);
-    console.log('==================================');
+    console.log('===================================');
   },
   async reset(){
     if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
