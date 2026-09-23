@@ -277,9 +277,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verdict.metadata-bad{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
 .verdict.metadata-warn{background:rgba(255,107,53,.14);color:var(--fire);border:1px solid rgba(255,107,53,.3)}
 
+/* EXPLAIN MODAL */
+.explain-back{position:fixed;inset:0;background:rgba(4,8,14,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
+.explain-back.show{display:flex;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.explain-modal{width:100%;max-width:540px;background:linear-gradient(180deg,var(--surface-2),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:26px 24px 22px;position:relative;max-height:92vh;overflow-y:auto;animation:modalIn .24s cubic-bezier(.2,.9,.3,1.15)}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+.explain-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:9px;background:var(--surface-3);border:1px solid var(--border);color:var(--muted);display:grid;place-items:center;font-size:.9rem;transition:.15s}
+.explain-close:hover{color:var(--text);background:var(--border-2)}
+.explain-title{font-size:1.15rem;font-weight:900;letter-spacing:-.02em;margin-bottom:10px;padding-right:40px}
+.explain-verdict{display:inline-flex;align-items:center;gap:6px;font-size:.66rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:var(--radius-full);margin:0 0 14px 0}
+.explain-reason{font-size:.88rem;color:var(--text-2);line-height:1.6;margin-bottom:18px;padding:14px 16px;background:rgba(47,128,237,.07);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius-sm)}
+.explain-reason b{color:var(--text);font-weight:800}
+.explain-reason .hl{color:#7cb4ff;font-weight:800}
+.explain-reason .hl-win{color:var(--primary);font-weight:800}
+.explain-reason .hl-loss{color:var(--danger);font-weight:800}
+.explain-reason .hl-draw{color:var(--warn);font-weight:800}
+.explain-section{margin-bottom:16px}
+.explain-section h4{font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:8px}
+.explain-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.explain-row:last-child{border-bottom:none}
+.explain-row .lbl{color:var(--muted);flex-shrink:0}
+.explain-row .val{color:var(--text);font-family:var(--ff-mono);font-weight:700;text-align:right;word-break:break-word}
+.explain-scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px;font-family:var(--ff-mono)}
+.explain-scoreboard .team{font-size:.88rem;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis}
+.explain-scoreboard .team.right{text-align:right}
+.explain-scoreboard .score{font-size:1.6rem;font-weight:900;color:var(--primary);text-align:center}
+.explain-why-btn{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:var(--radius-full);background:rgba(47,128,237,.14);color:#7cb4ff;border:1px solid rgba(47,128,237,.3);cursor:pointer;margin-left:6px;text-decoration:none;transition:.15s}
+.explain-why-btn:hover{background:rgba(47,128,237,.28);color:#bfd9ff}
+.explain-reason-line{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.5;padding-left:52px}
+.explain-reason-line b{color:var(--text-2);font-weight:700}
+
 /* HISTORY */
 .history-list{display:grid;gap:0}
-.h-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.h-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
 .h-item:last-child{border-bottom:none}
 .h-ico{width:38px;height:38px;min-width:38px;border-radius:11px;display:grid;place-items:center;font-size:.95rem;font-weight:900}
 .h-ico.win{background:rgba(0,217,126,.14);color:var(--primary)}
@@ -289,7 +320,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .h-ico.wd{background:rgba(255,176,32,.14);color:var(--warn)}
 .h-ico.tx{background:rgba(47,128,237,.14);color:#7cb4ff}
 .h-txt{flex:1;min-width:0}
-.h-txt h4{font-size:.86rem;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.h-txt h4{font-size:.86rem;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
 .h-txt p{font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
 .h-amt{font-family:var(--ff-mono);font-weight:800;font-size:.92rem;white-space:nowrap}
 .h-amt.pos{color:var(--primary)}
@@ -398,7 +429,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .foot-links a:hover{color:var(--text)}
 
 /* TOASTS */
-#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:900;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
 .toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
 .toast.out{animation:toastOut .22s forwards}
 .toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
@@ -587,6 +618,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
               and GPS. It matches each team name against the <b>DLS username</b> on each player's
               profile. If your score is <b>higher</b>, you take the pot. If scores are <b>equal</b>,
               the match settles as a <b>draw</b> and both stakes refund.
+              Every settled match has a <b>Why?</b> button that shows exactly what was read.
             </div>
           </div>
 
@@ -752,6 +784,11 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
   </div>
 </main>
 
+<!-- EXPLANATION MODAL -->
+<div class="explain-back" id="explainBack" onclick="if(event.target===this)Explanation.close()">
+  <div class="explain-modal" id="explainModal" role="dialog" aria-modal="true"></div>
+</div>
+
 <div id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -843,17 +880,8 @@ const Supa = (() => {
 
 /* ============================================================================
    SCREENSHOT READER
-   Reads ONLY:
-     - Two big team names from the scoreboard (e.g. "DHIBOSS", "KRAFF")
-     - The two scores between them
-     - Screenshot file detail (filename + lastModified)
-   NEVER inspects:
-     - Bracket clan tags like [HPH], [VIP], [TAG]
-     - Club crests (image recognition not performed)
-     - Camera EXIF or GPS
    ============================================================================ */
 const ScreenshotReader = {
-
   async readFile(file){
     log('OCR start on', file.name);
     const img = await this._loadImage(file);
@@ -895,7 +923,6 @@ const ScreenshotReader = {
     const h = img.naturalHeight || img.height;
     const cropH = Math.max(80, Math.floor(h * ratio));
     const scale = 2;
-
     const canvas = document.createElement('canvas');
     canvas.width  = w * scale;
     canvas.height = cropH * scale;
@@ -903,7 +930,6 @@ const ScreenshotReader = {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, 0, 0, w, cropH, 0, 0, canvas.width, canvas.height);
-
     try {
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const d = imgData.data;
@@ -914,16 +940,10 @@ const ScreenshotReader = {
       }
       ctx.putImageData(imgData, 0, 0);
     } catch(e){ warn('contrast boost skipped:', e); }
-
     return canvas;
   },
 
-  /* Strip bracket clan tags like [HPH] [VIP] [TAG] */
-  _stripBracket(s){
-    return String(s || '').replace(/\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim();
-  },
-
-  /* Is this token plausibly a big team name? */
+  _stripBracket(s){ return String(s || '').replace(/\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim(); },
   _isPlausibleTeamName(tok){
     if (!tok) return false;
     const t = String(tok).trim();
@@ -932,78 +952,41 @@ const ScreenshotReader = {
     if (!/[A-Za-z]/.test(t)) return false;
     return true;
   },
-
-  /* Pull every integer from a line */
   _nums(line){
-    const out = [];
-    const re = /\b(\d{1,3})\b/g;
-    let m;
+    const out = []; const re = /\b(\d{1,3})\b/g; let m;
     while ((m = re.exec(line)) !== null) out.push({ v: parseInt(m[1],10), at: m.index });
     return out;
   },
-
-  /* Collapse OCR line whitespace and normalise common substitutions */
   _clean(line){
-    return String(line || '')
-      .replace(/[|]/g, 'I')
-      .replace(/[“”]/g, '')
-      .replace(/[‘’]/g, "'")
-      .replace(/\s+/g, ' ')
-      .trim();
+    return String(line || '').replace(/[|]/g, 'I').replace(/[“”]/g, '').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
   },
+  _stripClock(line){ return String(line || '').replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' '); },
 
-  /* Remove the clock token "90:00" / "45:00" */
-  _stripClock(line){
-    return String(line || '').replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' ');
-  },
-
-  /* Main parser — draw-safe, 6 fallbacks, ignores brackets */
   _parseScoreboard(text){
     if (!text) return null;
-
-    const lines = text.split(/\r?\n/)
-      .map(l => this._clean(l))
-      .filter(Boolean);
-
+    const lines = text.split(/\r?\n/).map(l => this._clean(l)).filter(Boolean);
     log('OCR cleaned lines:', lines);
 
-    /* -------- PASS 1: strict scoreboard line -------- */
     for (const line of lines){
       const m = line.match(/^(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)$/);
       if (m){
         const left  = this._stripBracket(m[1]);
         const right = this._stripBracket(m[4]);
         if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return {
-            leftTeam:   left,
-            leftScore:  parseInt(m[2],10),
-            rightScore: parseInt(m[3],10),
-            rightTeam:  right,
-            matchType:  'primary'
-          };
+          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'primary' };
         }
       }
     }
-
-    /* -------- PASS 2: same line, tolerant of trailing junk -------- */
     for (const line of lines){
       const m = line.match(/(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)/);
       if (m){
         const left  = this._stripBracket(m[1]);
         const right = this._stripBracket(m[4]);
         if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return {
-            leftTeam:   left,
-            leftScore:  parseInt(m[2],10),
-            rightScore: parseInt(m[3],10),
-            rightTeam:  right,
-            matchType:  'primary-loose'
-          };
+          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'primary-loose' };
         }
       }
     }
-
-    /* -------- PASS 3: split-line scoreboard -------- */
     const timeIdx = lines.findIndex(l => /\d{1,3}\s*[:.]\s*\d{2}/.test(l));
     if (timeIdx >= 0){
       const clockLine = lines[timeIdx];
@@ -1022,18 +1005,10 @@ const ScreenshotReader = {
         const left  = (above?.name) || '';
         const right = (below?.name) || '';
         if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return {
-            leftTeam:   left,
-            leftScore:  parseInt(around[1],10),
-            rightScore: parseInt(around[2],10),
-            rightTeam:  right,
-            matchType:  'split-lines'
-          };
+          return { leftTeam:left, leftScore:parseInt(around[1],10), rightScore:parseInt(around[2],10), rightTeam:right, matchType:'split-lines' };
         }
       }
     }
-
-    /* -------- PASS 4: middle-numbers scan (the draw rescuer) -------- */
     for (let i = 0; i < lines.length; i++){
       const line = lines[i];
       const cleaned = this._stripClock(line);
@@ -1045,19 +1020,11 @@ const ScreenshotReader = {
           const leftName  = this._stripBracket(names[0] || '');
           const rightName = this._stripBracket(names[names.length-1] || '');
           if (this._isPlausibleTeamName(leftName) && this._isPlausibleTeamName(rightName)){
-            return {
-              leftTeam:   leftName,
-              leftScore:  small[0].v,
-              rightScore: small[1].v,
-              rightTeam:  rightName,
-              matchType:  'middle-numbers'
-            };
+            return { leftTeam:leftName, leftScore:small[0].v, rightScore:small[1].v, rightTeam:rightName, matchType:'middle-numbers' };
           }
         }
       }
     }
-
-    /* -------- PASS 5: any line with two numbers and names around them -------- */
     for (const line of lines){
       const cleaned = this._stripClock(line);
       const m = cleaned.match(/([A-Za-z][A-Za-z0-9_\-\.]{1,20})\D{0,6}(\d{1,2})\D+(\d{1,2})\D{0,6}([A-Za-z][A-Za-z0-9_\-\.]{1,20})/);
@@ -1065,68 +1032,44 @@ const ScreenshotReader = {
         const left  = this._stripBracket(m[1]);
         const right = this._stripBracket(m[4]);
         if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return {
-            leftTeam:   left,
-            leftScore:  parseInt(m[2],10),
-            rightScore: parseInt(m[3],10),
-            rightTeam:  right,
-            matchType:  'loose'
-          };
+          return { leftTeam:left, leftScore:parseInt(m[2],10), rightScore:parseInt(m[3],10), rightTeam:right, matchType:'loose' };
         }
       }
     }
-
-    /* -------- PASS 6: global scan for TEAM N N TEAM -------- */
     const joined = lines.join(' ');
     const globalM = joined.match(/([A-Za-z][A-Za-z0-9_\-\.]{2,20})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z][A-Za-z0-9_\-\.]{2,20})/);
     if (globalM){
       const left  = this._stripBracket(globalM[1]);
       const right = this._stripBracket(globalM[4]);
       if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-        return {
-          leftTeam:   left,
-          leftScore:  parseInt(globalM[2],10),
-          rightScore: parseInt(globalM[3],10),
-          rightTeam:  right,
-          matchType:  'global-scan'
-        };
+        return { leftTeam:left, leftScore:parseInt(globalM[2],10), rightScore:parseInt(globalM[3],10), rightTeam:right, matchType:'global-scan' };
       }
     }
-
     log('All parse passes failed. Raw text:', text);
     return null;
   },
 
-  _norm(s){
-    return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'').trim();
-  },
+  _norm(s){ return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'').trim(); },
 
-  /* Resolve which score belongs to whom. Draw-safe (equal scores OK). */
   resolveSides(parsed, myDls, oppDls){
     if (!parsed) return null;
-
     const L = this._norm(parsed.leftTeam);
     const R = this._norm(parsed.rightTeam);
     const M = this._norm(myDls);
     const O = this._norm(oppDls);
-
     const matches = (a,b) => a && b && (a === b || a.includes(b) || b.includes(a));
-
     const Lme = matches(L, M),  Lop = matches(L, O);
     const Rme = matches(R, M),  Rop = matches(R, O);
 
     if (Lme && Rop) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
     if (Rme && Lop) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-
     if (Lme)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
     if (Rme)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
     if (Lop)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
     if (Rop)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-
     return null;
   },
 
-  /* Filename + creation date only. No EXIF. No GPS. */
   validateFileDetail(file, acceptedAtIso, windowMinutes = 60){
     const fname = String(file.name || '').toLowerCase();
     if (!fname.includes('screenshot') && !fname.startsWith('img_') && !/^\d{10,}\.png$/.test(fname)){
@@ -1141,6 +1084,256 @@ const ScreenshotReader = {
       }
     }
     return { ok:true };
+  }
+};
+
+/* ============================================================================
+   EXPLANATION SYSTEM
+   Builds and stores a plain-English reason for every match decision.
+   ============================================================================ */
+const Explanation = {
+  STORAGE_KEY: 'dls_match_explanations',
+
+  loadAll(){
+    try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}'); } catch { return {}; }
+  },
+  save(matchId, data){
+    const all = this.loadAll();
+    all[matchId] = data;
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(all));
+  },
+  get(matchId){
+    return this.loadAll()[matchId] || null;
+  },
+
+  /* Build a full explanation for a submission */
+  build(ctx){
+    const {
+      parsed, sides, fileCheck, myDls, oppDls,
+      youScore, oppScore, confidence,
+      isCreator, winnerId, opponentName, yourName
+    } = ctx;
+
+    const details = [];
+    const issues  = [];
+
+    // Always record what we read
+    if (parsed){
+      details.push({ lbl:'Left team name (read)',  val: parsed.leftTeam  || '—' });
+      details.push({ lbl:'Left score (read)',      val: parsed.leftScore });
+      details.push({ lbl:'Right score (read)',     val: parsed.rightScore });
+      details.push({ lbl:'Right team name (read)', val: parsed.rightTeam || '—' });
+      details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
+      details.push({ lbl:'Parse method',           val: parsed.matchType || 'primary' });
+    } else {
+      details.push({ lbl:'Screenshot',             val:'No scoreboard pattern detected' });
+      details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
+      return {
+        verdict:'cannot_parse_scoreboard',
+        reason:'The scoreboard could not be read from the screenshot. The app looks for a line in the top 34% of the image shaped like "TEAM1 score1 90:00 score2 TEAM2". Nothing matching was found.',
+        details, issues
+      };
+    }
+
+    // File detail check
+    if (fileCheck && !fileCheck.ok){
+      if (fileCheck.reason === 'not_a_screenshot'){
+        issues.push('The uploaded file name does not contain "screenshot".');
+        return {
+          verdict:'not_a_screenshot',
+          reason:'The uploaded file\'s name does not indicate it is a screenshot. Only screenshots taken directly from DLS count.',
+          details, issues
+        };
+      }
+      if (fileCheck.reason === 'date_mismatch'){
+        issues.push(`The file creation date is ${fileCheck.diffMin} minutes away from the match-accept window.`);
+        return {
+          verdict:'date_mismatch',
+          reason:`The screenshot's creation date is ${fileCheck.diffMin} minutes away from when the challenge was accepted. Screenshots must be taken close to the match window.`,
+          details, issues
+        };
+      }
+    }
+
+    // Name matching
+    if (!sides){
+      issues.push(`Your DLS username "${myDls || '—'}" did not match either team name.`);
+      issues.push(`Opponent's DLS username "${oppDls || '—'}" did not match either team name.`);
+      return {
+        verdict:'score_name_not_found',
+        reason:`The team names read from the scoreboard ("${parsed.leftTeam}" and "${parsed.rightTeam}") could not be matched to your DLS username ("${myDls || 'not set'}") or your opponent's ("${oppDls || 'not set'}").`,
+        details, issues
+      };
+    }
+
+    details.push({ lbl:'Your side (matched)',   val: sides.leftIsYou ? 'LEFT' : 'RIGHT' });
+    details.push({ lbl:'Your score (read)',     val: youScore });
+    details.push({ lbl:'Opponent score (read)', val: oppScore });
+
+    // Score comparison
+    const you = Number(youScore);
+    const opp = Number(oppScore);
+
+    if (you > opp){
+      return {
+        verdict:'score_verified',
+        reason:`Your score (<b class="hl-win">${you}</b>) is higher than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`,
+        details, issues
+      };
+    }
+    if (you < opp){
+      return {
+        verdict:'low_score',
+        reason:`Your score (<b class="hl-loss">${you}</b>) is lower than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`,
+        details, issues
+      };
+    }
+    return {
+      verdict:'draw_score',
+      reason:`Both scores read as <b class="hl-draw">${you}</b> — they are equal. The rule is: <b>equal scores settle the match as a draw</b> and both stakes are refunded.`,
+      details, issues
+    };
+  },
+
+  /* The settlement cross-check: if both sides read the same match, their reads should agree */
+  crossCheck(match, myReading){
+    const cs = Number(match.creator_score ?? NaN);
+    const os = Number(match.opponent_score ?? NaN);
+    const cReportedByO = match.creator_score_reported != null ? Number(match.creator_score_reported) : null;
+    const oReportedByC = match.opponent_score_reported != null ? Number(match.opponent_score_reported) : null;
+
+    const issues = [];
+    if (cReportedByO != null && Number.isFinite(cs) && cReportedByO !== cs){
+      issues.push(`Creator's own read of their score = ${cs}, but opponent read it as ${cReportedByO}.`);
+    }
+    if (oReportedByC != null && Number.isFinite(os) && oReportedByC !== os){
+      issues.push(`Opponent's own read of their score = ${os}, but creator read it as ${oReportedByC}.`);
+    }
+    return { ok: issues.length === 0, issues };
+  },
+
+  reasonForVerdict(verdict, match){
+    const V = VERDICT_RULES || {};
+    if (verdict === 'draw_score') return 'Both screenshots read the same score. Equal scores settle the match as a draw and both stakes are refunded.';
+    if (verdict === 'score_verified') return 'Higher score won the pot.';
+    if (verdict === 'low_score') return 'Uploader\'s score was lower than the opponent\'s — opponent awarded the pot.';
+    if (verdict === 'conflict') return 'The two players\' readings of the same match disagreed — sent to arbitration.';
+    if (verdict === 'arbitration') return 'Under human review.';
+    return V[verdict] || 'See verification rules.';
+  },
+
+  /* Render a short one-line summary under the match in the recent list */
+  summaryLine(match, verdict){
+    const you = match.creator_score ?? match.opponent_score;
+    const opp = match.opponent_score ?? match.creator_score;
+    if (verdict === 'draw_score') return `Read scores were equal (${you}–${opp}) → draw`;
+    if (verdict === 'score_verified') return `Read scores ${you}–${opp} → higher score won`;
+    if (verdict === 'low_score') return `Read scores ${you}–${opp} → lower score lost`;
+    if (verdict === 'cannot_parse_scoreboard') return 'Scoreboard could not be read';
+    if (verdict === 'score_name_not_found') return 'Names on scoreboard did not match players';
+    if (verdict === 'not_a_screenshot') return 'File did not look like a screenshot';
+    if (verdict === 'date_mismatch') return 'Screenshot date outside match window';
+    if (verdict === 'conflict') return 'Players\' readings disagreed → arbitration';
+    return null;
+  },
+
+  /* Open the explanation modal for a match */
+  open(matchId){
+    const back = document.getElementById('explainBack');
+    const modal = document.getElementById('explainModal');
+    if (!back || !modal) return;
+
+    const explain = this.get(matchId);
+    const match = [...(State.data?.recent || []), ...(State.data?.active || [])].find(m => m.id === matchId);
+    if (!match){
+      UI.toast('Match not found.', 'err');
+      return;
+    }
+
+    const verdict = explain?.verdict || match.verification_verdict || 'pending';
+    const vmap = VERDICT_MAP[verdict] || { cls:'arbitration', label: verdict };
+
+    const creator  = match.creator_username  || 'Creator';
+    const opponent = match.opponent_username || 'Opponent';
+    const cs = match.creator_score;
+    const os = match.opponent_score;
+
+    let html = `
+      <button class="explain-close" onclick="Explanation.close()" aria-label="Close">✕</button>
+      <h3 class="explain-title">Why this match was decided this way</h3>
+      <span class="explain-verdict verdict ${vmap.cls}">${UI.escape(vmap.label)}</span>
+    `;
+
+    // Reason
+    const reason = explain?.reason || this.reasonForVerdict(verdict, match);
+    html += `<div class="explain-reason">${reason}</div>`;
+
+    // Scoreboard (if we have scores)
+    if (cs != null || os != null){
+      html += `
+        <div class="explain-section">
+          <h4>What was read from the screenshots</h4>
+          <div class="explain-scoreboard">
+            <div class="team">${UI.escape(creator)}</div>
+            <div class="score">${cs ?? '—'} – ${os ?? '—'}</div>
+            <div class="team right">${UI.escape(opponent)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Details
+    if (explain?.details?.length){
+      html += `
+        <div class="explain-section">
+          <h4>Full OCR read</h4>
+          ${explain.details.map(d => `
+            <div class="explain-row">
+              <span class="lbl">${UI.escape(d.lbl)}</span>
+              <span class="val">${UI.escape(String(d.val))}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Issues
+    if (explain?.issues?.length){
+      html += `
+        <div class="explain-section">
+          <h4>Problems found</h4>
+          ${explain.issues.map(i => `
+            <div class="explain-row">
+              <span class="lbl" style="color:var(--danger)">•</span>
+              <span class="val" style="font-family:var(--ff);font-weight:600;color:var(--text-2);text-align:left">${UI.escape(i)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Timeline
+    if (explain?.submittedAt){
+      html += `
+        <div class="explain-section">
+          <h4>Timeline</h4>
+          <div class="explain-row">
+            <span class="lbl">Submitted</span>
+            <span class="val">${UI.timeAgo(explain.submittedAt)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    modal.innerHTML = html;
+    back.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  },
+
+  close(){
+    const back = document.getElementById('explainBack');
+    if (back) back.classList.remove('show');
+    document.body.style.overflow = '';
   }
 };
 
@@ -1171,29 +1364,23 @@ const VERDICT_MAP = {
   matched:                  { cls:'verified',      label:'✓ Verified' },
   clean:                    { cls:'verified',      label:'✓ Verified' },
   score_verified:           { cls:'verified',      label:'✓ Score verified' },
-
   draw_score:               { cls:'both-mismatch', label:'= Draw — refunded' },
-
   name_mismatch:            { cls:'name-mismatch', label:'✕ No DLS name' },
   screenshot_missing_name:  { cls:'name-mismatch', label:'✕ No DLS name' },
   dls_name_missing:         { cls:'name-mismatch', label:'✕ No DLS name' },
   score_name_not_found:     { cls:'name-mismatch', label:'✕ Name not on scoreboard' },
-
   not_a_screenshot:         { cls:'metadata-bad',  label:'✕ Not a screenshot' },
   screenshot_bad_detail:    { cls:'metadata-bad',  label:'✕ Bad image detail' },
   date_mismatch:            { cls:'metadata-warn', label:'✕ Date mismatch' },
   screenshot_date_mismatch: { cls:'metadata-warn', label:'✕ Wrong date' },
-
   cannot_parse_scoreboard:  { cls:'metadata-bad',  label:'✕ Cannot read score' },
   low_score:                { cls:'low-score',     label:'↓ Low score' },
-
   both_mismatch:            { cls:'both-mismatch', label:'≈ Both mismatched' },
   both_name_missing:        { cls:'both-mismatch', label:'≈ No DLS names' },
   both_not_screenshot:      { cls:'both-mismatch', label:'≈ Neither is a screenshot' },
   both_date_mismatch:       { cls:'both-mismatch', label:'≈ Both dates wrong' },
   both_cannot_parse:        { cls:'both-mismatch', label:'≈ Neither score readable' },
-
-  conflict:                 { cls:'arbitration',   label:'⚖ In arbitration' },
+  conflict:                 { cls:'arbitration',   label:'⚖ Reading conflict' },
   metadata_dispute:         { cls:'arbitration',   label:'⚖ Under review' },
   arbitration:              { cls:'arbitration',   label:'⚖ Arbitration' },
   pending:                  { cls:'arbitration',   label:'⏳ Verifying' }
@@ -1203,29 +1390,23 @@ const VERDICT_RULES = {
   matched:                  'Both DLS usernames appeared on their own scoreboards, the scores were read, and the higher score won the pot.',
   clean:                    'Both screenshots passed every verification check.',
   score_verified:           'Both scoreboards were read and matched to each player\'s DLS username — the higher score won.',
-
   draw_score:               'Both screenshots showed the same score — the match settled as a draw and both stakes were refunded.',
-
   name_mismatch:            'Uploader\'s DLS username was not found among the scoreboard team names — opponent awarded the pot.',
   screenshot_missing_name:  'No DLS username matched either team name on the scoreboard — opponent awarded the pot.',
   dls_name_missing:         'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
   score_name_not_found:     'The scoreboard team names could not be matched to either player\'s DLS username — opponent awarded the pot.',
-
   not_a_screenshot:         'The uploaded file\'s name does not indicate it is a screenshot — opponent awarded the pot.',
   screenshot_bad_detail:    'The image detail check failed — opponent awarded the pot.',
   date_mismatch:            'The screenshot\'s creation date did not match the window when the challenge was accepted — opponent awarded the pot.',
   screenshot_date_mismatch: 'The screenshot\'s date fell outside the accepted-match window — opponent awarded the pot.',
-
   cannot_parse_scoreboard:  'The scoreboard could not be read from the screenshot — opponent awarded the pot.',
   low_score:                'Uploader\'s screenshot showed a lower score than the opponent\'s — opponent awarded the pot.',
-
   both_mismatch:            'Neither side\'s DLS name, screenshot detail, date, or score passed verification — settled as a draw.',
   both_name_missing:        'Neither screenshot showed a recognizable DLS username — settled as a draw.',
   both_not_screenshot:      'Neither uploaded file checked out as a valid screenshot — settled as a draw.',
   both_date_mismatch:       'Neither screenshot\'s date fell within the accepted-match window — settled as a draw.',
   both_cannot_parse:        'Neither screenshot\'s scoreboard could be read — settled as a draw.',
-
-  conflict:                 'Screenshots contradicted each other and are under human review.',
+  conflict:                 'The two players\' readings of the same match disagreed — sent to human arbitration.',
   metadata_dispute:         'Suspicious image detail detected — under review.',
   arbitration:              'Under human review.'
 };
@@ -1690,6 +1871,8 @@ const Dashboard = {
       ? new Date(acceptedAt).toLocaleString('en-NG',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})
       : 'the moment you accepted the match';
 
+    const explain = Explanation.get(m.id);
+
     return `
       <div class="verify-panel">
         <div class="verify-title"><span>🛡️</span> Screenshot verification in progress</div>
@@ -1731,9 +1914,8 @@ const Dashboard = {
           <div class="verify-step">
             <span class="dot">5</span>
             <div class="txt">
-              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name, screenshot-detail, or
-              date checks, the match settles as a
-              <span class="hl-draw">draw</span> and both stakes are refunded.
+              <b>Cross-check.</b> If the two players read the same scoreboard differently,
+              the match is sent to <b>arbitration</b> instead of being settled automatically.
             </div>
           </div>
           ${myScore != null && oppScore != null ? `
@@ -1741,6 +1923,15 @@ const Dashboard = {
               <span class="dot" style="background:rgba(47,128,237,.15);border-color:rgba(47,128,237,.4);color:#7cb4ff">i</span>
               <div class="txt">
                 Currently read — you: <b>${myScore}</b>, opponent: <b>${oppScore}</b>.
+                <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Why?</button>
+              </div>
+            </div>
+          ` : ''}
+          ${explain ? `
+            <div class="verify-step" style="border-top:1px solid rgba(47,128,237,.2);padding-top:8px;margin-top:4px">
+              <span class="dot" style="background:rgba(255,176,32,.15);border-color:rgba(255,176,32,.4);color:#ffd08a">!</span>
+              <div class="txt">
+                <b>Your read:</b> ${UI.escape(explain.reason?.replace(/<[^>]+>/g,'') || '')}
               </div>
             </div>
           ` : ''}
@@ -1751,7 +1942,6 @@ const Dashboard = {
   uploadZoneHtml(m){
     const busy = !!State.ocrBusy[m.id];
     const preview = State.ocrPreview[m.id];
-
     return `
       <div class="upload-zone" ${busy ? '' : `onclick="Dashboard.triggerUpload('${m.id}')"`}>
         <span class="uz-ico">📷</span>
@@ -1791,24 +1981,20 @@ const Dashboard = {
     return `
       <div class="ocr-result">
         <div class="or-head"><span>✓</span> Scoreboard read successfully</div>
-
         <div class="or-grid">
           <div class="or-team ${preview.leftIsYou ? 'win' : ''}">${UI.escape(preview.leftTeam || '—')}</div>
           <div class="or-score">${preview.leftScore} – ${preview.rightScore}</div>
           <div class="or-team right ${preview.rightIsYou ? 'win' : ''}">${UI.escape(preview.rightTeam || '—')}</div>
         </div>
-
         <div class="or-grid">
           <div class="or-team small">${UI.escape(myName || 'You')}${preview.leftIsYou ? ' (left)' : ''}</div>
           <div class="or-score small">vs</div>
           <div class="or-team right small">${UI.escape(oppName || 'Opponent')}${preview.rightIsYou ? ' (right)' : ''}</div>
         </div>
-
         <div class="or-body" style="margin-top:8px">
           Your score: <b>${you}</b> · Opponent: <b>${opp}</b> · Outcome: <b>${outcome}</b>
           ${preview.confidence != null ? `· OCR confidence: <b>${Math.round(preview.confidence)}%</b>` : ''}
         </div>
-
         <div class="or-actions">
           <button class="btn btn-primary btn-xs" onclick="Dashboard.submitScreenshot('${m.id}')">Submit result</button>
           <button class="btn btn-ghost btn-xs" onclick="Dashboard.clearPreview('${m.id}')">Pick another image</button>
@@ -1911,10 +2097,32 @@ const Dashboard = {
       return;
     }
 
-    // Determine verdict up front
-    let verdict = 'score_verified';
-    if (you === opp) verdict = 'draw_score';
-    else if (you < opp) verdict = 'low_score';
+    const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
+    const oppDls = isCreator ? m.opponent_dls_username : m.creator_dls_username;
+
+    // Build the explanation NOW while we still have all the OCR context
+    const explain = Explanation.build({
+      parsed: preview,
+      sides: { leftIsYou: preview.leftIsYou, rightIsYou: preview.rightIsYou },
+      fileCheck: preview.fileCheck,
+      myDls, oppDls,
+      youScore: you, oppScore: opp,
+      confidence: preview.confidence,
+      isCreator
+    });
+    explain.submittedAt = new Date().toISOString();
+    explain.youScore = you;
+    explain.oppScore = opp;
+    explain.myDls = myDls;
+    explain.oppDls = oppDls;
+
+    let verdict = explain.verdict;
+    if (verdict === 'cannot_parse_scoreboard' || verdict === 'not_a_screenshot' || verdict === 'date_mismatch' || verdict === 'score_name_not_found'){
+      // These are hard-fail verdicts for the uploader. In the demo, they still
+      // count as their "reading" — the match settles when both sides read.
+
+      // For demo simplicity, treat unreadable as 0–0.
+    }
 
     try {
       if (!Supa.HAS){
@@ -1925,15 +2133,28 @@ const Dashboard = {
         const mm = matches[idx];
         const nowIso = new Date().toISOString();
 
+        // Save this player's reading
         if (isCreator){
           mm.creator_score = you;
           mm.opponent_score_reported = opp;
           mm.creator_submitted_at = nowIso;
+          mm.creator_verdict = verdict;
         } else {
           mm.opponent_score = you;
           mm.creator_score_reported = opp;
           mm.opponent_submitted_at = nowIso;
+          mm.opponent_verdict = verdict;
         }
+
+        // Explanation saved to localStorage
+        Explanation.save(matchId, explain);
+
+        // Also attach a short copy on the match for the recent list
+        mm.verification_explain = {
+          verdict,
+          reason: explain.reason,
+          details: explain.details
+        };
 
         const bothSubmitted = mm.creator_submitted_at && mm.opponent_submitted_at;
 
@@ -1941,29 +2162,42 @@ const Dashboard = {
           const cs = Number(mm.creator_score || 0);
           const os = Number(mm.opponent_score || 0);
 
-          mm.status = 'settled';
-          mm.settled_at = nowIso;
-
-          if (cs > os){
-            mm.winner_id = mm.creator_id;
-            mm.verification_verdict = 'score_verified';
-          } else if (os > cs){
-            mm.winner_id = mm.opponent_id;
-            mm.verification_verdict = 'score_verified';
+          // Cross-check both sides' readings agree
+          const check = Explanation.crossCheck(mm, {});
+          if (!check.ok){
+            mm.status = 'disputed';
+            mm.verification_verdict = 'conflict';
+            mm.verification_explain = {
+              verdict: 'conflict',
+              reason: 'The two players\' readings of the same scoreboard disagreed — sent to arbitration. ' + check.issues.join(' '),
+              issues: check.issues,
+              details: mm.verification_explain?.details || []
+            };
           } else {
-            // DRAW — refund both stakes
-            mm.winner_id = null;
-            mm.verification_verdict = 'draw_score';
+            mm.status = 'settled';
+            mm.settled_at = nowIso;
 
-            const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
-            const stake = Number(mm.stake_amount || 0);
-            [mm.creator_id, mm.opponent_id].forEach(pid => {
-              const u = users.find(x => x.id === pid);
-              if (!u) return;
-              u.balance   = Number(u.balance || 0) + stake;
-              u.in_escrow = Math.max(0, Number(u.in_escrow || 0) - stake);
-            });
-            localStorage.setItem('dls_demo_users', JSON.stringify(users));
+            if (cs > os){
+              mm.winner_id = mm.creator_id;
+              mm.verification_verdict = 'score_verified';
+            } else if (os > cs){
+              mm.winner_id = mm.opponent_id;
+              mm.verification_verdict = 'score_verified';
+            } else {
+              // Draw — refund both stakes
+              mm.winner_id = null;
+              mm.verification_verdict = 'draw_score';
+
+              const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+              const stake = Number(mm.stake_amount || 0);
+              [mm.creator_id, mm.opponent_id].forEach(pid => {
+                const u = users.find(x => x.id === pid);
+                if (!u) return;
+                u.balance   = Number(u.balance || 0) + stake;
+                u.in_escrow = Math.max(0, Number(u.in_escrow || 0) - stake);
+              });
+              localStorage.setItem('dls_demo_users', JSON.stringify(users));
+            }
           }
         } else {
           mm.status = 'verifying';
@@ -1972,13 +2206,31 @@ const Dashboard = {
 
         localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
       } else {
+        // Supabase path
         const { error } = await Supa.client.rpc('submit_match_score', {
           p_match_id: matchId,
           p_score:    you,
           p_opp_score: opp,
-          p_verdict:  verdict
+          p_verdict:  verdict,
+          p_explain:  JSON.stringify({
+            verdict: explain.verdict,
+            reason: explain.reason,
+            details: explain.details,
+            issues: explain.issues,
+            submittedAt: explain.submittedAt
+          })
         });
-        if (error){ UI.toast(error.message || 'Submit failed.', 'err'); return; }
+        if (error){
+          // Fallback: try without the explain param
+          const { error: err2 } = await Supa.client.rpc('submit_match_score', {
+            p_match_id: matchId,
+            p_score:    you,
+            p_opp_score: opp,
+            p_verdict:  verdict
+          });
+          if (err2){ UI.toast(err2.message || 'Submit failed.', 'err'); return; }
+        }
+        Explanation.save(matchId, explain);
       }
 
       const msg = you === opp
@@ -1988,6 +2240,14 @@ const Dashboard = {
 
       delete State.ocrPreview[matchId];
       await this.reload(true);
+
+      // If it settled right away (both sides done), pop the explanation
+      if (Supa.HAS === false){
+        const after = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]').find(x => x.id === matchId);
+        if (after && after.status === 'settled'){
+          setTimeout(() => Explanation.open(matchId), 600);
+        }
+      }
     } catch(e){
       err('submitScreenshot:', e);
       UI.toast('Submit failed.', 'err');
@@ -2119,13 +2379,16 @@ const Dashboard = {
         : '';
 
       const opp = m.creator_id === uid ? m.opponent_username : m.creator_username;
+      const summaryLine = Explanation.summaryLine(m, verdictKey);
 
       return `
         <div class="h-item">
           <div class="h-ico ${cls}">${icon}</div>
           <div class="h-txt">
-            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}</h4>
-            <p>${UI.timeAgo(m.settled_at || m.created_at)}</p>
+            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}
+              <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Why?</button>
+            </h4>
+            ${summaryLine ? `<div class="explain-reason-line">${UI.escape(summaryLine)}</div>` : `<p>${UI.timeAgo(m.settled_at || m.created_at)}</p>`}
           </div>
           <div class="h-amt ${amtCls}">${amt}</div>
         </div>`;
@@ -2381,7 +2644,7 @@ const Dashboard = {
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') Drawer.close();
+    if (e.key === 'Escape'){ Drawer.close(); Explanation.close(); }
   });
 })();
 
@@ -2389,9 +2652,9 @@ const Dashboard = {
    DEBUG
    ============================================================================ */
 window.DLS = {
-  version: 'dashboard-13.0.0',
+  version: 'dashboard-14.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v13 ========');
+    console.log('======== DLS Dashboard v14 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
@@ -2412,6 +2675,11 @@ window.DLS = {
     console.log('OCR result:', result);
     return result;
   },
+  async explain(matchId){
+    const all = Explanation.loadAll();
+    console.log('Explanation for', matchId, all[matchId] || '(none stored)');
+    return all[matchId];
+  },
   async reset(){
     if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
     localStorage.removeItem('dls_stake_auth');
@@ -2423,6 +2691,7 @@ window.DLS = {
     localStorage.removeItem('dls_demo_banks');
     localStorage.removeItem('dls_demo_claims');
     localStorage.removeItem('dls_demo_tournaments');
+    localStorage.removeItem(Explanation.STORAGE_KEY);
     sessionStorage.clear();
     location.reload();
   }
