@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <meta name="theme-color" content="#070d16" />
 <title>Dashboard — DLS Stake</title>
-<meta name="description" content="Your DLS Stake dashboard — balance, escrow, active matches, wallet, tournaments, and quick actions." />
 
 <style>
 :root{
@@ -15,20 +14,20 @@
   --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
   --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
   --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
-  --gold:#ffd700; --silver:#c0c8d6; --bronze:#cd7f32;
+  --gold:#ffd700;
   --text:#e6eef8; --text-2:#b8c9dc;
   --muted:#7b90a8; --muted-2:#556b85;
   --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
   --shadow:0 8px 28px rgba(0,0,0,.45);
   --shadow-sm:0 3px 12px rgba(0,0,0,.35);
   --shadow-lg:0 20px 60px rgba(0,0,0,.6);
-  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
-  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,Consolas,monospace;
   --nav-h:62px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
-body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
 button,input,select,textarea{font:inherit;color:inherit}
 button{background:none;border:none;cursor:pointer}
 a{color:inherit;text-decoration:none}
@@ -51,7 +50,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .nav-links a:hover{color:var(--text)}
 .nav-links a.active{color:var(--primary)}
 @media(min-width:1024px){.nav-links{display:flex}}
-
 .menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:1.1rem;transition:.15s;flex-shrink:0}
 .menu-btn:hover{background:var(--surface-2)}
 @media(min-width:1024px){.menu-btn{display:none}}
@@ -72,7 +70,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .drawer-link.active{background:rgba(0,217,126,.08);color:var(--primary);font-weight:800}
 .drawer-link .dico{width:24px;text-align:center;font-size:1rem}
 .drawer-link .d-badge{margin-left:auto;font-family:var(--ff-mono);font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:var(--radius-full);background:var(--danger);color:#fff}
-.drawer-link .d-badge.soft{background:var(--surface-3);color:var(--muted)}
 
 /* NAV USER */
 .nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0}
@@ -119,19 +116,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .alert .arrow{font-size:1.1rem;color:var(--muted);flex-shrink:0}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none;text-decoration:none}
 .btn:active{transform:translateY(1px) scale(.99)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
 .btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
 .btn-primary:hover:not(:disabled){filter:brightness(1.06)}
 .btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
-.btn-ghost:hover:not(:disabled){background:var(--surface-2);border-color:var(--muted-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
 .btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
 .btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
-.btn-purple{background:linear-gradient(180deg,#8b5cf6,#6d3ee0);color:#fff;box-shadow:0 6px 20px rgba(139,92,246,.28)}
-.btn-purple:hover:not(:disabled){filter:brightness(1.08)}
-.btn-gold{background:linear-gradient(180deg,var(--gold),#c9a800);color:#1a1000;box-shadow:0 6px 20px rgba(255,215,0,.3)}
-.btn-gold:hover:not(:disabled){filter:brightness(1.06)}
+.btn-purple{background:linear-gradient(180deg,#8b5cf6,#6d3ee0);color:#fff}
+.btn-gold{background:linear-gradient(180deg,var(--gold),#c9a800);color:#1a1000}
 .btn-danger{background:var(--danger);color:#fff}
 .btn-danger:hover:not(:disabled){background:var(--danger-dark)}
 .btn-block{width:100%}
@@ -160,13 +155,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .stat .v{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.1;font-family:var(--ff-mono)}
 .stat .v.primary{color:var(--primary)}
 .stat .v.blue{color:#7cb4ff}
-.stat .v.warn{color:var(--warn)}
-.stat .v.gold{color:var(--gold)}
-.stat .v.purple{color:#c4b5fd}
 .stat .v.mono-sm{font-size:1.35rem}
 .stat .sub{font-size:.74rem;color:var(--muted-2);margin-top:6px}
 
-/* PRIMARY ACTIONS GRID */
+/* ACTIONS GRID */
 .actions-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:26px}
 @media(min-width:720px){.actions-grid{grid-template-columns:repeat(4,1fr)}}
 .action-tile-big{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:20px 18px;border-radius:var(--radius-lg);border:1px solid var(--border);background:linear-gradient(180deg,var(--surface-2),var(--bg-2));cursor:pointer;transition:.18s;overflow:hidden;min-height:150px;text-decoration:none;color:inherit}
@@ -197,16 +189,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .panel-head .link:hover{text-decoration:underline}
 .panel-head .count-pill{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3);padding:2px 9px;border-radius:var(--radius-full)}
 
-/* ACTIONS (SMALL) */
-.action-list{display:grid;gap:12px}
-.action-tile{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:left;width:100%;transition:transform .15s,border-color .15s,background .15s;cursor:pointer;text-decoration:none;color:inherit}
-.action-tile:hover{transform:translateY(-2px);border-color:var(--primary);background:var(--surface-3)}
-.action-tile .ico{width:42px;height:42px;min-width:42px;border-radius:12px;background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.22);display:grid;place-items:center;font-size:1.15rem}
-.action-tile .txt{flex:1;min-width:0}
-.action-tile .txt h3{font-size:.94rem;font-weight:800;margin-bottom:2px}
-.action-tile .txt p{font-size:.78rem;color:var(--muted);line-height:1.4}
-.action-tile .chev{color:var(--muted-2);font-size:1.1rem;transition:transform .15s}
-
 /* ACTIVE MATCHES */
 .match-list{display:grid;gap:10px}
 .match-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s,transform .15s}
@@ -222,11 +204,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .match-players .you{font-size:.6rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);border:1px solid rgba(0,217,126,.35);padding:1px 6px;border-radius:var(--radius-full);margin-left:4px}
 .match-side{display:flex;gap:8px;align-items:center;flex-direction:column;text-align:right}
 .match-pot{font-family:var(--ff-mono);font-weight:900;font-size:1rem;color:var(--primary)}
-.match-hint{font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
-.match-hint.play{color:var(--accent)}
 @media(max-width:640px){.match-item{grid-template-columns:1fr}.match-side{align-items:flex-start;text-align:left}}
 
-/* LIVE TIMER (playing matches) */
+/* TIMER */
 .match-timer{margin-top:10px}
 .match-timer-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:10px}
 .match-timer-head .lbl{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -234,12 +214,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .match-timer.warn .match-timer-head .time{color:var(--warn)}
 .match-timer.danger .match-timer-head .time{color:var(--danger);animation:timerPulse 1s ease-in-out infinite}
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.55}}
-.match-timer-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden;position:relative}
-.match-timer-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width 1s linear, background .3s}
+.match-timer-bar{height:6px;border-radius:3px;background:var(--border);overflow:hidden}
+.match-timer-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width 1s linear}
 .match-timer.warn .match-timer-bar i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
 .match-timer.danger .match-timer-bar i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
 
-/* VERIFICATION PREVIEW (verifying matches) */
+/* VERIFICATION PANEL */
 .verify-panel{margin-top:12px;padding:14px 16px;background:rgba(47,128,237,.05);border:1px solid rgba(47,128,237,.25);border-radius:var(--radius-sm)}
 .verify-title{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7cb4ff;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .verify-steps{display:grid;gap:8px}
@@ -252,7 +232,34 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verify-step .txt .hl-draw{color:var(--warn);font-weight:800}
 .verify-step .txt code{font-family:var(--ff-mono);font-size:.72em;background:var(--bg-2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:#7cb4ff}
 
-/* INFO STRIP (rules summary above active matches) */
+/* UPLOAD ZONE */
+.upload-zone{margin-top:12px;padding:16px;border-radius:var(--radius-sm);background:rgba(255,176,32,.06);border:1px dashed rgba(255,176,32,.45);text-align:center;cursor:pointer;transition:.15s}
+.upload-zone:hover{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.7)}
+.upload-zone .uz-ico{font-size:1.6rem;margin-bottom:6px;display:block}
+.upload-zone .uz-title{font-size:.86rem;font-weight:800;color:#ffd08a;margin-bottom:4px}
+.upload-zone .uz-sub{font-size:.72rem;color:var(--muted);line-height:1.4}
+.upload-zone input[type=file]{display:none}
+
+/* OCR RESULT */
+.ocr-result{margin-top:12px;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(0,217,126,.06);border:1px solid rgba(0,217,126,.3)}
+.ocr-result.error{background:rgba(255,77,94,.06);border-color:rgba(255,77,94,.3)}
+.ocr-result.warn{background:rgba(255,176,32,.06);border-color:rgba(255,176,32,.3)}
+.ocr-result .or-head{display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
+.ocr-result.error .or-head{color:var(--danger)}
+.ocr-result.warn .or-head{color:var(--warn)}
+.ocr-result .or-body{font-size:.82rem;line-height:1.5;color:var(--text-2)}
+.ocr-result .or-body b{color:var(--text);font-weight:800}
+.ocr-result .or-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;margin:10px 0;font-family:var(--ff-mono)}
+.ocr-result .or-team{font-size:.9rem;font-weight:900;color:var(--text)}
+.ocr-result .or-team.right{text-align:right}
+.ocr-result .or-team.win{color:var(--primary)}
+.ocr-result .or-score{font-size:1.6rem;font-weight:900;color:var(--primary);text-align:center}
+.ocr-result .or-score.small{font-size:.72rem;font-weight:700;color:var(--muted);font-family:var(--ff-mono)}
+.ocr-result .or-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ocr-result .or-raw{font-family:var(--ff-mono);font-size:.68rem;color:var(--muted-2);background:var(--bg);border:1px solid var(--border);padding:8px 10px;border-radius:6px;margin-top:8px;max-height:80px;overflow:auto;white-space:pre-wrap}
+.ocr-spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+
+/* RULES STRIP */
 .rules-strip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(47,128,237,.06);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius);margin-bottom:16px;font-size:.82rem;line-height:1.55;color:#9cc4ff}
 .rules-strip .ico{font-size:1.05rem;line-height:1.3;flex-shrink:0}
 .rules-strip b{color:#bfd9ff;font-weight:800}
@@ -260,7 +267,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .rules-strip .em-bad{color:#ff97a4;font-weight:800}
 .rules-strip code{font-family:var(--ff-mono);font-size:.82em;background:rgba(7,13,22,.5);border:1px solid rgba(47,128,237,.35);padding:1px 6px;border-radius:4px;color:#bfd9ff}
 
-/* VERDICT CHIPS (recent matches) */
+/* VERDICT CHIPS */
 .verdict{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);margin-left:8px}
 .verdict.verified{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
 .verdict.name-mismatch{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
@@ -294,14 +301,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .tour-mini:last-child{margin-bottom:0}
 .tour-mini:hover{border-color:var(--gold);transform:translateX(2px)}
 .tour-mini .head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
-.tour-mini h4{font-size:.86rem;font-weight:900;line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.tour-mini .tag{font-size:.58rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap;flex-shrink:0}
+.tour-mini h4{font-size:.86rem;font-weight:900;line-height:1.3}
+.tour-mini .tag{font-size:.58rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap}
 .tour-mini .tag.open{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
 .tour-mini .tag.live{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
 .tour-mini .meta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
 .tour-mini .prize{color:var(--gold);font-weight:900}
 
-/* ACHIEVEMENTS MINI */
+/* ACHIEVEMENTS */
 .ach-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .ach-mini{flex:1;min-width:80px;padding:14px 12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:center;transition:.15s;cursor:pointer;text-decoration:none;color:inherit}
 .ach-mini:hover{border-color:var(--gold);transform:translateY(-2px)}
@@ -367,7 +374,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 @media(min-width:960px){.links-grid{grid-template-columns:repeat(4,1fr)}}
 .link-tile{display:flex;align-items:center;gap:12px;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:.15s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
 .link-tile:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
-.link-tile .l-ico{width:40px;height:40px;min-width:40px;border-radius:12px;background:var(--surface-3);display:grid;place-items:center;font-size:1.1rem;transition:.15s}
+.link-tile .l-ico{width:40px;height:40px;min-width:40px;border-radius:12px;background:var(--surface-3);display:grid;place-items:center;font-size:1.1rem}
 .link-tile.primary .l-ico{background:rgba(0,217,126,.1);border:1px solid rgba(0,217,126,.24)}
 .link-tile.blue    .l-ico{background:rgba(47,128,237,.1);border:1px solid rgba(47,128,237,.24)}
 .link-tile.gold    .l-ico{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.24)}
@@ -378,7 +385,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .link-tile .l-txt h4{font-size:.86rem;font-weight:800;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link-tile .l-txt p{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link-tile .arrow{color:var(--muted-2);font-size:.9rem;flex-shrink:0}
-.link-tile .count-pill{position:absolute;top:10px;right:10px;font-size:.6rem;font-weight:900;padding:2px 7px;border-radius:var(--radius-full);background:var(--danger);color:#fff}
 
 /* LOADING */
 .loading{padding:56px 22px;text-align:center;color:var(--muted);font-size:.9rem}
@@ -439,7 +445,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <div class="brand-text">DLS<span>Stake</span></div>
     <button class="drawer-close" onclick="Drawer.close()">✕</button>
   </div>
-
   <div class="drawer-section">
     <h4>Play</h4>
     <a class="drawer-link" href="dashboard.html"><span class="dico">🏠</span> Dashboard</a>
@@ -448,7 +453,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <a class="drawer-link" href="discover.html"><span class="dico">🔍</span> Discover players</a>
     <a class="drawer-link" href="tournament.html"><span class="dico">🏆</span> Tournaments</a>
   </div>
-
   <div class="drawer-section">
     <h4>My activity</h4>
     <a class="drawer-link" href="history.html"><span class="dico">📜</span> Match history</a>
@@ -456,14 +460,12 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <a class="drawer-link" href="achievements.html"><span class="dico">🏅</span> Achievements</a>
     <a class="drawer-link" href="leaderboard.html"><span class="dico">📊</span> Leaderboard</a>
   </div>
-
   <div class="drawer-section">
     <h4>Money</h4>
     <a class="drawer-link" href="wallet.html"><span class="dico">💰</span> Wallet</a>
     <a class="drawer-link" href="bank-accounts.html"><span class="dico">🏦</span> Bank accounts</a>
     <a class="drawer-link" href="referral.html"><span class="dico">🎁</span> Refer &amp; earn</a>
   </div>
-
   <div class="drawer-section">
     <h4>Account</h4>
     <a class="drawer-link" href="profile.html"><span class="dico">👤</span> Profile</a>
@@ -471,7 +473,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     <a class="drawer-link" href="settings.html"><span class="dico">⚙️</span> Settings</a>
     <a class="drawer-link" href="notifications.html"><span class="dico">🔔</span> Notifications <span class="d-badge hidden" id="drawerNotifBadge">0</span></a>
   </div>
-
   <div class="drawer-section">
     <h4>Help</h4>
     <a class="drawer-link" href="support.html"><span class="dico">💬</span> Help &amp; support</a>
@@ -579,13 +580,17 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             <span class="ico">🛡️</span>
             <div>
               <b>How screenshot verification works.</b>
-              Each player's <b>Dream League Soccer username</b> must appear on their <b>own</b> screenshot —
-              the app reads the scoreboard text and matches it against the username on your DLS Stake profile.
-              The <b>screenshot's own file details</b> are then checked: the filename must indicate it's a
-              <b>Screenshot</b>, and its creation date must fall within the window the match was accepted.
-              Finally, the app reads both scores from the screenshots — the <b>higher score wins the pot</b>.
-              Fail any check, and the <span class="em-bad">opponent takes the pot</span>.
-              If <span class="em">both</span> sides fail, the match settles as a <span class="em">draw</span> and both stakes refund.
+              The app reads the <b>big team names</b> on the scoreboard
+              (the ones flanking the <code>90:00</code> clock — e.g. <b>DHIBOSS</b> and <b>KRAFF</b>),
+              and the <b>two scores</b> between them. It matches each team name against the
+              <b>DLS username</b> on each player's profile, then the
+              <b>higher score wins the pot</b>.
+              Bracket clan tags like <code>[HPH]</code>, club crests, camera metadata, and GPS are
+              <b>never</b> inspected. The <b>screenshot's own filename + creation date</b>
+              must fall within the match window. Fail any check and the
+              <span class="em-bad">opponent takes the pot</span>. If
+              <span class="em">both</span> sides fail, the match is a
+              <span class="em">draw</span> and both stakes refund.
             </div>
           </div>
 
@@ -672,31 +677,23 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             <div>
               <b>Verify your identity to unlock withdrawals.</b><br />
               Upload your ID — approval within 24 hours.
-              <div class="actions">
-                <button onclick="location.href='kyc.html'">Start verification →</button>
-              </div>
+              <div class="actions"><button onclick="location.href='kyc.html'">Start verification →</button></div>
             </div>
           </div>
-
           <div class="callout info" id="bankBanner" style="display:none">
             <span class="ico">🏦</span>
             <div>
               <b>No payout account saved.</b><br />
               Add a Nigerian bank account so withdrawals have somewhere to go.
-              <div class="actions">
-                <button onclick="location.href='bank-accounts.html'">Add account →</button>
-              </div>
+              <div class="actions"><button onclick="location.href='bank-accounts.html'">Add account →</button></div>
             </div>
           </div>
-
           <div class="callout admin" id="adminCallout" style="display:none">
             <span class="ico">⚙️</span>
             <div>
               <b>You have admin access.</b><br />
               Manage KYC, disputes, withdrawals and revenue.
-              <div class="actions">
-                <button onclick="location.href='admin.html'">Open admin console →</button>
-              </div>
+              <div class="actions"><button onclick="location.href='admin.html'">Open admin console →</button></div>
             </div>
           </div>
 
@@ -724,11 +721,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     </div>
 
     <div class="links-section">
-      <div class="section-title">
-        <span>Everything else</span>
-        <span class="line"></span>
-      </div>
-
+      <div class="section-title"><span>Everything else</span><span class="line"></span></div>
       <div class="links-grid">
         <a class="link-tile primary" href="history.html"><div class="l-ico">📜</div><div class="l-txt"><h4>Match history</h4><p>Every match you've played</p></div><span class="arrow">›</span></a>
         <a class="link-tile purple" href="analytics.html"><div class="l-ico">📈</div><div class="l-txt"><h4>Analytics</h4><p>Your numbers, decomposed</p></div><span class="arrow">›</span></a>
@@ -737,7 +730,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
         <a class="link-tile primary" href="wallet.html"><div class="l-ico">💰</div><div class="l-txt"><h4>Wallet</h4><p>Deposit, withdraw, transactions</p></div><span class="arrow">›</span></a>
         <a class="link-tile blue" href="bank-accounts.html"><div class="l-ico">🏦</div><div class="l-txt"><h4>Bank accounts</h4><p>Saved payout accounts</p></div><span class="arrow">›</span></a>
         <a class="link-tile purple" href="referral.html"><div class="l-ico">🎁</div><div class="l-txt"><h4>Refer &amp; earn</h4><p>Invite friends, earn bonuses</p></div><span class="arrow">›</span></a>
-        <a class="link-tile warn" href="kyc.html" id="kycLinkTile"><div class="l-ico">🪪</div><div class="l-txt"><h4>Verify identity</h4><p>Unlock real-money withdrawals</p></div><span class="arrow">›</span></a>
+        <a class="link-tile warn" href="kyc.html"><div class="l-ico">🪪</div><div class="l-txt"><h4>Verify identity</h4><p>Unlock real-money withdrawals</p></div><span class="arrow">›</span></a>
         <a class="link-tile primary" href="notifications.html"><div class="l-ico">🔔</div><div class="l-txt"><h4>Notifications</h4><p>Match invites and updates</p></div><span class="arrow">›</span></a>
         <a class="link-tile purple" href="discover.html"><div class="l-ico">🔍</div><div class="l-txt"><h4>Discover</h4><p>Find new opponents</p></div><span class="arrow">›</span></a>
         <a class="link-tile blue" href="profile.html"><div class="l-ico">👤</div><div class="l-txt"><h4>Your profile</h4><p>Stats, settings, preferences</p></div><span class="arrow">›</span></a>
@@ -766,6 +759,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 <div id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 
 <script>
 /* ============================================================================
@@ -775,7 +769,6 @@ const CONFIG = {
   SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
   LOGIN_PAGE:        'login.html',
-  ONBOARDING_PAGE:   'onboarding.html',
   CURRENCY:          '₦',
   MATCH_DURATION_SEC: 300,
   SUBMIT_WINDOW_SEC:  300,
@@ -788,6 +781,9 @@ const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
 const warn = (...a) => console.warn('[DLS]', ...a);
 const err  = (...a) => console.error('[DLS]', ...a);
 
+/* ============================================================================
+   UI HELPERS
+   ============================================================================ */
 const UI = {
   toast(msg, type='info', ms=4200){
     const el = document.createElement('div');
@@ -850,6 +846,229 @@ const Supa = (() => {
 })();
 
 /* ============================================================================
+   SCREENSHOT READER — reads ONLY the big team names + scores from DLS scoreboard.
+   Explicitly ignores:
+     - Club crests (image recognition is not performed on them)
+     - Bracket clan tags like [HPH], [VIP], [TAG] (rejected by filter)
+     - Camera EXIF / GPS metadata (never inspected)
+   Uses only:
+     - The scoreboard line "TEAM1  SCORE1  90:00  SCORE2  TEAM2"
+     - Filename pattern + creation date (via File.lastModified)
+   ============================================================================ */
+const ScreenshotReader = {
+
+  async readFile(file){
+    log('OCR start on', file.name);
+    const img = await this._loadImage(file);
+    const cropped = this._cropTopRegion(img, 0.32);
+    const dataUrl = cropped.toDataURL('image/png');
+
+    if (!window.Tesseract){
+      return { ok:false, error:'Tesseract.js failed to load.' };
+    }
+
+    const result = await window.Tesseract.recognize(dataUrl, 'eng');
+    const text = (result?.data?.text || '').trim();
+    const conf = result?.data?.confidence ?? 0;
+    log('OCR raw text:', text, 'confidence:', conf);
+
+    const parsed = this._parseScoreboard(text);
+    return {
+      ok: !!parsed,
+      ...(parsed || {}),
+      raw: text,
+      confidence: conf,
+      filename: file.name,
+      fileModified: file.lastModified
+    };
+  },
+
+  _loadImage(file){
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Could not load image.')); };
+      img.src = url;
+    });
+  },
+
+  _cropTopRegion(img, ratio){
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    const cropH = Math.max(80, Math.floor(h * ratio));
+    const scale = 2;
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = w * scale;
+    canvas.height = cropH * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, w, cropH, 0, 0, canvas.width, canvas.height);
+
+    // Contrast boost: binarise brightness to help OCR read white-on-blue scoreboard
+    try {
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = imgData.data;
+      for (let i = 0; i < d.length; i += 4){
+        const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+        const v = lum > 140 ? 255 : 0;
+        d[i] = d[i+1] = d[i+2] = v;
+      }
+      ctx.putImageData(imgData, 0, 0);
+    } catch(e){ warn('contrast boost skipped:', e); }
+
+    return canvas;
+  },
+
+  /* Remove bracketed clan tags from a token, e.g. "[HPH]" or "[VIP]TAG" */
+  _stripBracket(tok){
+    return String(tok || '').replace(/\[[^\]]*\]/g,'').trim();
+  },
+
+  /* Reject tokens that are obviously NOT big team names:
+       - Empty after stripping
+       - Pure numbers
+       - Starts with '[' (still bracketed)
+       - Very short (1 char)
+       - Contains lowercase mixed inside uppercase clan tag patterns */
+  _isPlausibleTeamName(tok){
+    if (!tok) return false;
+    const t = tok.trim();
+    if (t.length < 2) return false;
+    if (/^\d+$/.test(t)) return false;
+    if (t.startsWith('[')) return false;
+    return true;
+  },
+
+  /* Parse the scoreboard line: TEAM1 SCORE1 TIME SCORE2 TEAM2 */
+  _parseScoreboard(text){
+    if (!text) return null;
+
+    const lines = text.split(/\r?\n/)
+      .map(l => l.trim().replace(/\s+/g,' '))
+      .filter(Boolean);
+
+    log('OCR lines:', lines);
+
+    // Strong pattern for the scoreboard line
+    // Examples this will match:
+    //   DHIBOSS 6 90:00 5 KRAFF
+    //   DHIBOSS  6  90:00  5  KRAFF
+    const primary = /^([A-Za-z0-9_\-\.]+)\s+(\d{1,2})\s+\d{1,3}:\d{2}\s+(\d{1,2})\s+([A-Za-z0-9_\-\.]+)$/;
+
+    for (const line of lines){
+      const m = line.match(primary);
+      if (m){
+        const left  = this._stripBracket(m[1]);
+        const right = this._stripBracket(m[4]);
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:   left,
+            leftScore:  parseInt(m[2],10),
+            rightScore: parseInt(m[3],10),
+            rightTeam:  right,
+            matchType:  'primary'
+          };
+        }
+      }
+    }
+
+    // Fallback: find any line containing a time and two numbers around it
+    for (const line of lines){
+      const around = line.match(/([A-Za-z0-9_\-\.]+)?\s*(\d{1,2})\s*\d{1,3}:\d{2}\s*(\d{1,2})\s*([A-Za-z0-9_\-\.]+)?/);
+      if (around && around[2] && around[3]){
+        const left  = this._stripBracket(around[1] || '');
+        const right = this._stripBracket(around[4] || '');
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:   left,
+            leftScore:  parseInt(around[2],10),
+            rightScore: parseInt(around[3],10),
+            rightTeam:  right,
+            matchType:  'fallback'
+          };
+        }
+      }
+    }
+
+    // Last resort: no time token but a clean "TEAM SCORE SCORE TEAM" line
+    for (const line of lines){
+      const m = line.match(/^([A-Za-z0-9_\-\.]{3,})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z0-9_\-\.]{3,})$/);
+      if (m){
+        const left  = this._stripBracket(m[1]);
+        const right = this._stripBracket(m[4]);
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:   left,
+            leftScore:  parseInt(m[2],10),
+            rightScore: parseInt(m[3],10),
+            rightTeam:  right,
+            matchType:  'no-time'
+          };
+        }
+      }
+    }
+
+    return null;
+  },
+
+  _norm(s){
+    return String(s||'')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g,'')
+      .trim();
+  },
+
+  /* Match the extracted team names against each player's DLS username.
+     Returns { youScore, oppScore, leftIsYou, rightIsYou } or null.
+     No crest comparison. No bracket-tag comparison. */
+  resolveSides(parsed, myDls, oppDls){
+    if (!parsed) return null;
+    const L = this._norm(parsed.leftTeam);
+    const R = this._norm(parsed.rightTeam);
+    const M = this._norm(myDls);
+    const O = this._norm(oppDls);
+
+    const matches = (a,b) => a && b && (a === b || a.includes(b) || b.includes(a));
+
+    const Lme = matches(L, M),  Lop = matches(L, O);
+    const Rme = matches(R, M),  Rop = matches(R, O);
+
+    if (Lme && !Rme) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
+    if (Rme && !Lme) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+    if (Lop && !Rop) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+    if (Rop && !Lop) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
+    if (Lme && Rop)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
+    if (Rme && Lop)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+
+    return null;
+  },
+
+  /* Validate the screenshot's own file detail.
+     Not camera EXIF. Not GPS. Just:
+       - Filename must contain "screenshot" (case-insensitive)
+       - File.lastModified must be within the match window */
+  validateFileDetail(file, acceptedAtIso, windowMinutes = 30){
+    const fname = String(file.name || '').toLowerCase();
+    if (!fname.includes('screenshot') && !fname.startsWith('img_') && !/^\d{10,}\.png$/.test(fname)){
+      return { ok:false, reason:'not_a_screenshot' };
+    }
+    if (acceptedAtIso){
+      const accepted = new Date(acceptedAtIso).getTime();
+      const modified = Number(file.lastModified || 0);
+      const diffMin = Math.abs(modified - accepted) / 60000;
+      // Allow a wide default window — 30 min either side of accept
+      if (diffMin > windowMinutes){
+        return { ok:false, reason:'date_mismatch', diffMin: Math.round(diffMin) };
+      }
+    }
+    return { ok:true };
+  }
+};
+
+/* ============================================================================
    ACHIEVEMENT CATALOG
    ============================================================================ */
 const ACH_CATALOG = {
@@ -871,63 +1090,54 @@ const ACH_CATALOG = {
 
 /* ============================================================================
    VERIFICATION VERDICTS
-   Maps a verification_verdict string from the DB to a friendly label.
    ============================================================================ */
 const VERDICT_MAP = {
-  /* Both sides passed every check */
-  matched:                 { cls:'verified',       label:'✓ Verified' },
-  clean:                   { cls:'verified',       label:'✓ Verified' },
-
-  /* DLS username on own screenshot */
-  name_mismatch:           { cls:'name-mismatch',  label:'✕ No DLS name' },
-  screenshot_missing_name: { cls:'name-mismatch',  label:'✕ No DLS name' },
-  dls_name_missing:        { cls:'name-mismatch',  label:'✕ No DLS name' },
-
-  /* Screenshot detail / date validation */
-  not_a_screenshot:        { cls:'metadata-bad',   label:'✕ Not a screenshot' },
-  screenshot_bad_detail:   { cls:'metadata-bad',   label:'✕ Bad image detail' },
-  date_mismatch:           { cls:'metadata-warn',  label:'✕ Date mismatch' },
-  screenshot_date_mismatch:{ cls:'metadata-warn',  label:'✕ Wrong date' },
-
-  /* Score comparison */
-  low_score:               { cls:'low-score',      label:'↓ Low score' },
-
-  /* Both sides failed */
-  both_mismatch:           { cls:'both-mismatch',  label:'≈ Both mismatched' },
-  both_name_missing:       { cls:'both-mismatch',  label:'≈ No DLS names' },
-  both_not_screenshot:     { cls:'both-mismatch',  label:'≈ Neither is a screenshot' },
-  both_date_mismatch:      { cls:'both-mismatch',  label:'≈ Both dates wrong' },
-
-  /* Arbitration */
-  conflict:                { cls:'arbitration',    label:'⚖ In arbitration' },
-  metadata_dispute:        { cls:'arbitration',    label:'⚖ Under review' },
-  arbitration:             { cls:'arbitration',    label:'⚖ Arbitration' },
-  pending:                 { cls:'arbitration',    label:'⏳ Verifying' }
+  matched:                  { cls:'verified',      label:'✓ Verified' },
+  clean:                    { cls:'verified',      label:'✓ Verified' },
+  score_verified:           { cls:'verified',      label:'✓ Score verified' },
+  name_mismatch:            { cls:'name-mismatch', label:'✕ No DLS name' },
+  screenshot_missing_name:  { cls:'name-mismatch', label:'✕ No DLS name' },
+  dls_name_missing:         { cls:'name-mismatch', label:'✕ No DLS name' },
+  score_name_not_found:     { cls:'name-mismatch', label:'✕ Name not on scoreboard' },
+  not_a_screenshot:         { cls:'metadata-bad',  label:'✕ Not a screenshot' },
+  screenshot_bad_detail:    { cls:'metadata-bad',  label:'✕ Bad image detail' },
+  date_mismatch:            { cls:'metadata-warn', label:'✕ Date mismatch' },
+  screenshot_date_mismatch: { cls:'metadata-warn', label:'✕ Wrong date' },
+  cannot_parse_scoreboard:  { cls:'metadata-bad',  label:'✕ Cannot read score' },
+  low_score:                { cls:'low-score',     label:'↓ Low score' },
+  both_mismatch:            { cls:'both-mismatch', label:'≈ Both mismatched' },
+  both_name_missing:        { cls:'both-mismatch', label:'≈ No DLS names' },
+  both_not_screenshot:      { cls:'both-mismatch', label:'≈ Neither is a screenshot' },
+  both_date_mismatch:       { cls:'both-mismatch', label:'≈ Both dates wrong' },
+  both_cannot_parse:        { cls:'both-mismatch', label:'≈ Neither score readable' },
+  conflict:                 { cls:'arbitration',   label:'⚖ In arbitration' },
+  metadata_dispute:         { cls:'arbitration',   label:'⚖ Under review' },
+  arbitration:              { cls:'arbitration',   label:'⚖ Arbitration' },
+  pending:                  { cls:'arbitration',   label:'⏳ Verifying' }
 };
 
 const VERDICT_RULES = {
-  matched:                 'Both DLS usernames appeared on their own screenshots, screenshot details and dates were valid, and scores were compared.',
-  clean:                   'Both screenshots passed every verification check.',
-
-  name_mismatch:           'Uploader\'s DLS username was not found on their own screenshot — opponent awarded the pot.',
-  screenshot_missing_name: 'No DLS username was read from the uploader\'s screenshot — opponent awarded the pot.',
-  dls_name_missing:        'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
-
-  not_a_screenshot:        'The uploaded file\'s details do not indicate it is a screenshot — opponent awarded the pot.',
-  screenshot_bad_detail:   'The image detail check failed (wrong filename pattern, stripped metadata, or re-saved file) — opponent awarded the pot.',
-  date_mismatch:           'The screenshot\'s creation date did not match the window when the challenge was accepted — opponent awarded the pot.',
-  screenshot_date_mismatch:'The screenshot\'s date fell outside the accepted-match window — opponent awarded the pot.',
-
-  low_score:               'Uploader\'s screenshot showed a lower score than the opponent\'s — opponent awarded the pot.',
-
-  both_mismatch:           'Neither side\'s DLS name, screenshot detail, date, or score passed verification — settled as a draw.',
-  both_name_missing:       'Neither screenshot showed a recognizable DLS username — settled as a draw.',
-  both_not_screenshot:     'Neither uploaded file checked out as a valid screenshot — settled as a draw.',
-  both_date_mismatch:      'Neither screenshot\'s date fell within the accepted-match window — settled as a draw.',
-
-  conflict:                'Screenshots contradicted each other and are under human review.',
-  metadata_dispute:        'Suspicious image detail detected — under review.',
-  arbitration:             'Under human review.'
+  matched:                  'Both DLS usernames appeared on their own scoreboards, the scores were read, and the higher score won the pot.',
+  clean:                    'Both screenshots passed every verification check.',
+  score_verified:           'Both scoreboards were read and matched to each player\'s DLS username — the higher score won.',
+  name_mismatch:            'Uploader\'s DLS username was not found among the scoreboard team names — opponent awarded the pot.',
+  screenshot_missing_name:  'No DLS username matched either team name on the scoreboard — opponent awarded the pot.',
+  dls_name_missing:         'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
+  score_name_not_found:     'The scoreboard team names could not be matched to either player\'s DLS username — opponent awarded the pot.',
+  not_a_screenshot:         'The uploaded file\'s name does not indicate it is a screenshot — opponent awarded the pot.',
+  screenshot_bad_detail:    'The image detail check failed — opponent awarded the pot.',
+  date_mismatch:            'The screenshot\'s creation date did not match the window when the challenge was accepted — opponent awarded the pot.',
+  screenshot_date_mismatch: 'The screenshot\'s date fell outside the accepted-match window — opponent awarded the pot.',
+  cannot_parse_scoreboard:  'The scoreboard could not be read from the screenshot — opponent awarded the pot.',
+  low_score:                'Uploader\'s screenshot showed a lower score than the opponent\'s — opponent awarded the pot.',
+  both_mismatch:            'Neither side\'s DLS name, screenshot detail, date, or score passed verification — settled as a draw.',
+  both_name_missing:        'Neither screenshot showed a recognizable DLS username — settled as a draw.',
+  both_not_screenshot:      'Neither uploaded file checked out as a valid screenshot — settled as a draw.',
+  both_date_mismatch:       'Neither screenshot\'s date fell within the accepted-match window — settled as a draw.',
+  both_cannot_parse:        'Neither screenshot\'s scoreboard could be read — settled as a draw.',
+  conflict:                 'Screenshots contradicted each other and are under human review.',
+  metadata_dispute:         'Suspicious image detail detected — under review.',
+  arbitration:              'Under human review.'
 };
 
 /* ============================================================================
@@ -936,17 +1146,13 @@ const VERDICT_RULES = {
 const State = {
   session: null,
   data: null,
-  extra: {
-    tournaments: [],
-    achievements: [],
-    notifications: [],
-    unreadCount: 0,
-    rank: null
-  },
+  extra: { tournaments: [], achievements: [], notifications: [], unreadCount: 0, rank: null },
   loading: true,
   walletView: 'real',
   activeEndsAt: {},
   transitioning: {},
+  ocrBusy: {},
+  ocrPreview: {},
   _poll: null,
   _ticker: null
 };
@@ -996,7 +1202,6 @@ const Dashboard = {
 
   async init(){
     log('Dashboard init');
-
     const { data } = await Auth.getSession();
     State.session = data.session;
     if (!State.session?.user){
@@ -1064,9 +1269,7 @@ const Dashboard = {
       }
 
       this.prepareDeadlines();
-
       await this.loadExtras(uid);
-
       State.loading = false;
       this.render();
     } catch(e){
@@ -1078,22 +1281,16 @@ const Dashboard = {
   prepareDeadlines(){
     const active = State.data?.active || [];
     const now = Date.now();
-
     active.forEach(m => {
       if (m.status !== 'accepted') return;
       if (State.activeEndsAt[m.id]) return;
-
       let ends = m.match_ends_at ? new Date(m.match_ends_at).getTime() : null;
       if (!ends && m.updated_at) ends = new Date(m.updated_at).getTime() + CONFIG.MATCH_DURATION_SEC * 1000;
       if (!ends) ends = now + CONFIG.MATCH_DURATION_SEC * 1000;
-
       State.activeEndsAt[m.id] = ends;
     });
-
     const activeIds = new Set(active.map(m => m.id));
-    Object.keys(State.activeEndsAt).forEach(id => {
-      if (!activeIds.has(id)) delete State.activeEndsAt[id];
-    });
+    Object.keys(State.activeEndsAt).forEach(id => { if (!activeIds.has(id)) delete State.activeEndsAt[id]; });
   },
 
   async loadExtras(uid){
@@ -1114,7 +1311,7 @@ const Dashboard = {
           .limit(3);
         if (!error) State.extra.tournaments = data || [];
       }
-    } catch(e){ warn('tournaments:', e.message); State.extra.tournaments = []; }
+    } catch(e){ State.extra.tournaments = []; }
 
     try {
       if (!Supa.HAS){
@@ -1185,39 +1382,29 @@ const Dashboard = {
     const d = State.data || {};
     const p = d.profile || {};
     const out = [];
-
     const kyc = p.kyc_status || 'pending';
     if (kyc === 'unverified' || !p.kyc_status){
       out.push({ type:'warn', ico:'🪪', title:'Verify your identity',
-        body:'You need KYC to withdraw real money. Takes about 3 minutes.',
-        link:'kyc.html' });
+        body:'You need KYC to withdraw real money. Takes about 3 minutes.', link:'kyc.html' });
     } else if (kyc === 'rejected'){
       out.push({ type:'danger', ico:'✕', title:'KYC needs attention',
-        body:'There was an issue with your documents. Resubmit to unlock withdrawals.',
-        link:'kyc.html' });
+        body:'There was an issue with your documents. Resubmit to unlock withdrawals.', link:'kyc.html' });
     }
-
     if (!p.has_bank_account && kyc === 'verified'){
       out.push({ type:'warn', ico:'🏦', title:'Add a payout account',
-        body:'Save a bank account so withdrawals have somewhere to go.',
-        link:'bank-accounts.html' });
+        body:'Save a bank account so withdrawals have somewhere to go.', link:'bank-accounts.html' });
     }
-
     if (State.extra.unreadCount > 0){
       out.push({ type:'info', ico:'🔔',
         title:`${State.extra.unreadCount} unread notification${State.extra.unreadCount === 1 ? '' : 's'}`,
-        body:'Check what happened while you were away.',
-        link:'notifications.html' });
+        body:'Check what happened while you were away.', link:'notifications.html' });
     }
-
     const openT = State.extra.tournaments.filter(t => t.status === 'open').length;
     if (openT > 0 && out.length < 3){
       out.push({ type:'success', ico:'🏆',
         title:`${openT} tournament${openT === 1 ? '' : 's'} open for registration`,
-        body:'Brackets are filling up. Claim your slot before kickoff.',
-        link:'tournament.html' });
+        body:'Brackets are filling up. Claim your slot before kickoff.', link:'tournament.html' });
     }
-
     return out.slice(0, 3);
   },
 
@@ -1232,7 +1419,6 @@ const Dashboard = {
     const p = d.profile || {};
     const stats = d.stats || {};
     const isDemo = State.walletView === 'demo';
-
     const username = p.username || u.user_metadata?.username || u.email?.split('@')[0] || 'Player';
     const dls      = p.dls_username || '—';
     const email    = u.email || '—';
@@ -1255,10 +1441,8 @@ const Dashboard = {
     }
     const db = $('#drawerNotifBadge');
     if (db){
-      if (State.extra.unreadCount > 0){
-        db.textContent = State.extra.unreadCount;
-        db.classList.remove('hidden');
-      } else db.classList.add('hidden');
+      if (State.extra.unreadCount > 0){ db.textContent = State.extra.unreadCount; db.classList.remove('hidden'); }
+      else db.classList.add('hidden');
     }
     const da = $('#drawerAdminLink');
     if (da) da.style.display = isAdmin ? 'flex' : 'none';
@@ -1304,30 +1488,23 @@ const Dashboard = {
     const realEsc  = Number(p.in_escrow || 0);
     const demoBal  = Number(p.demo_balance ?? 0);
     const demoEsc  = Number(p.demo_in_escrow ?? 0);
-
     const shownBal = isDemo ? demoBal : realBal;
     const shownEsc = isDemo ? demoEsc : realEsc;
-
     const played = Number(isDemo ? (p.demo_played || 0) : (p.matches_played || 0));
     const won    = Number(isDemo ? (p.demo_won || 0)    : (p.matches_won || 0));
 
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-
     const balanceCard = $('#statBalanceCard');
     if (balanceCard) balanceCard.classList.toggle('demo', isDemo);
-
     const balanceIco = $('#statBalanceIco');
     if (balanceIco) balanceIco.classList.toggle('blue', isDemo);
-
     const balanceLabel = $('#statBalanceLabel');
     if (balanceLabel) balanceLabel.textContent = isDemo ? 'Demo balance' : 'Balance';
-
     const balanceEl = $('#statBalance');
     if (balanceEl){
       balanceEl.textContent = UI.money(shownBal);
       balanceEl.className = 'v ' + (isDemo ? 'blue' : 'primary');
     }
-
     const balanceSub = $('#statBalanceSub');
     if (balanceSub) balanceSub.textContent = isDemo ? 'Free practice money' : 'Available to stake';
 
@@ -1352,15 +1529,9 @@ const Dashboard = {
       tb.innerHTML = `<i style="width:${Math.min(100,trust)}%"></i>`;
     }
 
-    const kb = $('#kycBanner');
-    if (kb) kb.style.display = kyc === 'verified' ? 'none' : 'flex';
-
-    const bb = $('#bankBanner');
-    if (bb) bb.style.display = (kyc === 'verified' && !p.has_bank_account) ? 'flex' : 'none';
-
-    const ac = $('#adminCallout');
-    if (ac) ac.style.display = isAdmin ? 'flex' : 'none';
-
+    const kb = $('#kycBanner'); if (kb) kb.style.display = kyc === 'verified' ? 'none' : 'flex';
+    const bb = $('#bankBanner'); if (bb) bb.style.display = (kyc === 'verified' && !p.has_bank_account) ? 'flex' : 'none';
+    const ac = $('#adminCallout'); if (ac) ac.style.display = isAdmin ? 'flex' : 'none';
     const ab = $('#authBadgeText'); if (ab) ab.textContent = Supa.HAS ? 'Supabase' : 'Demo';
 
     set('wTotalDep',  UI.money(stats.total_deposited || 0));
@@ -1415,7 +1586,6 @@ const Dashboard = {
       </div>`;
   },
 
-  /* Build the verification steps UI for matches in 'verifying' state */
   verificationStepsHtml(m, uid){
     const isCreator = m.creator_id === uid;
     const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
@@ -1437,57 +1607,265 @@ const Dashboard = {
           <div class="verify-step">
             <span class="dot">1</span>
             <div class="txt">
-              <b>Your DLS name check.</b> Your screenshot must show
+              <b>Your DLS name check.</b> Your big team name on the scoreboard must match
               <b>${UI.escape(myName)}</b> — the username registered on your DLS Stake profile.
-              We read the scoreboard text and match it against your profile.
-              If it's missing, the <span class="hl-loss">opponent takes the pot</span>.
+              If it doesn't, the <span class="hl-loss">opponent takes the pot</span>.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">2</span>
             <div class="txt">
-              <b>Opponent DLS name check.</b> Their screenshot must show
-              <b>${UI.escape(oppName)}</b>, the name on their profile. Same rule applies to them.
+              <b>Opponent DLS name check.</b> Their big team name must match
+              <b>${UI.escape(oppName)}</b>. Same rule applies to them.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">3</span>
             <div class="txt">
               <b>Screenshot detail + date check.</b> The uploaded file's details must indicate it is a
-              <b>screenshot</b> (filename pattern <code>Screenshot_YYYYMMDD-HHMMSS</code>), and its
-              <b>creation date must fall within the match window</b> — around
-              <b>${UI.escape(acceptedLabel)}</b>, when the challenge was accepted.
-              A file that isn't a screenshot, or one whose date is outside that window, means the
-              <span class="hl-loss">opponent takes the pot</span>. Camera metadata and location are
-              <b>not</b> inspected.
+              <b>screenshot</b>, and its creation date must fall within the match window — around
+              <b>${UI.escape(acceptedLabel)}</b>.
+              Bracket clan tags (like <code>[HPH]</code>), club crests, camera metadata, and location
+              are <b>never</b> inspected.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">4</span>
             <div class="txt">
-              <b>Score check.</b> We read both scores from the scoreboards — the
-              <span class="hl">higher score wins the pot</span>. Whichever screenshot shows the
-              larger number for that player is the winner.
+              <b>Score check.</b> The app reads the two scores flanking the
+              <code>90:00</code> clock. The
+              <span class="hl">higher score wins the pot</span>.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">5</span>
             <div class="txt">
-              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name, screenshot-detail, or date checks,
-              the match settles as a <span class="hl-draw">draw</span> and both stakes are refunded.
+              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name, screenshot-detail, date, or
+              score-read checks, the match settles as a
+              <span class="hl-draw">draw</span> and both stakes are refunded.
             </div>
           </div>
           ${myScore != null && oppScore != null ? `
             <div class="verify-step" style="border-top:1px solid rgba(47,128,237,.2);padding-top:8px;margin-top:4px">
               <span class="dot" style="background:rgba(47,128,237,.15);border-color:rgba(47,128,237,.4);color:#7cb4ff">i</span>
               <div class="txt">
-                Currently read from screenshots — you: <b>${myScore}</b>, opponent: <b>${oppScore}</b>.
-                Verdict is usually issued within a few seconds.
+                Currently read — you: <b>${myScore}</b>, opponent: <b>${oppScore}</b>.
               </div>
             </div>
           ` : ''}
         </div>
       </div>`;
+  },
+
+  /* ---------- Upload zone for awaiting_submission matches ---------- */
+  uploadZoneHtml(m){
+    const busy = !!State.ocrBusy[m.id];
+    const preview = State.ocrPreview[m.id];
+
+    return `
+      <div class="upload-zone" ${busy ? '' : `onclick="Dashboard.triggerUpload('${m.id}')"`}>
+        <span class="uz-ico">📷</span>
+        <div class="uz-title">${busy ? 'Reading screenshot…' : 'Upload match screenshot'}</div>
+        <div class="uz-sub">
+          ${busy
+            ? '<span class="ocr-spin"></span> Running OCR on the scoreboard'
+            : 'Tap to pick the DLS full-time screenshot from your gallery'}
+        </div>
+      </div>
+      <input type="file" id="file-${m.id}" accept="image/*" onchange="Dashboard.handleFile('${m.id}', event)" />
+      ${preview ? this.ocrPreviewHtml(m, preview) : ''}
+    `;
+  },
+
+  ocrPreviewHtml(m, preview){
+    const isCreator = m.creator_id === State.session?.user?.id;
+    const myName  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
+    const oppName = isCreator ? m.opponent_dls_username : m.creator_dls_username;
+
+    if (preview.error){
+      return `
+        <div class="ocr-result error">
+          <div class="or-head"><span>✕</span> Could not read this screenshot</div>
+          <div class="or-body">${UI.escape(preview.error)}</div>
+          ${preview.raw ? `<div class="or-raw">${UI.escape(preview.raw)}</div>` : ''}
+          <div class="or-actions">
+            <button class="btn btn-ghost btn-xs" onclick="Dashboard.clearPreview('${m.id}')">Try another image</button>
+          </div>
+        </div>`;
+    }
+
+    const you = preview.youScore;
+    const opp = preview.oppScore;
+    const outcome = you > opp ? 'You win' : you < opp ? 'Opponent wins' : 'Draw';
+    const yourWin = you > opp;
+    const oppWin  = opp > you;
+
+    return `
+      <div class="ocr-result">
+        <div class="or-head"><span>✓</span> Scoreboard read successfully</div>
+
+        <div class="or-grid">
+          <div class="or-team ${preview.leftIsYou ? 'win' : ''}">${UI.escape(preview.leftTeam || '—')}</div>
+          <div class="or-score">${preview.leftScore} – ${preview.rightScore}</div>
+          <div class="or-team right ${preview.rightIsYou ? 'win' : ''}">${UI.escape(preview.rightTeam || '—')}</div>
+        </div>
+
+        <div class="or-grid">
+          <div class="or-team small">${UI.escape(myName || 'You')}${preview.leftIsYou ? ' (left)' : ''}</div>
+          <div class="or-score small">vs</div>
+          <div class="or-team right small">${UI.escape(oppName || 'Opponent')}${preview.rightIsYou ? ' (right)' : ''}</div>
+        </div>
+
+        <div class="or-body" style="margin-top:8px">
+          Your score: <b>${you}</b> · Opponent: <b>${opp}</b> · Outcome: <b>${outcome}</b>
+          ${preview.confidence != null ? `· OCR confidence: <b>${Math.round(preview.confidence)}%</b>` : ''}
+        </div>
+
+        <div class="or-actions">
+          <button class="btn btn-primary btn-xs" onclick="Dashboard.submitScreenshot('${m.id}')">Submit result</button>
+          <button class="btn btn-ghost btn-xs" onclick="Dashboard.clearPreview('${m.id}')">Pick another image</button>
+        </div>
+      </div>`;
+  },
+
+  triggerUpload(matchId){
+    const el = document.getElementById('file-' + matchId);
+    if (el) el.click();
+  },
+
+  clearPreview(matchId){
+    delete State.ocrPreview[matchId];
+    delete State.ocrBusy[matchId];
+    this.renderActive(State.data?.active || [], State.session?.user?.id);
+  },
+
+  async handleFile(matchId, ev){
+    const file = ev?.target?.files?.[0];
+    if (!file) return;
+
+    const m = (State.data?.active || []).find(x => x.id === matchId);
+    if (!m){ UI.toast('Match not found.', 'err'); return; }
+
+    State.ocrBusy[matchId] = true;
+    delete State.ocrPreview[matchId];
+    this.renderActive(State.data?.active || [], State.session?.user?.id);
+    UI.toast('Reading screenshot…', 'info', 1800);
+
+    try {
+      const fileCheck = ScreenshotReader.validateFileDetail(
+        file,
+        m.match_started_at || m.accepted_at || m.updated_at,
+        60
+      );
+
+      const result = await ScreenshotReader.readFile(file);
+
+      if (!result.ok){
+        State.ocrPreview[matchId] = {
+          error: result.raw
+            ? 'Could not locate the scoreboard line (team1 score1 90:00 score2 team2). Please upload the full-time match summary screenshot.'
+            : 'Nothing readable in the top region of the image.',
+          raw: result.raw || ''
+        };
+        State.ocrBusy[matchId] = false;
+        this.renderActive(State.data?.active || [], State.session?.user?.id);
+        return;
+      }
+
+      const isCreator = m.creator_id === State.session?.user?.id;
+      const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
+      const oppDls = isCreator ? m.opponent_dls_username : m.creator_dls_username;
+
+      const sides = ScreenshotReader.resolveSides(result, myDls, oppDls);
+
+      if (!sides){
+        State.ocrPreview[matchId] = {
+          ...result,
+          error: 'The team names on the scoreboard could not be matched to your DLS username or your opponent\'s. Names found: "'
+            + (result.leftTeam || '?') + '" and "' + (result.rightTeam || '?')
+            + '". Your registered DLS name is "' + (myDls || 'not set') + '".',
+          youScore: 0,
+          oppScore: 0
+        };
+        State.ocrBusy[matchId] = false;
+        this.renderActive(State.data?.active || [], State.session?.user?.id);
+        return;
+      }
+
+      State.ocrPreview[matchId] = {
+        ...result,
+        ...sides,
+        fileCheck,
+        file
+      };
+    } catch(e){
+      err('OCR pipeline threw:', e);
+      State.ocrPreview[matchId] = { error: e.message || 'OCR failed.' };
+    } finally {
+      State.ocrBusy[matchId] = false;
+      this.renderActive(State.data?.active || [], State.session?.user?.id);
+    }
+  },
+
+  async submitScreenshot(matchId){
+    const preview = State.ocrPreview[matchId];
+    if (!preview || preview.error){ UI.toast('No valid screenshot to submit.', 'err'); return; }
+
+    const m = (State.data?.active || []).find(x => x.id === matchId);
+    if (!m){ UI.toast('Match not found.', 'err'); return; }
+
+    const isCreator = m.creator_id === State.session?.user?.id;
+    const uid = State.session?.user?.id;
+    const you = preview.youScore;
+    const opp = preview.oppScore;
+
+    try {
+      if (!Supa.HAS){
+        const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
+        const idx = matches.findIndex(x => x.id === matchId);
+        if (idx < 0){ UI.toast('Match not found.', 'err'); return; }
+
+        const mm = matches[idx];
+        if (isCreator){
+          mm.creator_score = you;
+          mm.creator_submitted_at = new Date().toISOString();
+        } else {
+          mm.opponent_score = you;
+          mm.opponent_submitted_at = new Date().toISOString();
+        }
+        mm.verification_verdict = 'score_verified';
+        mm.last_submitted_score = you;
+        mm.last_submitted_opp_score = opp;
+
+        // If both sides have submitted, settle immediately
+        if (mm.creator_submitted_at && mm.opponent_submitted_at){
+          mm.status = 'settled';
+          mm.settled_at = new Date().toISOString();
+          if (mm.creator_score > mm.opponent_score) mm.winner_id = mm.creator_id;
+          else if (mm.opponent_score > mm.creator_score) mm.winner_id = mm.opponent_id;
+          else mm.winner_id = null; // draw
+        } else {
+          mm.status = 'verifying';
+        }
+
+        localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
+      } else {
+        const { error } = await Supa.client.rpc('submit_match_score', {
+          p_match_id: matchId,
+          p_score: you,
+          p_opp_score: opp,
+          p_verdict: 'score_verified'
+        });
+        if (error){ UI.toast(error.message || 'Submit failed.', 'err'); return; }
+      }
+
+      UI.toast(`Submitted ${you}–${opp}. Verifying…`, 'ok');
+      delete State.ocrPreview[matchId];
+      await this.reload(true);
+    } catch(e){
+      err('submitScreenshot:', e);
+      UI.toast('Submit failed.', 'err');
+    }
   },
 
   renderActive(list, uid){
@@ -1526,6 +1904,7 @@ const Dashboard = {
       }[m.status] || 'badge-blue';
 
       let timerHtml = '';
+      let uploadHtml = '';
 
       if (m.status === 'accepted'){
         const timerId = 'timer-' + m.id;
@@ -1549,6 +1928,7 @@ const Dashboard = {
             </div>
             <div class="match-timer-bar" id="${barId}"><i style="width:100%"></i></div>
           </div>`;
+        uploadHtml = this.uploadZoneHtml(m);
       } else if (m.status === 'verifying'){
         timerHtml = this.verificationStepsHtml(m, uid);
       }
@@ -1571,6 +1951,7 @@ const Dashboard = {
               <span>${UI.escape(other)}${!isCreator ? ' <span class="you">You</span>' : ''}</span>
             </div>
             ${timerHtml}
+            ${uploadHtml}
           </div>
           <div class="match-side">
             <div class="match-pot">${UI.money(m.pot_amount || m.stake_amount || 0)}</div>
@@ -1605,7 +1986,6 @@ const Dashboard = {
       if (isCancel){ cls='draw'; icon='↩'; label='Cancelled'; amt = UI.moneyShort(m.stake_amount || 0); }
       if (isDisp){ cls='draw'; icon='⚖'; label='Disputed'; amt = UI.moneyShort(m.pot_amount || 0); }
 
-      /* Verification verdict chip */
       const verdictKey = m.verification_verdict || (m.status === 'settled' ? 'matched' : null);
       const verdict = verdictKey ? VERDICT_MAP[verdictKey] : null;
       const verdictHtml = verdict
@@ -1618,303 +1998,4 @@ const Dashboard = {
         <div class="h-item">
           <div class="h-ico ${cls}">${icon}</div>
           <div class="h-txt">
-            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}</h4>
-            <p>${UI.timeAgo(m.settled_at || m.created_at)}</p>
-          </div>
-          <div class="h-amt ${amtCls}">${amt}</div>
-        </div>`;
-    }).join('');
-  },
-
-  renderTransactions(list){
-    const container = $('#txList');
-    if (!list.length){
-      container.innerHTML = `
-        <div class="empty">
-          <div class="ico-big">💳</div>
-          <h3>No transactions yet</h3>
-          <p>Deposits, withdrawals, and match payouts appear here.</p>
-          <button class="btn btn-primary btn-sm" onclick="location.href='wallet.html'">Open wallet</button>
-        </div>`;
-      return;
-    }
-
-    container.innerHTML = list.slice(0, 5).map(t => {
-      let cls = 'tx', icon = '•', sign = '', amtCls = 'neu';
-      if (t.type === 'deposit'){ cls='dep'; icon='↓'; sign='+'; amtCls='pos'; }
-      else if (t.type === 'withdrawal'){ cls='wd'; icon='↑'; sign='−'; amtCls='neg'; }
-      else if (t.type === 'stake_lock'){ cls='tx'; icon='🔒'; }
-      else if (t.type === 'stake_release'){ cls='win'; icon='★'; sign='+'; amtCls='pos'; }
-      else if (t.type === 'refund'){ cls='draw'; icon='↩'; }
-      else if (t.type === 'fee'){ cls='wd'; icon='⚙'; sign='−'; amtCls='neg'; }
-
-      return `
-        <div class="h-item">
-          <div class="h-ico ${cls}">${icon}</div>
-          <div class="h-txt">
-            <h4>${UI.escape(t.note || t.type)}</h4>
-            <p>${UI.timeAgo(t.created_at)}</p>
-          </div>
-          <div class="h-amt ${amtCls}">${sign}${UI.moneyShort(Math.abs(Number(t.amount||0)))}</div>
-        </div>`;
-    }).join('');
-  },
-
-  renderTournaments(list){
-    const container = $('#tournamentsList');
-    if (!container) return;
-    if (!list.length){
-      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🏆</div><p>No tournaments open right now.</p></div>`;
-      return;
-    }
-    container.innerHTML = list.map(t => {
-      const n = (t.participants || t.tournament_participants || []).length;
-      const slots = t.max_players - n;
-      const prize = Math.round(n * Number(t.entry_fee || 0) * 0.9);
-      const tag = t.status === 'open' ? 'Open' : 'Live';
-      return `
-        <a class="tour-mini" href="tournament.html?id=${UI.escape(t.id)}">
-          <div class="head">
-            <h4>${UI.escape(t.name)}</h4>
-            <span class="tag ${t.status}">${tag}</span>
-          </div>
-          <div class="meta">
-            <span>${slots > 0 ? slots + ' slots left' : 'Full'} · ${UI.moneyShort(t.entry_fee)} entry</span>
-            <span class="prize">${UI.moneyShort(prize)}</span>
-          </div>
-        </a>
-      `;
-    }).join('');
-  },
-
-  renderAchievements(list){
-    const container = $('#achievementsList');
-    if (!container) return;
-    if (!list.length){
-      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">🎖️</div><p>No badges yet — play matches to unlock them.</p></div>`;
-      return;
-    }
-    container.innerHTML = `
-      <div class="ach-preview">
-        ${list.map(a => {
-          const meta = ACH_CATALOG[a.achievement_id] || { icon:'🏅', title:a.achievement_id };
-          return `
-            <a class="ach-mini" href="achievements.html">
-              <span class="ico">${meta.icon}</span>
-              <div class="n">${UI.escape(meta.title)}</div>
-              <div class="s">${UI.timeAgo(a.claimed_at)}</div>
-            </a>
-          `;
-        }).join('')}
-      </div>
-      <div style="font-size:.74rem;color:var(--muted);text-align:center;padding:4px 0">
-        You've claimed ${list.length} badge${list.length === 1 ? '' : 's'}. Keep going.
-      </div>
-    `;
-  },
-
-  renderNotifications(list){
-    const container = $('#notifsList');
-    if (!container) return;
-    if (!list.length){
-      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📭</div><p>You're all caught up.</p></div>`;
-      return;
-    }
-    container.innerHTML = list.map(n => {
-      const isUnread = !n.read_at;
-      return `
-        <a class="notif-row ${isUnread ? 'unread' : 'read'}" href="${UI.escape(n.link || 'notifications.html')}">
-          <span class="n-ico">${this.notifIcon(n.type)}</span>
-          <div class="n-body">
-            <h4>${UI.escape(n.title || 'Notification')}</h4>
-            <p>${UI.escape(n.body || '')}</p>
-          </div>
-          <span class="n-time">${UI.timeAgo(n.created_at)}</span>
-        </a>
-      `;
-    }).join('');
-  },
-
-  notifIcon(type){
-    if (type === 'invite' || type === 'challenge') return '⚔️';
-    if (type === 'result') return '🏆';
-    if (type === 'payout' || type === 'deposit' || type === 'withdrawal') return '💰';
-    if (type === 'kyc') return '🪪';
-    if (type === 'dispute') return '⚖️';
-    return '🔔';
-  },
-
-  renderRank(rank){
-    const container = $('#leaderboardRank');
-    if (!container) return;
-    if (!rank){
-      container.innerHTML = `<div class="empty" style="padding:22px 16px"><div class="ico-big">📊</div><p>Play a few more matches to enter the leaderboard.</p></div>`;
-      return;
-    }
-    container.innerHTML = `
-      <div style="text-align:center;padding:16px 8px">
-        <div style="font-family:var(--ff-mono);font-size:2rem;font-weight:900;letter-spacing:-.03em;color:var(--gold);line-height:1">
-          #${Number(rank.position || 0)}
-        </div>
-        <div style="font-size:.76rem;color:var(--muted);margin-top:6px;font-family:var(--ff-mono)">
-          out of ${Number(rank.total || 0).toLocaleString()} players
-        </div>
-        <a class="btn btn-ghost btn-sm" href="leaderboard.html" style="margin-top:12px">View leaderboard</a>
-      </div>
-    `;
-  },
-
-  tick(){
-    const d = State.data;
-    if (!d) return;
-
-    (d.invites_received || []).forEach(m => {
-      const el = document.getElementById('inv-' + m.id);
-      if (!el) return;
-      const u = UI.until(m.expires_at);
-      el.textContent = u ? u.text : '—';
-    });
-
-    (d.active || []).forEach(m => {
-      if (m.status === 'accepted'){
-        const timeEl = document.getElementById('timer-' + m.id + '-time');
-        const wrapEl = document.getElementById('timer-' + m.id);
-        const barEl  = document.getElementById('timerbar-' + m.id);
-        if (!timeEl || !wrapEl) return;
-
-        const endsAt = State.activeEndsAt[m.id];
-        if (!endsAt) return;
-
-        const remaining = Math.max(0, Math.floor((endsAt - Date.now()) / 1000));
-        timeEl.textContent = UI.clock(remaining);
-
-        const total = CONFIG.MATCH_DURATION_SEC;
-        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
-        if (barEl){
-          const i = barEl.querySelector('i');
-          if (i) i.style.width = pct + '%';
-        }
-
-        wrapEl.classList.remove('warn','danger');
-        if (remaining <= 30) wrapEl.classList.add('danger');
-        else if (remaining <= 60) wrapEl.classList.add('warn');
-
-        if (remaining <= 0 && !State.transitioning[m.id]){
-          State.transitioning[m.id] = true;
-          this.autoStartSubmission(m.id);
-        }
-      }
-      else if (m.status === 'awaiting_submission' && m.submission_started_at){
-        const timeEl = document.getElementById('timer-' + m.id + '-time');
-        const wrapEl = document.getElementById('timer-' + m.id);
-        const barEl  = document.getElementById('timerbar-' + m.id);
-        if (!timeEl || !wrapEl) return;
-
-        const deadline = new Date(m.submission_started_at).getTime() + CONFIG.SUBMIT_WINDOW_SEC * 1000;
-        const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
-        timeEl.textContent = UI.clock(remaining);
-
-        const total = CONFIG.SUBMIT_WINDOW_SEC;
-        const pct = total > 0 ? Math.max(0, (remaining / total) * 100) : 0;
-        if (barEl){
-          const i = barEl.querySelector('i');
-          if (i) i.style.width = pct + '%';
-        }
-
-        wrapEl.classList.remove('warn','danger');
-        if (remaining <= 30) wrapEl.classList.add('danger');
-        else if (remaining <= 60) wrapEl.classList.add('warn');
-      }
-    });
-  },
-
-  async autoStartSubmission(matchId){
-    log('Timer hit zero for', matchId, '— transitioning to submission phase');
-
-    try {
-      if (!Supa.HAS){
-        const matches = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]');
-        const match = matches.find(x => x.id === matchId);
-        if (match && match.status === 'accepted'){
-          match.status = 'awaiting_submission';
-          match.submission_started_at = new Date().toISOString();
-          localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
-        }
-      } else {
-        const { error } = await Supa.client.rpc('start_submission', { p_match_id: matchId });
-        if (error) warn('start_submission error:', error.message);
-      }
-
-      UI.toast('Time! Upload your match screenshot now.', 'info', 6000);
-
-      await this.reload(true);
-    } catch(e){
-      err('autoStartSubmission:', e);
-    } finally {
-      setTimeout(() => { State.transitioning[matchId] = false; }, 15000);
-    }
-  }
-};
-
-/* ============================================================================
-   BOOT
-   ============================================================================ */
-(async function boot(){
-  log('Dashboard boot');
-  if (!Supa.HAS){
-    console.info('%cDLS Stake — Dashboard (DEMO)',
-      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
-  } else {
-    console.info('%cDLS Stake — Dashboard (Supabase)',
-      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
-  }
-  try { await Dashboard.init(); }
-  catch(e){ err('Dashboard init failed:', e); UI.toast('Failed to load dashboard.', 'err'); }
-
-  window.addEventListener('beforeunload', () => {
-    if (State._poll)   clearInterval(State._poll);
-    if (State._ticker) clearInterval(State._ticker);
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') Drawer.close();
-  });
-})();
-
-/* ============================================================================
-   DEBUG
-   ============================================================================ */
-window.DLS = {
-  version: 'dashboard-11.0.0',
-  async debug(){
-    console.log('======== DLS Dashboard v11 ========');
-    console.log('Session:', State.session?.user?.email);
-    console.log('Wallet view:', State.walletView);
-    console.log('Profile:', State.data?.profile);
-    console.log('Active matches:', State.data?.active?.length);
-    console.log('Active deadlines:', State.activeEndsAt);
-    console.log('Invites:', State.data?.invites_received?.length);
-    console.log('Tournaments:', State.extra.tournaments.length);
-    console.log('Achievements:', State.extra.achievements.length);
-    console.log('Notifications:', State.extra.notifications.length, '·', State.extra.unreadCount, 'unread');
-    console.log('Rank:', State.extra.rank);
-    console.log('===================================');
-  },
-  async reset(){
-    if (Supa.HAS){ try { await Supa.client.auth.signOut(); } catch {} }
-    localStorage.removeItem('dls_stake_auth');
-    localStorage.removeItem('dls_demo_users');
-    localStorage.removeItem('dls_demo_session');
-    localStorage.removeItem('dls_demo_matches');
-    localStorage.removeItem('dls_demo_kyc');
-    localStorage.removeItem('dls_demo_notifs');
-    localStorage.removeItem('dls_demo_banks');
-    localStorage.removeItem('dls_demo_claims');
-    localStorage.removeItem('dls_demo_tournaments');
-    sessionStorage.clear();
-    location.reload();
-  }
-};
-</script>
-</body>
-</html>
+            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs
