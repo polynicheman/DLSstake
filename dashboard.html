@@ -213,7 +213,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .upload-zone input[type=file]{display:none}
 .ocr-result{margin-top:12px;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(0,217,126,.06);border:1px solid rgba(0,217,126,.3)}
 .ocr-result.error{background:rgba(255,77,94,.06);border-color:rgba(255,77,94,.3)}
-.ocr-result.warn{background:rgba(255,176,32,.06);border-color:rgba(255,176,32,.3)}
+.ocr-result.warn{background:rgba(255,176,32,.08);border-color:rgba(255,176,32,.4)}
 .ocr-result .or-head{display:flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
 .ocr-result.error .or-head{color:var(--danger)}
 .ocr-result.warn .or-head{color:var(--warn)}
@@ -225,7 +225,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .ocr-result .or-team.win{color:var(--primary)}
 .ocr-result .or-score{font-size:1.6rem;font-weight:900;color:var(--primary);text-align:center}
 .ocr-result .or-score.small{font-size:.72rem;font-weight:700;color:var(--muted);font-family:var(--ff-mono)}
-.ocr-result .or-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ocr-result .or-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
 .ocr-result .or-raw{font-family:var(--ff-mono);font-size:.68rem;color:var(--muted-2);background:var(--bg);border:1px solid var(--border);padding:8px 10px;border-radius:6px;margin-top:8px;max-height:80px;overflow:auto;white-space:pre-wrap}
 .ocr-spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 .rules-strip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(47,128,237,.06);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius);margin-bottom:16px;font-size:.82rem;line-height:1.55;color:#9cc4ff}
@@ -245,7 +245,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .explain-back{position:fixed;inset:0;background:rgba(4,8,14,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
 .explain-back.show{display:flex;animation:fadeIn .18s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.explain-modal{width:100%;max-width:540px;background:linear-gradient(180deg,var(--surface-2),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:26px 24px 22px;position:relative;max-height:92vh;overflow-y:auto;animation:modalIn .24s cubic-bezier(.2,.9,.3,1.15)}
+.explain-modal{width:100%;max-width:560px;background:linear-gradient(180deg,var(--surface-2),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);padding:26px 24px 22px;position:relative;max-height:92vh;overflow-y:auto;animation:modalIn .24s cubic-bezier(.2,.9,.3,1.15)}
 @keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
 .explain-close{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:9px;background:var(--surface-3);border:1px solid var(--border);color:var(--muted);display:grid;place-items:center;font-size:.9rem;transition:.15s}
 .explain-close:hover{color:var(--text);background:var(--border-2)}
@@ -268,9 +268,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .explain-scoreboard .team{font-size:.88rem;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis}
 .explain-scoreboard .team.right{text-align:right}
 .explain-scoreboard .score{font-size:1.6rem;font-weight:900;color:var(--primary);text-align:center}
-.explain-why-btn{display:inline-flex;align-items:center;gap:4px;font-size:.6rem;font-weight:800;padding:3px 8px;border-radius:var(--radius-full);background:rgba(47,128,237,.14);color:#7cb4ff;border:1px solid rgba(47,128,237,.3);cursor:pointer;margin-left:6px;text-decoration:none;transition:.15s}
-.explain-why-btn:hover{background:rgba(47,128,237,.28);color:#bfd9ff}
-.explain-reason-line{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.5;padding-left:52px}
+.explain-why-btn{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:800;padding:6px 12px;border-radius:var(--radius-full);background:rgba(47,128,237,.18);color:#7cb4ff;border:1px solid rgba(47,128,237,.45);cursor:pointer;margin-left:8px;text-decoration:none;transition:.15s;letter-spacing:.02em}
+.explain-why-btn:hover{background:rgba(47,128,237,.32);color:#bfd9ff;transform:translateY(-1px)}
+.explain-reason-line{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.5;padding-left:52px;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
 .explain-reason-line b{color:var(--text-2);font-weight:700}
 .history-list{display:grid;gap:0}
 .h-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
@@ -559,7 +559,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
               (e.g. <code>Screenshot_20260923-100755.jpg</code>) — the datetime embedded in the
               filename must fall within <b>60 minutes</b> of the match window. If your score is
               <b>higher</b>, you take the pot. If scores are <b>equal</b>, the match settles as a
-              <b>draw</b> and both stakes refund. Every settled match has a <b>Why?</b> button
+              <b>draw</b> and both stakes refund. Every settled match has an <b>Explain</b> button
               that shows exactly what was read.
             </div>
           </div>
@@ -814,30 +814,83 @@ const Supa = (() => {
 })();
 
 /* ============================================================================
-   SCREENSHOT READER
+   SCREENSHOT READER — multi-threshold OCR with zero-guard
    ============================================================================ */
 const ScreenshotReader = {
+
   async readFile(file){
     log('OCR start on', file.name);
     const img = await this._loadImage(file);
-    const cropped = this._cropTopRegion(img, 0.34);
-    const dataUrl = cropped.toDataURL('image/png');
 
     if (!window.Tesseract){
       return { ok:false, error:'Tesseract.js failed to load.' };
     }
 
-    const result = await window.Tesseract.recognize(dataUrl, 'eng');
-    const text = (result?.data?.text || '').trim();
-    const conf = result?.data?.confidence ?? 0;
-    log('OCR raw text:', text, 'confidence:', conf);
+    const attempts = [
+      { ratio: 0.34, th: 140 },
+      { ratio: 0.34, th: 100 },
+      { ratio: 0.34, th: 180 },
+      { ratio: 0.34, th: 0   },
+      { ratio: 0.22, th: 140 },
+      { ratio: 0.45, th: 140 }
+    ];
 
-    const parsed = this._parseScoreboard(text);
+    const tried = [];
+
+    for (const a of attempts){
+      try {
+        const cropped = this._cropTopRegion(img, a.ratio, a.th);
+        const dataUrl = cropped.toDataURL('image/png');
+        const ocr = await window.Tesseract.recognize(dataUrl, 'eng');
+        const text = (ocr?.data?.text || '').trim();
+        const conf = ocr?.data?.confidence ?? 0;
+        const parsed = this._parseScoreboard(text);
+
+        tried.push({
+          ratio: a.ratio, threshold: a.th,
+          parsed, text, conf,
+          scores: parsed ? [parsed.leftScore, parsed.rightScore] : null
+        });
+
+        if (parsed && (parsed.leftScore > 0 || parsed.rightScore > 0)){
+          return {
+            ok: true,
+            ...parsed,
+            raw: text,
+            confidence: conf,
+            threshold: a.th,
+            ratio: a.ratio,
+            attempts: tried,
+            filename: file.name,
+            fileModified: file.lastModified
+          };
+        }
+      } catch(e){
+        warn('OCR attempt failed:', e);
+      }
+    }
+
+    const anyParse = tried.find(t => t.parsed);
+    if (anyParse){
+      return {
+        ok: true,
+        ...anyParse.parsed,
+        raw: anyParse.text,
+        confidence: anyParse.conf,
+        threshold: anyParse.threshold,
+        ratio: anyParse.ratio,
+        attempts: tried,
+        zeroZeroWarning: true,
+        filename: file.name,
+        fileModified: file.lastModified
+      };
+    }
+
     return {
-      ok: !!parsed,
-      ...(parsed || {}),
-      raw: text,
-      confidence: conf,
+      ok: false,
+      raw: tried.map(t => `[th=${t.threshold} ratio=${t.ratio}]\n${t.text}`).join('\n\n---\n\n') || '(no OCR output)',
+      confidence: 0,
+      attempts: tried,
       filename: file.name,
       fileModified: file.lastModified
     };
@@ -853,7 +906,7 @@ const ScreenshotReader = {
     });
   },
 
-  _cropTopRegion(img, ratio){
+  _cropTopRegion(img, ratio, threshold = 140){
     const w = img.naturalWidth || img.width;
     const h = img.naturalHeight || img.height;
     const cropH = Math.max(80, Math.floor(h * ratio));
@@ -865,16 +918,20 @@ const ScreenshotReader = {
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, 0, 0, w, cropH, 0, 0, canvas.width, canvas.height);
-    try {
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const d = imgData.data;
-      for (let i = 0; i < d.length; i += 4){
-        const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
-        const v = lum > 140 ? 255 : 0;
-        d[i] = d[i+1] = d[i+2] = v;
-      }
-      ctx.putImageData(imgData, 0, 0);
-    } catch(e){ warn('contrast boost skipped:', e); }
+
+    if (threshold > 0){
+      try {
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = imgData.data;
+        for (let i = 0; i < d.length; i += 4){
+          const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+          const v = lum > threshold ? 255 : 0;
+          d[i] = d[i+1] = d[i+2] = v;
+        }
+        ctx.putImageData(imgData, 0, 0);
+      } catch(e){ warn('binarization skipped:', e); }
+    }
+
     return canvas;
   },
 
@@ -1005,22 +1062,12 @@ const ScreenshotReader = {
     return null;
   },
 
-  /* ==========================================================================
-     STRICT FILENAME DATETIME VALIDATION
-     Android native format: Screenshot_YYYYMMDD-HHMMSS.<ext>
-     Example: Screenshot_20260923-100755.jpg  →  2026-09-23 10:07:55
-     The datetime from the FILENAME is what we compare to the match-accept
-     window — NOT file.lastModified (unreliable after file transfers).
-     Falls back to file.lastModified for iOS IMG_xxxx and unnamed screenshots.
-     ========================================================================== */
   validateFileDetail(file, acceptedAtIso, windowMinutes = 60){
     const fname = String(file.name || '').trim();
     const lower = fname.toLowerCase();
     const isImageExt = /\.(png|jpe?g|webp|heic)$/i.test(lower);
 
-    // Android: Screenshot_20260923-100755.jpg
     const androidRe = /^screenshot[_\-]?(\d{4})(\d{2})(\d{2})[_\-]?(\d{2})(\d{2})(\d{2})/i;
-    // iOS: IMG_1234.PNG
     const iosRe = /^img[_\-\s]?\d+/i;
 
     let extractedDate = null;
@@ -1029,21 +1076,9 @@ const ScreenshotReader = {
     const am = lower.match(androidRe);
     if (am && isImageExt){
       const [, yyyy, mm, dd, HH, MM, SS] = am;
-      extractedDate = new Date(
-        Number(yyyy),
-        Number(mm) - 1,
-        Number(dd),
-        Number(HH),
-        Number(MM),
-        Number(SS)
-      );
+      extractedDate = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(HH), Number(MM), Number(SS));
       if (isNaN(extractedDate.getTime())){
-        return {
-          ok:false,
-          reason:'not_a_screenshot',
-          filename: fname,
-          note:'The date embedded in the filename could not be parsed as a valid datetime.'
-        };
+        return { ok:false, reason:'not_a_screenshot', filename: fname, note:'The date embedded in the filename could not be parsed as a valid datetime.' };
       }
       extractionMethod = 'android-filename-datetime';
     } else if (iosRe.test(lower) && isImageExt){
@@ -1053,22 +1088,11 @@ const ScreenshotReader = {
       extractedDate = new Date(Number(file.lastModified || 0));
       extractionMethod = 'name-only-mtime';
     } else {
-      return {
-        ok:false,
-        reason:'not_a_screenshot',
-        filename: fname,
-        note:'Filename must look like "Screenshot_YYYYMMDD-HHMMSS.jpg" (Android) or "IMG_xxxx.png" (iOS).'
-      };
+      return { ok:false, reason:'not_a_screenshot', filename: fname, note:'Filename must look like "Screenshot_YYYYMMDD-HHMMSS.jpg" (Android) or "IMG_xxxx.png" (iOS).' };
     }
 
-    // No match accepted time — accept whatever we found
     if (!acceptedAtIso){
-      return {
-        ok:true,
-        extractionMethod,
-        extractedDate: extractedDate.toISOString(),
-        filename: fname
-      };
+      return { ok:true, extractionMethod, extractedDate: extractedDate.toISOString(), filename: fname };
     }
 
     const accepted = new Date(acceptedAtIso).getTime();
@@ -1077,24 +1101,18 @@ const ScreenshotReader = {
 
     if (diffMin > windowMinutes){
       return {
-        ok:false,
-        reason:'date_mismatch',
-        diffMin: Math.round(diffMin),
-        extractionMethod,
-        extractedDate: extractedDate.toISOString(),
-        acceptedAt:    new Date(accepted).toISOString(),
-        filename:      fname,
-        note:          `Screenshot was taken ${Math.round(diffMin)} minutes from the match window (max ${windowMinutes} min).`
+        ok:false, reason:'date_mismatch', diffMin: Math.round(diffMin),
+        extractionMethod, extractedDate: extractedDate.toISOString(),
+        acceptedAt: new Date(accepted).toISOString(),
+        filename: fname,
+        note: `Screenshot was taken ${Math.round(diffMin)} minutes from the match window (max ${windowMinutes} min).`
       };
     }
 
     return {
-      ok:true,
-      extractionMethod,
-      extractedDate: extractedDate.toISOString(),
-      acceptedAt:    new Date(accepted).toISOString(),
-      diffMin:       Math.round(diffMin),
-      filename:      fname
+      ok:true, extractionMethod, extractedDate: extractedDate.toISOString(),
+      acceptedAt: new Date(accepted).toISOString(),
+      diffMin: Math.round(diffMin), filename: fname
     };
   }
 };
@@ -1118,32 +1136,16 @@ const Explanation = {
   },
 
   build(ctx){
-    const {
-      parsed, sides, fileCheck, myDls, oppDls,
-      youScore, oppScore, confidence,
-      isCreator
-    } = ctx;
-
+    const { parsed, sides, fileCheck, myDls, oppDls, youScore, oppScore, confidence } = ctx;
     const details = [];
     const issues  = [];
 
-    /* ---------- FILE DETAIL CHECK (before OCR) ---------- */
     if (fileCheck){
-      if (fileCheck.filename){
-        details.push({ lbl:'File name', val: fileCheck.filename });
-      }
-      if (fileCheck.extractionMethod){
-        details.push({ lbl:'Date source', val: fileCheck.extractionMethod });
-      }
-      if (fileCheck.extractedDate){
-        details.push({ lbl:'Screenshot taken', val: UI.fmtDateTime(fileCheck.extractedDate) });
-      }
-      if (fileCheck.acceptedAt){
-        details.push({ lbl:'Match accepted at', val: UI.fmtDateTime(fileCheck.acceptedAt) });
-      }
-      if (typeof fileCheck.diffMin === 'number'){
-        details.push({ lbl:'Difference', val: fileCheck.diffMin + ' minutes' });
-      }
+      if (fileCheck.filename) details.push({ lbl:'File name', val: fileCheck.filename });
+      if (fileCheck.extractionMethod) details.push({ lbl:'Date source', val: fileCheck.extractionMethod });
+      if (fileCheck.extractedDate) details.push({ lbl:'Screenshot taken', val: UI.fmtDateTime(fileCheck.extractedDate) });
+      if (fileCheck.acceptedAt) details.push({ lbl:'Match accepted at', val: UI.fmtDateTime(fileCheck.acceptedAt) });
+      if (typeof fileCheck.diffMin === 'number') details.push({ lbl:'Difference', val: fileCheck.diffMin + ' minutes' });
 
       if (!fileCheck.ok){
         if (fileCheck.reason === 'not_a_screenshot'){
@@ -1165,7 +1167,6 @@ const Explanation = {
       }
     }
 
-    /* ---------- OCR PARSE CHECK ---------- */
     if (!parsed){
       details.push({ lbl:'Screenshot', val:'No scoreboard pattern detected' });
       details.push({ lbl:'OCR confidence', val: Math.round(confidence || 0) + '%' });
@@ -1183,7 +1184,6 @@ const Explanation = {
     details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
     details.push({ lbl:'Parse method',           val: parsed.matchType || 'primary' });
 
-    /* ---------- NAME MATCH CHECK ---------- */
     if (!sides){
       issues.push(`Your DLS username "${myDls || '—'}" did not match either team name.`);
       issues.push(`Opponent's DLS username "${oppDls || '—'}" did not match either team name.`);
@@ -1198,48 +1198,26 @@ const Explanation = {
     details.push({ lbl:'Your score (read)',     val: youScore });
     details.push({ lbl:'Opponent score (read)', val: oppScore });
 
-    /* ---------- SCORE COMPARISON ---------- */
     const you = Number(youScore);
     const opp = Number(oppScore);
 
-    if (you > opp){
-      return {
-        verdict:'score_verified',
-        reason:`Your score (<b class="hl-win">${you}</b>) is higher than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`,
-        details, issues
-      };
-    }
-    if (you < opp){
-      return {
-        verdict:'low_score',
-        reason:`Your score (<b class="hl-loss">${you}</b>) is lower than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`,
-        details, issues
-      };
-    }
-    return {
-      verdict:'draw_score',
-      reason:`Both scores read as <b class="hl-draw">${you}</b> — they are equal. The rule is: <b>equal scores settle the match as a draw</b> and both stakes are refunded.`,
-      details, issues
-    };
+    if (you > opp) return { verdict:'score_verified', reason:`Your score (<b class="hl-win">${you}</b>) is higher than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`, details, issues };
+    if (you < opp) return { verdict:'low_score', reason:`Your score (<b class="hl-loss">${you}</b>) is lower than your opponent's (<b>${opp}</b>). The rule is: <b>higher score wins the pot</b>.`, details, issues };
+    return { verdict:'draw_score', reason:`Both scores read as <b class="hl-draw">${you}</b> — they are equal. The rule is: <b>equal scores settle the match as a draw</b> and both stakes are refunded.`, details, issues };
   },
 
-  crossCheck(match, myReading){
+  crossCheck(match){
     const cs = Number(match.creator_score ?? NaN);
     const os = Number(match.opponent_score ?? NaN);
     const cReportedByO = match.creator_score_reported != null ? Number(match.creator_score_reported) : null;
     const oReportedByC = match.opponent_score_reported != null ? Number(match.opponent_score_reported) : null;
-
     const issues = [];
-    if (cReportedByO != null && Number.isFinite(cs) && cReportedByO !== cs){
-      issues.push(`Creator's own read of their score = ${cs}, but opponent read it as ${cReportedByO}.`);
-    }
-    if (oReportedByC != null && Number.isFinite(os) && oReportedByC !== os){
-      issues.push(`Opponent's own read of their score = ${os}, but creator read it as ${oReportedByC}.`);
-    }
+    if (cReportedByO != null && Number.isFinite(cs) && cReportedByO !== cs) issues.push(`Creator's own read of their score = ${cs}, but opponent read it as ${cReportedByO}.`);
+    if (oReportedByC != null && Number.isFinite(os) && oReportedByC !== os) issues.push(`Opponent's own read of their score = ${os}, but creator read it as ${oReportedByC}.`);
     return { ok: issues.length === 0, issues };
   },
 
-  reasonForVerdict(verdict, match){
+  reasonForVerdict(verdict){
     const V = VERDICT_RULES || {};
     if (verdict === 'draw_score') return 'Both screenshots read the same score. Equal scores settle the match as a draw and both stakes are refunded.';
     if (verdict === 'score_verified') return 'Higher score won the pot.';
@@ -1263,6 +1241,53 @@ const Explanation = {
     return null;
   },
 
+  openPreview(matchId){
+    const preview = State.ocrPreview[matchId];
+    if (!preview){ UI.toast('No preview available.', 'err'); return; }
+
+    const back = document.getElementById('explainBack');
+    const modal = document.getElementById('explainModal');
+    if (!back || !modal) return;
+
+    const you = preview.youScore;
+    const opp = preview.oppScore;
+    const verdict = (you === opp) ? 'draw_score' : (you > opp ? 'score_verified' : 'low_score');
+    const vmap = VERDICT_MAP[verdict];
+
+    let html = `
+      <button class="explain-close" onclick="Explanation.close()" aria-label="Close">✕</button>
+      <h3 class="explain-title">Why this read was interpreted this way</h3>
+      <span class="explain-verdict verdict ${vmap.cls}">${UI.escape(vmap.label)}</span>
+    `;
+
+    html += `<div class="explain-reason">
+      The OCR engine returned: <b>${UI.escape(preview.leftTeam || '—')}</b> ${preview.leftScore} – ${preview.rightScore} <b>${UI.escape(preview.rightTeam || '—')}</b>.
+      Your DLS name was matched to the <b>${preview.leftIsYou ? 'LEFT' : 'RIGHT'}</b> side, so your score was read as
+      <b class="hl-win">${you}</b> and your opponent's as <b>${opp}</b>.
+      ${you === opp ? 'Both scores are equal — the match settles as a draw.' : (you > opp ? 'Your score is higher — you win.' : 'Your score is lower — you lose.')}
+    </div>`;
+
+    if (preview.attempts?.length){
+      html += `
+        <div class="explain-section">
+          <h4>All OCR attempts (${preview.attempts.length})</h4>
+          ${preview.attempts.map((a, i) => `
+            <div class="explain-row" style="display:block">
+              <div style="font-size:.74rem;color:var(--muted);margin-bottom:4px">
+                <b>Attempt #${i+1}</b> · ratio=${a.ratio} · threshold=${a.threshold}
+                ${a.scores ? `· read <b style="color:#7cb4ff">${a.scores[0]}–${a.scores[1]}</b>` : '· no parse'}
+              </div>
+              <div style="font-family:var(--ff-mono);font-size:.68rem;background:var(--bg);padding:8px;border-radius:6px;white-space:pre-wrap;max-height:120px;overflow:auto;color:var(--muted-2)">${UI.escape((a.text||'(empty)').slice(0,600))}</div>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    modal.innerHTML = html;
+    back.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  },
+
   open(matchId){
     const back = document.getElementById('explainBack');
     const modal = document.getElementById('explainModal');
@@ -1270,10 +1295,7 @@ const Explanation = {
 
     const explain = this.get(matchId);
     const match = [...(State.data?.recent || []), ...(State.data?.active || [])].find(m => m.id === matchId);
-    if (!match){
-      UI.toast('Match not found.', 'err');
-      return;
-    }
+    if (!match){ UI.toast('Match not found.', 'err'); return; }
 
     const verdict = explain?.verdict || match.verification_verdict || 'pending';
     const vmap = VERDICT_MAP[verdict] || { cls:'arbitration', label: verdict };
@@ -1327,6 +1349,23 @@ const Explanation = {
             <div class="explain-row">
               <span class="lbl" style="color:var(--danger)">•</span>
               <span class="val" style="font-family:var(--ff);font-weight:600;color:var(--text-2);text-align:left">${UI.escape(i)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (explain?.attempts?.length){
+      html += `
+        <div class="explain-section">
+          <h4>OCR attempts</h4>
+          ${explain.attempts.map((a, i) => `
+            <div class="explain-row" style="display:block">
+              <div style="font-size:.74rem;color:var(--muted);margin-bottom:4px">
+                <b>#${i+1}</b> · threshold=${a.threshold} · ratio=${a.ratio}
+                ${a.scores ? `· read <b style="color:#7cb4ff">${a.scores[0]}–${a.scores[1]}</b>` : '· no parse'}
+              </div>
+              <div style="font-family:var(--ff-mono);font-size:.68rem;background:var(--bg);padding:8px;border-radius:6px;white-space:pre-wrap;max-height:100px;overflow:auto;color:var(--muted-2)">${UI.escape((a.raw||'(empty)').slice(0,500))}</div>
             </div>
           `).join('')}
         </div>
@@ -1933,15 +1972,7 @@ const Dashboard = {
               <span class="dot" style="background:rgba(47,128,237,.15);border-color:rgba(47,128,237,.4);color:#7cb4ff">i</span>
               <div class="txt">
                 Currently read — you: <b>${myScore}</b>, opponent: <b>${oppScore}</b>.
-                <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Why?</button>
-              </div>
-            </div>
-          ` : ''}
-          ${explain ? `
-            <div class="verify-step" style="border-top:1px solid rgba(47,128,237,.2);padding-top:8px;margin-top:4px">
-              <span class="dot" style="background:rgba(255,176,32,.15);border-color:rgba(255,176,32,.4);color:#ffd08a">!</span>
-              <div class="txt">
-                <b>Your read:</b> ${UI.escape(explain.reason?.replace(/<[^>]+>/g,'') || '')}
+                <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Explain</button>
               </div>
             </div>
           ` : ''}
@@ -1958,7 +1989,7 @@ const Dashboard = {
         <div class="uz-title">${busy ? 'Reading screenshot…' : 'Upload match screenshot'}</div>
         <div class="uz-sub">
           ${busy
-            ? '<span class="ocr-spin"></span> Running OCR on the scoreboard'
+            ? '<span class="ocr-spin"></span> Running OCR on the scoreboard (multiple attempts)'
             : 'File must be named <code>Screenshot_YYYYMMDD-HHMMSS.jpg</code>'}
         </div>
       </div>
@@ -1987,6 +2018,7 @@ const Dashboard = {
     const you = preview.youScore;
     const opp = preview.oppScore;
     const outcome = you > opp ? 'You win' : you < opp ? 'Opponent wins' : 'Draw — both refunded';
+    const suspicious = (you === 0 && opp === 0);
 
     const fileCheck = preview.fileCheck || {};
     const fileDateLine = fileCheck.extractedDate
@@ -1996,9 +2028,27 @@ const Dashboard = {
          </div>`
       : '';
 
+    const attemptDebug = preview.attempts && preview.attempts.length
+      ? `
+        <details style="margin-top:10px">
+          <summary style="cursor:pointer;font-size:.72rem;color:var(--muted);font-weight:700">
+            OCR debug (${preview.attempts.length} attempts)
+          </summary>
+          <div style="margin-top:8px;font-family:var(--ff-mono);font-size:.68rem;color:var(--muted-2);line-height:1.4">
+            ${preview.attempts.map((a, i) => `
+              <div style="padding:6px 0;border-top:1px solid var(--border)">
+                <b>#${i+1}</b> ratio=${a.ratio} threshold=${a.threshold}
+                ${a.scores ? `→ read <b style="color:#7cb4ff">${a.scores[0]}–${a.scores[1]}</b>` : '→ no parse'}
+                <div style="white-space:pre-wrap;background:var(--bg);padding:6px;border-radius:4px;margin-top:4px;max-height:60px;overflow:auto">${UI.escape((a.text||'').slice(0,300))}</div>
+              </div>
+            `).join('')}
+          </div>
+        </details>
+      ` : '';
+
     return `
-      <div class="ocr-result">
-        <div class="or-head"><span>✓</span> Scoreboard read successfully</div>
+      <div class="ocr-result ${suspicious ? 'warn' : ''}">
+        <div class="or-head"><span>${suspicious ? '⚠' : '✓'}</span> ${suspicious ? 'Suspicious 0–0 read' : 'Scoreboard read successfully'}</div>
         <div class="or-grid">
           <div class="or-team ${preview.leftIsYou ? 'win' : ''}">${UI.escape(preview.leftTeam || '—')}</div>
           <div class="or-score">${preview.leftScore} – ${preview.rightScore}</div>
@@ -2012,11 +2062,20 @@ const Dashboard = {
         <div class="or-body" style="margin-top:8px">
           Your score: <b>${you}</b> · Opponent: <b>${opp}</b> · Outcome: <b>${outcome}</b>
           ${preview.confidence != null ? `· OCR confidence: <b>${Math.round(preview.confidence)}%</b>` : ''}
+          ${preview.threshold != null ? `· threshold: <b>${preview.threshold}</b>` : ''}
         </div>
+        ${suspicious ? `
+          <div class="or-body" style="margin-top:8px;color:#ffd08a">
+            ⚠ <b>Both scores read as 0.</b> This is usually an OCR misread of the DLS stylized font.
+            Please re-upload a clearer screenshot, or tap <b>Explain</b> below to see the raw OCR text.
+          </div>
+        ` : ''}
         ${fileDateLine}
-        <div class="or-actions">
-          <button class="btn btn-primary btn-xs" onclick="Dashboard.submitScreenshot('${m.id}')">Submit result</button>
-          <button class="btn btn-ghost btn-xs" onclick="Dashboard.clearPreview('${m.id}')">Pick another image</button>
+        ${attemptDebug}
+        <div class="or-actions" style="margin-top:12px">
+          <button class="btn btn-primary btn-sm" onclick="Dashboard.submitScreenshot('${m.id}')">Submit result</button>
+          <button class="btn btn-ghost btn-sm" onclick="Dashboard.clearPreview('${m.id}')">Pick another image</button>
+          <button class="explain-why-btn" onclick="Explanation.openPreview('${m.id}')">Explain</button>
         </div>
       </div>`;
   },
@@ -2042,7 +2101,7 @@ const Dashboard = {
     State.ocrBusy[matchId] = true;
     delete State.ocrPreview[matchId];
     this.renderActive(State.data?.active || [], State.session?.user?.id);
-    UI.toast('Reading screenshot…', 'info', 1800);
+    UI.toast('Reading screenshot (6 attempts)…', 'info', 2500);
 
     try {
       const fileCheck = ScreenshotReader.validateFileDetail(
@@ -2056,9 +2115,10 @@ const Dashboard = {
       if (!result.ok){
         State.ocrPreview[matchId] = {
           error: result.raw
-            ? 'Could not locate the scoreboard line (team1 score1 90:00 score2 team2). Please upload the full-time match summary screenshot.'
+            ? 'Could not locate the scoreboard line in any of the OCR attempts. Please upload the full-time match summary screenshot.'
             : 'Nothing readable in the top region of the image.',
           raw: result.raw || '',
+          attempts: result.attempts || [],
           fileCheck
         };
         State.ocrBusy[matchId] = false;
@@ -2114,8 +2174,16 @@ const Dashboard = {
     const opp = Number(preview.oppScore);
 
     if (!Number.isFinite(you) || !Number.isFinite(opp)){
-      UI.toast('Scores could not be read.', 'err');
+      UI.toast('Scores could not be read. Please retry with a clearer screenshot.', 'err');
       return;
+    }
+
+    if (you === 0 && opp === 0){
+      const confirmed = confirm(
+        'The OCR read your scores as 0–0. This is usually a misread.\n\n' +
+        'Do you really want to submit 0–0? Click Cancel to re-upload a clearer screenshot.'
+      );
+      if (!confirmed) return;
     }
 
     const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
@@ -2135,6 +2203,10 @@ const Dashboard = {
     explain.oppScore = opp;
     explain.myDls = myDls;
     explain.oppDls = oppDls;
+    if (preview.attempts) explain.attempts = preview.attempts.map(t => ({
+      threshold: t.threshold, ratio: t.ratio,
+      scores: t.scores, raw: (t.text || '').slice(0, 500)
+    }));
 
     let verdict = explain.verdict;
 
@@ -2164,7 +2236,8 @@ const Dashboard = {
         mm.verification_explain = {
           verdict,
           reason: explain.reason,
-          details: explain.details
+          details: explain.details,
+          attempts: explain.attempts
         };
 
         const bothSubmitted = mm.creator_submitted_at && mm.opponent_submitted_at;
@@ -2173,7 +2246,7 @@ const Dashboard = {
           const cs = Number(mm.creator_score || 0);
           const os = Number(mm.opponent_score || 0);
 
-          const check = Explanation.crossCheck(mm, {});
+          const check = Explanation.crossCheck(mm);
           if (!check.ok){
             mm.status = 'disputed';
             mm.verification_verdict = 'conflict';
@@ -2225,15 +2298,13 @@ const Dashboard = {
             reason: explain.reason,
             details: explain.details,
             issues: explain.issues,
+            attempts: explain.attempts,
             submittedAt: explain.submittedAt
           })
         });
         if (error){
           const { error: err2 } = await Supa.client.rpc('submit_match_score', {
-            p_match_id: matchId,
-            p_score:    you,
-            p_opp_score: opp,
-            p_verdict:  verdict
+            p_match_id: matchId, p_score: you, p_opp_score: opp, p_verdict: verdict
           });
           if (err2){ UI.toast(err2.message || 'Submit failed.', 'err'); return; }
         }
@@ -2248,7 +2319,7 @@ const Dashboard = {
       delete State.ocrPreview[matchId];
       await this.reload(true);
 
-      if (Supa.HAS === false){
+      if (!Supa.HAS){
         const after = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]').find(x => x.id === matchId);
         if (after && after.status === 'settled'){
           setTimeout(() => Explanation.open(matchId), 600);
@@ -2391,10 +2462,16 @@ const Dashboard = {
         <div class="h-item">
           <div class="h-ico ${cls}">${icon}</div>
           <div class="h-txt">
-            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}
-              <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Why?</button>
-            </h4>
-            ${summaryLine ? `<div class="explain-reason-line">${UI.escape(summaryLine)}</div>` : `<p>${UI.timeAgo(m.settled_at || m.created_at)}</p>`}
+            <h4>${label} · ${UI.escape(m.match_code || '')}${opp ? ' vs ' + UI.escape(opp) : ''} ${verdictHtml}</h4>
+            ${summaryLine
+              ? `<div class="explain-reason-line" style="margin-top:6px">
+                   ${UI.escape(summaryLine)}
+                   <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Explain</button>
+                 </div>`
+              : `<div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                   <p style="font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)">${UI.timeAgo(m.settled_at || m.created_at)}</p>
+                   <button class="explain-why-btn" onclick="Explanation.open('${m.id}')">Explain</button>
+                 </div>`}
           </div>
           <div class="h-amt ${amtCls}">${amt}</div>
         </div>`;
@@ -2652,9 +2729,9 @@ const Dashboard = {
 })();
 
 window.DLS = {
-  version: 'dashboard-15.0.0',
+  version: 'dashboard-16.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v15 ========');
+    console.log('======== DLS Dashboard v16 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
