@@ -580,14 +580,13 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             <span class="ico">🛡️</span>
             <div>
               <b>How screenshot verification works.</b>
-              The app reads the <b>big team names</b> on the scoreboard
+              The app reads the <b>two big team names</b> on the scoreboard
               (the ones flanking the <code>90:00</code> clock — e.g. <b>DHIBOSS</b> and <b>KRAFF</b>),
-              and the <b>two scores</b> between them. It matches each team name against the
-              <b>DLS username</b> on each player's profile, then the
-              <b>higher score wins the pot</b>.
-              Bracket clan tags like <code>[HPH]</code>, club crests, camera metadata, and GPS are
-              <b>never</b> inspected. 
-              
+              and the <b>two scores</b> between them. Bracket clan tags like
+              <code>[HPH]</code> are <b>ignored</b>, and so are crest images, camera metadata,
+              and GPS. It matches each team name against the <b>DLS username</b> on each player's
+              profile. If your score is <b>higher</b>, you take the pot. If scores are <b>equal</b>,
+              the match settles as a <b>draw</b> and both stakes refund.
             </div>
           </div>
 
@@ -843,21 +842,22 @@ const Supa = (() => {
 })();
 
 /* ============================================================================
-   SCREENSHOT READER — reads ONLY the big team names + scores from DLS scoreboard.
-   Explicitly ignores:
-     - Club crests (image recognition is not performed on them)
-     - Bracket clan tags like [HPH], [VIP], [TAG] (rejected by filter)
-     - Camera EXIF / GPS metadata (never inspected)
-   Uses only:
-     - The scoreboard line "TEAM1  SCORE1  90:00  SCORE2  TEAM2"
-     - Filename pattern + creation date (via File.lastModified)
+   SCREENSHOT READER
+   Reads ONLY:
+     - Two big team names from the scoreboard (e.g. "DHIBOSS", "KRAFF")
+     - The two scores between them
+     - Screenshot file detail (filename + lastModified)
+   NEVER inspects:
+     - Bracket clan tags like [HPH], [VIP], [TAG]
+     - Club crests (image recognition not performed)
+     - Camera EXIF or GPS
    ============================================================================ */
 const ScreenshotReader = {
 
   async readFile(file){
     log('OCR start on', file.name);
     const img = await this._loadImage(file);
-    const cropped = this._cropTopRegion(img, 0.32);
+    const cropped = this._cropTopRegion(img, 0.34);
     const dataUrl = cropped.toDataURL('image/png');
 
     if (!window.Tesseract){
@@ -904,7 +904,6 @@ const ScreenshotReader = {
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, 0, 0, w, cropH, 0, 0, canvas.width, canvas.height);
 
-    // Contrast boost: binarise brightness to help OCR read white-on-blue scoreboard
     try {
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
       const d = imgData.data;
@@ -919,44 +918,58 @@ const ScreenshotReader = {
     return canvas;
   },
 
-  /* Remove bracketed clan tags from a token, e.g. "[HPH]" or "[VIP]TAG" */
-  _stripBracket(tok){
-    return String(tok || '').replace(/\[[^\]]*\]/g,'').trim();
+  /* Strip bracket clan tags like [HPH] [VIP] [TAG] */
+  _stripBracket(s){
+    return String(s || '').replace(/\[[^\]]*\]/g, ' ').replace(/\s+/g, ' ').trim();
   },
 
-  /* Reject tokens that are obviously NOT big team names:
-       - Empty after stripping
-       - Pure numbers
-       - Starts with '[' (still bracketed)
-       - Very short (1 char)
-       - Contains lowercase mixed inside uppercase clan tag patterns */
+  /* Is this token plausibly a big team name? */
   _isPlausibleTeamName(tok){
     if (!tok) return false;
-    const t = tok.trim();
-    if (t.length < 2) return false;
+    const t = String(tok).trim();
+    if (t.length < 2 || t.length > 24) return false;
     if (/^\d+$/.test(t)) return false;
-    if (t.startsWith('[')) return false;
+    if (!/[A-Za-z]/.test(t)) return false;
     return true;
   },
 
-  /* Parse the scoreboard line: TEAM1 SCORE1 TIME SCORE2 TEAM2 */
+  /* Pull every integer from a line */
+  _nums(line){
+    const out = [];
+    const re = /\b(\d{1,3})\b/g;
+    let m;
+    while ((m = re.exec(line)) !== null) out.push({ v: parseInt(m[1],10), at: m.index });
+    return out;
+  },
+
+  /* Collapse OCR line whitespace and normalise common substitutions */
+  _clean(line){
+    return String(line || '')
+      .replace(/[|]/g, 'I')
+      .replace(/[“”]/g, '')
+      .replace(/[‘’]/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  /* Remove the clock token "90:00" / "45:00" */
+  _stripClock(line){
+    return String(line || '').replace(/\b\d{1,3}\s*[:.]\s*\d{2}\b/g, ' ');
+  },
+
+  /* Main parser — draw-safe, 6 fallbacks, ignores brackets */
   _parseScoreboard(text){
     if (!text) return null;
 
     const lines = text.split(/\r?\n/)
-      .map(l => l.trim().replace(/\s+/g,' '))
+      .map(l => this._clean(l))
       .filter(Boolean);
 
-    log('OCR lines:', lines);
+    log('OCR cleaned lines:', lines);
 
-    // Strong pattern for the scoreboard line
-    // Examples this will match:
-    //   DHIBOSS 6 90:00 5 KRAFF
-    //   DHIBOSS  6  90:00  5  KRAFF
-    const primary = /^([A-Za-z0-9_\-\.]+)\s+(\d{1,2})\s+\d{1,3}:\d{2}\s+(\d{1,2})\s+([A-Za-z0-9_\-\.]+)$/;
-
+    /* -------- PASS 1: strict scoreboard line -------- */
     for (const line of lines){
-      const m = line.match(primary);
+      const m = line.match(/^(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)$/);
       if (m){
         const left  = this._stripBracket(m[1]);
         const right = this._stripBracket(m[4]);
@@ -972,27 +985,9 @@ const ScreenshotReader = {
       }
     }
 
-    // Fallback: find any line containing a time and two numbers around it
+    /* -------- PASS 2: same line, tolerant of trailing junk -------- */
     for (const line of lines){
-      const around = line.match(/([A-Za-z0-9_\-\.]+)?\s*(\d{1,2})\s*\d{1,3}:\d{2}\s*(\d{1,2})\s*([A-Za-z0-9_\-\.]+)?/);
-      if (around && around[2] && around[3]){
-        const left  = this._stripBracket(around[1] || '');
-        const right = this._stripBracket(around[4] || '');
-        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
-          return {
-            leftTeam:   left,
-            leftScore:  parseInt(around[2],10),
-            rightScore: parseInt(around[3],10),
-            rightTeam:  right,
-            matchType:  'fallback'
-          };
-        }
-      }
-    }
-
-    // Last resort: no time token but a clean "TEAM SCORE SCORE TEAM" line
-    for (const line of lines){
-      const m = line.match(/^([A-Za-z0-9_\-\.]{3,})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z0-9_\-\.]{3,})$/);
+      const m = line.match(/(.{2,30}?)\s+(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})\s+(.{2,30}?)/);
       if (m){
         const left  = this._stripBracket(m[1]);
         const right = this._stripBracket(m[4]);
@@ -1002,27 +997,114 @@ const ScreenshotReader = {
             leftScore:  parseInt(m[2],10),
             rightScore: parseInt(m[3],10),
             rightTeam:  right,
-            matchType:  'no-time'
+            matchType:  'primary-loose'
           };
         }
       }
     }
 
+    /* -------- PASS 3: split-line scoreboard -------- */
+    const timeIdx = lines.findIndex(l => /\d{1,3}\s*[:.]\s*\d{2}/.test(l));
+    if (timeIdx >= 0){
+      const clockLine = lines[timeIdx];
+      const around = clockLine.match(/(\d{1,2})\s+\d{1,3}\s*[:.]\s*\d{2}\s+(\d{1,2})/);
+      if (around){
+        const teamLines = [];
+        for (let i = 0; i < lines.length; i++){
+          if (i === timeIdx) continue;
+          const l = lines[i];
+          if (/[A-Za-z]{2,}/.test(l) && !/\d{1,3}\s*[:.]\s*\d{2}/.test(l)){
+            teamLines.push({ idx:i, name: this._stripBracket(l) });
+          }
+        }
+        const above = [...teamLines].reverse().find(t => t.idx < timeIdx);
+        const below = teamLines.find(t => t.idx > timeIdx);
+        const left  = (above?.name) || '';
+        const right = (below?.name) || '';
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:   left,
+            leftScore:  parseInt(around[1],10),
+            rightScore: parseInt(around[2],10),
+            rightTeam:  right,
+            matchType:  'split-lines'
+          };
+        }
+      }
+    }
+
+    /* -------- PASS 4: middle-numbers scan (the draw rescuer) -------- */
+    for (let i = 0; i < lines.length; i++){
+      const line = lines[i];
+      const cleaned = this._stripClock(line);
+      const nums = this._nums(cleaned);
+      if (nums.length >= 2){
+        const small = nums.filter(n => n.v >= 0 && n.v <= 99);
+        if (small.length >= 2){
+          const names = lines.filter(l => /[A-Za-z]{2,}/.test(l) && !this._nums(this._stripClock(l)).length);
+          const leftName  = this._stripBracket(names[0] || '');
+          const rightName = this._stripBracket(names[names.length-1] || '');
+          if (this._isPlausibleTeamName(leftName) && this._isPlausibleTeamName(rightName)){
+            return {
+              leftTeam:   leftName,
+              leftScore:  small[0].v,
+              rightScore: small[1].v,
+              rightTeam:  rightName,
+              matchType:  'middle-numbers'
+            };
+          }
+        }
+      }
+    }
+
+    /* -------- PASS 5: any line with two numbers and names around them -------- */
+    for (const line of lines){
+      const cleaned = this._stripClock(line);
+      const m = cleaned.match(/([A-Za-z][A-Za-z0-9_\-\.]{1,20})\D{0,6}(\d{1,2})\D+(\d{1,2})\D{0,6}([A-Za-z][A-Za-z0-9_\-\.]{1,20})/);
+      if (m){
+        const left  = this._stripBracket(m[1]);
+        const right = this._stripBracket(m[4]);
+        if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+          return {
+            leftTeam:   left,
+            leftScore:  parseInt(m[2],10),
+            rightScore: parseInt(m[3],10),
+            rightTeam:  right,
+            matchType:  'loose'
+          };
+        }
+      }
+    }
+
+    /* -------- PASS 6: global scan for TEAM N N TEAM -------- */
+    const joined = lines.join(' ');
+    const globalM = joined.match(/([A-Za-z][A-Za-z0-9_\-\.]{2,20})\s+(\d{1,2})\s+(\d{1,2})\s+([A-Za-z][A-Za-z0-9_\-\.]{2,20})/);
+    if (globalM){
+      const left  = this._stripBracket(globalM[1]);
+      const right = this._stripBracket(globalM[4]);
+      if (this._isPlausibleTeamName(left) && this._isPlausibleTeamName(right)){
+        return {
+          leftTeam:   left,
+          leftScore:  parseInt(globalM[2],10),
+          rightScore: parseInt(globalM[3],10),
+          rightTeam:  right,
+          matchType:  'global-scan'
+        };
+      }
+    }
+
+    log('All parse passes failed. Raw text:', text);
     return null;
   },
 
   _norm(s){
-    return String(s||'')
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g,'')
-      .trim();
+    return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'').trim();
   },
 
-  /* Match the extracted team names against each player's DLS username.
-     Returns { youScore, oppScore, leftIsYou, rightIsYou } or null.
-     No crest comparison. No bracket-tag comparison. */
+  /* Resolve which score belongs to whom. Draw-safe (equal scores OK). */
   resolveSides(parsed, myDls, oppDls){
     if (!parsed) return null;
+
     const L = this._norm(parsed.leftTeam);
     const R = this._norm(parsed.rightTeam);
     const M = this._norm(myDls);
@@ -1033,21 +1115,19 @@ const ScreenshotReader = {
     const Lme = matches(L, M),  Lop = matches(L, O);
     const Rme = matches(R, M),  Rop = matches(R, O);
 
-    if (Lme && !Rme) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    if (Rme && !Lme) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-    if (Lop && !Rop) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
-    if (Rop && !Lop) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    if (Lme && Rop)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
-    if (Rme && Lop)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+    if (Lme && Rop) return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
+    if (Rme && Lop) return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+
+    if (Lme)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
+    if (Rme)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+    if (Lop)  return { leftIsYou:false, rightIsYou:true,  youScore:parsed.rightScore, oppScore:parsed.leftScore };
+    if (Rop)  return { leftIsYou:true,  rightIsYou:false, youScore:parsed.leftScore,  oppScore:parsed.rightScore };
 
     return null;
   },
 
-  /* Validate the screenshot's own file detail.
-     Not camera EXIF. Not GPS. Just:
-       - Filename must contain "screenshot" (case-insensitive)
-       - File.lastModified must be within the match window */
-  validateFileDetail(file, acceptedAtIso, windowMinutes = 30){
+  /* Filename + creation date only. No EXIF. No GPS. */
+  validateFileDetail(file, acceptedAtIso, windowMinutes = 60){
     const fname = String(file.name || '').toLowerCase();
     if (!fname.includes('screenshot') && !fname.startsWith('img_') && !/^\d{10,}\.png$/.test(fname)){
       return { ok:false, reason:'not_a_screenshot' };
@@ -1056,7 +1136,6 @@ const ScreenshotReader = {
       const accepted = new Date(acceptedAtIso).getTime();
       const modified = Number(file.lastModified || 0);
       const diffMin = Math.abs(modified - accepted) / 60000;
-      // Allow a wide default window — 30 min either side of accept
       if (diffMin > windowMinutes){
         return { ok:false, reason:'date_mismatch', diffMin: Math.round(diffMin) };
       }
@@ -1092,21 +1171,28 @@ const VERDICT_MAP = {
   matched:                  { cls:'verified',      label:'✓ Verified' },
   clean:                    { cls:'verified',      label:'✓ Verified' },
   score_verified:           { cls:'verified',      label:'✓ Score verified' },
+
+  draw_score:               { cls:'both-mismatch', label:'= Draw — refunded' },
+
   name_mismatch:            { cls:'name-mismatch', label:'✕ No DLS name' },
   screenshot_missing_name:  { cls:'name-mismatch', label:'✕ No DLS name' },
   dls_name_missing:         { cls:'name-mismatch', label:'✕ No DLS name' },
   score_name_not_found:     { cls:'name-mismatch', label:'✕ Name not on scoreboard' },
+
   not_a_screenshot:         { cls:'metadata-bad',  label:'✕ Not a screenshot' },
   screenshot_bad_detail:    { cls:'metadata-bad',  label:'✕ Bad image detail' },
   date_mismatch:            { cls:'metadata-warn', label:'✕ Date mismatch' },
   screenshot_date_mismatch: { cls:'metadata-warn', label:'✕ Wrong date' },
+
   cannot_parse_scoreboard:  { cls:'metadata-bad',  label:'✕ Cannot read score' },
   low_score:                { cls:'low-score',     label:'↓ Low score' },
+
   both_mismatch:            { cls:'both-mismatch', label:'≈ Both mismatched' },
   both_name_missing:        { cls:'both-mismatch', label:'≈ No DLS names' },
   both_not_screenshot:      { cls:'both-mismatch', label:'≈ Neither is a screenshot' },
   both_date_mismatch:       { cls:'both-mismatch', label:'≈ Both dates wrong' },
   both_cannot_parse:        { cls:'both-mismatch', label:'≈ Neither score readable' },
+
   conflict:                 { cls:'arbitration',   label:'⚖ In arbitration' },
   metadata_dispute:         { cls:'arbitration',   label:'⚖ Under review' },
   arbitration:              { cls:'arbitration',   label:'⚖ Arbitration' },
@@ -1117,21 +1203,28 @@ const VERDICT_RULES = {
   matched:                  'Both DLS usernames appeared on their own scoreboards, the scores were read, and the higher score won the pot.',
   clean:                    'Both screenshots passed every verification check.',
   score_verified:           'Both scoreboards were read and matched to each player\'s DLS username — the higher score won.',
+
+  draw_score:               'Both screenshots showed the same score — the match settled as a draw and both stakes were refunded.',
+
   name_mismatch:            'Uploader\'s DLS username was not found among the scoreboard team names — opponent awarded the pot.',
   screenshot_missing_name:  'No DLS username matched either team name on the scoreboard — opponent awarded the pot.',
   dls_name_missing:         'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
   score_name_not_found:     'The scoreboard team names could not be matched to either player\'s DLS username — opponent awarded the pot.',
+
   not_a_screenshot:         'The uploaded file\'s name does not indicate it is a screenshot — opponent awarded the pot.',
   screenshot_bad_detail:    'The image detail check failed — opponent awarded the pot.',
   date_mismatch:            'The screenshot\'s creation date did not match the window when the challenge was accepted — opponent awarded the pot.',
   screenshot_date_mismatch: 'The screenshot\'s date fell outside the accepted-match window — opponent awarded the pot.',
+
   cannot_parse_scoreboard:  'The scoreboard could not be read from the screenshot — opponent awarded the pot.',
   low_score:                'Uploader\'s screenshot showed a lower score than the opponent\'s — opponent awarded the pot.',
+
   both_mismatch:            'Neither side\'s DLS name, screenshot detail, date, or score passed verification — settled as a draw.',
   both_name_missing:        'Neither screenshot showed a recognizable DLS username — settled as a draw.',
   both_not_screenshot:      'Neither uploaded file checked out as a valid screenshot — settled as a draw.',
   both_date_mismatch:       'Neither screenshot\'s date fell within the accepted-match window — settled as a draw.',
   both_cannot_parse:        'Neither screenshot\'s scoreboard could be read — settled as a draw.',
+
   conflict:                 'Screenshots contradicted each other and are under human review.',
   metadata_dispute:         'Suspicious image detail detected — under review.',
   arbitration:              'Under human review.'
@@ -1631,14 +1724,15 @@ const Dashboard = {
             <div class="txt">
               <b>Score check.</b> The app reads the two scores flanking the
               <code>90:00</code> clock. The
-              <span class="hl">higher score wins the pot</span>.
+              <span class="hl">higher score wins the pot</span>. <b>Equal scores</b> settle the
+              match as a <span class="hl-draw">draw</span> and refund both stakes.
             </div>
           </div>
           <div class="verify-step">
             <span class="dot">5</span>
             <div class="txt">
-              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name, screenshot-detail, date, or
-              score-read checks, the match settles as a
+              <b>Double fail.</b> If <b>both</b> sides fail the DLS-name, screenshot-detail, or
+              date checks, the match settles as a
               <span class="hl-draw">draw</span> and both stakes are refunded.
             </div>
           </div>
@@ -1654,7 +1748,6 @@ const Dashboard = {
       </div>`;
   },
 
-  /* ---------- Upload zone for awaiting_submission matches ---------- */
   uploadZoneHtml(m){
     const busy = !!State.ocrBusy[m.id];
     const preview = State.ocrPreview[m.id];
@@ -1693,9 +1786,7 @@ const Dashboard = {
 
     const you = preview.youScore;
     const opp = preview.oppScore;
-    const outcome = you > opp ? 'You win' : you < opp ? 'Opponent wins' : 'Draw';
-    const yourWin = you > opp;
-    const oppWin  = opp > you;
+    const outcome = you > opp ? 'You win' : you < opp ? 'Opponent wins' : 'Draw — both refunded';
 
     return `
       <div class="ocr-result">
@@ -1812,9 +1903,18 @@ const Dashboard = {
     if (!m){ UI.toast('Match not found.', 'err'); return; }
 
     const isCreator = m.creator_id === State.session?.user?.id;
-    const uid = State.session?.user?.id;
-    const you = preview.youScore;
-    const opp = preview.oppScore;
+    const you = Number(preview.youScore);
+    const opp = Number(preview.oppScore);
+
+    if (!Number.isFinite(you) || !Number.isFinite(opp)){
+      UI.toast('Scores could not be read.', 'err');
+      return;
+    }
+
+    // Determine verdict up front
+    let verdict = 'score_verified';
+    if (you === opp) verdict = 'draw_score';
+    else if (you < opp) verdict = 'low_score';
 
     try {
       if (!Supa.HAS){
@@ -1823,40 +1923,69 @@ const Dashboard = {
         if (idx < 0){ UI.toast('Match not found.', 'err'); return; }
 
         const mm = matches[idx];
+        const nowIso = new Date().toISOString();
+
         if (isCreator){
           mm.creator_score = you;
-          mm.creator_submitted_at = new Date().toISOString();
+          mm.opponent_score_reported = opp;
+          mm.creator_submitted_at = nowIso;
         } else {
           mm.opponent_score = you;
-          mm.opponent_submitted_at = new Date().toISOString();
+          mm.creator_score_reported = opp;
+          mm.opponent_submitted_at = nowIso;
         }
-        mm.verification_verdict = 'score_verified';
-        mm.last_submitted_score = you;
-        mm.last_submitted_opp_score = opp;
 
-        // If both sides have submitted, settle immediately
-        if (mm.creator_submitted_at && mm.opponent_submitted_at){
+        const bothSubmitted = mm.creator_submitted_at && mm.opponent_submitted_at;
+
+        if (bothSubmitted){
+          const cs = Number(mm.creator_score || 0);
+          const os = Number(mm.opponent_score || 0);
+
           mm.status = 'settled';
-          mm.settled_at = new Date().toISOString();
-          if (mm.creator_score > mm.opponent_score) mm.winner_id = mm.creator_id;
-          else if (mm.opponent_score > mm.creator_score) mm.winner_id = mm.opponent_id;
-          else mm.winner_id = null; // draw
+          mm.settled_at = nowIso;
+
+          if (cs > os){
+            mm.winner_id = mm.creator_id;
+            mm.verification_verdict = 'score_verified';
+          } else if (os > cs){
+            mm.winner_id = mm.opponent_id;
+            mm.verification_verdict = 'score_verified';
+          } else {
+            // DRAW — refund both stakes
+            mm.winner_id = null;
+            mm.verification_verdict = 'draw_score';
+
+            const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+            const stake = Number(mm.stake_amount || 0);
+            [mm.creator_id, mm.opponent_id].forEach(pid => {
+              const u = users.find(x => x.id === pid);
+              if (!u) return;
+              u.balance   = Number(u.balance || 0) + stake;
+              u.in_escrow = Math.max(0, Number(u.in_escrow || 0) - stake);
+            });
+            localStorage.setItem('dls_demo_users', JSON.stringify(users));
+          }
         } else {
           mm.status = 'verifying';
+          mm.verification_verdict = 'pending';
         }
 
         localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
       } else {
         const { error } = await Supa.client.rpc('submit_match_score', {
           p_match_id: matchId,
-          p_score: you,
+          p_score:    you,
           p_opp_score: opp,
-          p_verdict: 'score_verified'
+          p_verdict:  verdict
         });
         if (error){ UI.toast(error.message || 'Submit failed.', 'err'); return; }
       }
 
-      UI.toast(`Submitted ${you}–${opp}. Verifying…`, 'ok');
+      const msg = you === opp
+        ? `Draw ${you}–${opp}. Both stakes refunded.`
+        : `Submitted ${you}–${opp}. Verifying…`;
+      UI.toast(msg, 'ok');
+
       delete State.ocrPreview[matchId];
       await this.reload(true);
     } catch(e){
@@ -2260,9 +2389,9 @@ const Dashboard = {
    DEBUG
    ============================================================================ */
 window.DLS = {
-  version: 'dashboard-12.0.0',
+  version: 'dashboard-13.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v12 ========');
+    console.log('======== DLS Dashboard v13 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
