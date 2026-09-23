@@ -38,8 +38,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
 .wrap{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 .hidden{display:none !important}
-
-/* NAV */
 .nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
 .nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
@@ -53,8 +51,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .menu-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:1.1rem;transition:.15s;flex-shrink:0}
 .menu-btn:hover{background:var(--surface-2)}
 @media(min-width:1024px){.menu-btn{display:none}}
-
-/* DRAWER */
 .drawer-back{position:fixed;inset:0;background:rgba(4,8,14,.7);backdrop-filter:blur(6px);z-index:200;display:none}
 .drawer-back.show{display:block}
 .drawer{position:fixed;top:0;right:0;bottom:0;width:min(320px,86vw);background:linear-gradient(180deg,var(--surface),var(--bg-2));border-left:1px solid var(--border);z-index:201;padding:22px;overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
@@ -70,16 +66,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .drawer-link.active{background:rgba(0,217,126,.08);color:var(--primary);font-weight:800}
 .drawer-link .dico{width:24px;text-align:center;font-size:1rem}
 .drawer-link .d-badge{margin-left:auto;font-family:var(--ff-mono);font-size:.66rem;font-weight:800;padding:2px 8px;border-radius:var(--radius-full);background:var(--danger);color:#fff}
-
-/* NAV USER */
 .nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0}
 .nav-user:hover{background:var(--surface-2)}
 .nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
 .nav-user .name{font-size:.82rem;font-weight:700}
 .nav-user .nav-badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;border-radius:9px;background:var(--danger);color:#fff;font-size:.6rem;font-weight:900;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
 @media(max-width:520px){.nav-user .name{display:none}}
-
-/* DASHBOARD */
 .dash{padding:36px 0 80px}
 .hero{display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
 .hero-id{display:flex;align-items:center;gap:18px}
@@ -96,8 +88,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .badge-gold{background:rgba(255,215,0,.14);color:var(--gold);border:1px solid rgba(255,215,0,.3)}
 .badge i{width:6px;height:6px;border-radius:50%;background:currentColor}
 .hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-
-/* ALERTS */
 .alerts{display:grid;gap:10px;margin-bottom:22px}
 .alert{display:flex;gap:14px;align-items:center;padding:14px 18px;border-radius:var(--radius);transition:.15s;flex-wrap:wrap;cursor:pointer;text-decoration:none;color:inherit}
 .alert:hover{transform:translateX(2px)}
@@ -114,8 +104,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .alert.success .txt h4{color:#6ee7b0}
 .alert .txt p{font-size:.78rem;color:var(--text-2);line-height:1.5}
 .alert .arrow{font-size:1.1rem;color:var(--muted);flex-shrink:0}
-
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,background .18s,opacity .18s,border-color .18s;white-space:nowrap;user-select:none;text-decoration:none}
 .btn:active{transform:translateY(1px) scale(.99)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
@@ -132,15 +120,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .btn-block{width:100%}
 .btn-sm{padding:8px 15px;font-size:.82rem}
 .btn-xs{padding:6px 12px;font-size:.76rem}
-
-/* WALLET TOGGLE */
 .wallet-toggle{display:inline-flex;gap:4px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);padding:4px;margin-bottom:14px}
 .wallet-toggle button{padding:9px 18px;border-radius:var(--radius-full);font-size:.82rem;font-weight:800;color:var(--muted);transition:.15s;cursor:pointer}
 .wallet-toggle button:hover{color:var(--text-2)}
 .wallet-toggle button.active{background:var(--surface-3);color:var(--text);box-shadow:var(--shadow-sm)}
 .wallet-toggle button.active.demo{background:linear-gradient(180deg,rgba(47,128,237,.16),rgba(47,128,237,.08));color:#7cb4ff}
-
-/* STATS */
 .stat-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:22px}
 @media(min-width:820px){.stat-grid{grid-template-columns:repeat(4,1fr)}}
 .stat{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .18s,transform .18s;position:relative;overflow:hidden}
@@ -157,8 +141,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .stat .v.blue{color:#7cb4ff}
 .stat .v.mono-sm{font-size:1.35rem}
 .stat .sub{font-size:.74rem;color:var(--muted-2);margin-top:6px}
-
-/* ACTIONS GRID */
 .actions-grid{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin-bottom:26px}
 @media(min-width:720px){.actions-grid{grid-template-columns:repeat(4,1fr)}}
 .action-tile-big{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:20px 18px;border-radius:var(--radius-lg);border:1px solid var(--border);background:linear-gradient(180deg,var(--surface-2),var(--bg-2));cursor:pointer;transition:.18s;overflow:hidden;min-height:150px;text-decoration:none;color:inherit}
@@ -176,8 +158,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .action-tile-big h3{font-size:1rem;font-weight:900;letter-spacing:-.02em;position:relative;z-index:1;line-height:1.25}
 .action-tile-big p{font-size:.74rem;color:var(--muted);line-height:1.5;position:relative;z-index:1}
 .action-tile-big .arrow{margin-top:auto;font-size:.76rem;font-weight:800;color:var(--muted-2);position:relative;z-index:1;display:flex;align-items:center;gap:5px}
-
-/* LAYOUT */
 .grid-2{display:grid;gap:18px;grid-template-columns:1fr}
 @media(min-width:900px){.grid-2{grid-template-columns:1.35fr 1fr}}
 .panel{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
@@ -188,8 +168,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .panel-head .link{font-size:.78rem;font-weight:700;color:var(--primary)}
 .panel-head .link:hover{text-decoration:underline}
 .panel-head .count-pill{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3);padding:2px 9px;border-radius:var(--radius-full)}
-
-/* ACTIVE MATCHES */
 .match-list{display:grid;gap:10px}
 .match-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);transition:border-color .15s,transform .15s}
 .match-item:hover{border-color:var(--border-2);transform:translateY(-1px)}
@@ -205,8 +183,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .match-side{display:flex;gap:8px;align-items:center;flex-direction:column;text-align:right}
 .match-pot{font-family:var(--ff-mono);font-weight:900;font-size:1rem;color:var(--primary)}
 @media(max-width:640px){.match-item{grid-template-columns:1fr}.match-side{align-items:flex-start;text-align:left}}
-
-/* TIMER */
 .match-timer{margin-top:10px}
 .match-timer-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:10px}
 .match-timer-head .lbl{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -218,8 +194,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .match-timer-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width 1s linear}
 .match-timer.warn .match-timer-bar i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
 .match-timer.danger .match-timer-bar i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
-
-/* VERIFICATION PANEL */
 .verify-panel{margin-top:12px;padding:14px 16px;background:rgba(47,128,237,.05);border:1px solid rgba(47,128,237,.25);border-radius:var(--radius-sm)}
 .verify-title{font-size:.66rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#7cb4ff;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .verify-steps{display:grid;gap:8px}
@@ -231,16 +205,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verify-step .txt .hl-loss{color:var(--danger);font-weight:800}
 .verify-step .txt .hl-draw{color:var(--warn);font-weight:800}
 .verify-step .txt code{font-family:var(--ff-mono);font-size:.72em;background:var(--bg-2);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:#7cb4ff}
-
-/* UPLOAD ZONE */
 .upload-zone{margin-top:12px;padding:16px;border-radius:var(--radius-sm);background:rgba(255,176,32,.06);border:1px dashed rgba(255,176,32,.45);text-align:center;cursor:pointer;transition:.15s}
 .upload-zone:hover{background:rgba(255,176,32,.1);border-color:rgba(255,176,32,.7)}
 .upload-zone .uz-ico{font-size:1.6rem;margin-bottom:6px;display:block}
 .upload-zone .uz-title{font-size:.86rem;font-weight:800;color:#ffd08a;margin-bottom:4px}
 .upload-zone .uz-sub{font-size:.72rem;color:var(--muted);line-height:1.4}
 .upload-zone input[type=file]{display:none}
-
-/* OCR RESULT */
 .ocr-result{margin-top:12px;padding:14px 16px;border-radius:var(--radius-sm);background:rgba(0,217,126,.06);border:1px solid rgba(0,217,126,.3)}
 .ocr-result.error{background:rgba(255,77,94,.06);border-color:rgba(255,77,94,.3)}
 .ocr-result.warn{background:rgba(255,176,32,.06);border-color:rgba(255,176,32,.3)}
@@ -258,16 +228,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .ocr-result .or-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .ocr-result .or-raw{font-family:var(--ff-mono);font-size:.68rem;color:var(--muted-2);background:var(--bg);border:1px solid var(--border);padding:8px 10px;border-radius:6px;margin-top:8px;max-height:80px;overflow:auto;white-space:pre-wrap}
 .ocr-spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-
-/* RULES STRIP */
 .rules-strip{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(47,128,237,.06);border:1px solid rgba(47,128,237,.22);border-radius:var(--radius);margin-bottom:16px;font-size:.82rem;line-height:1.55;color:#9cc4ff}
 .rules-strip .ico{font-size:1.05rem;line-height:1.3;flex-shrink:0}
 .rules-strip b{color:#bfd9ff;font-weight:800}
 .rules-strip .em{color:#ffd08a;font-weight:800}
 .rules-strip .em-bad{color:#ff97a4;font-weight:800}
 .rules-strip code{font-family:var(--ff-mono);font-size:.82em;background:rgba(7,13,22,.5);border:1px solid rgba(47,128,237,.35);padding:1px 6px;border-radius:4px;color:#bfd9ff}
-
-/* VERDICT CHIPS */
 .verdict{display:inline-flex;align-items:center;gap:5px;font-size:.6rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full);margin-left:8px}
 .verdict.verified{background:rgba(0,217,126,.14);color:var(--primary);border:1px solid rgba(0,217,126,.3)}
 .verdict.name-mismatch{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
@@ -276,8 +242,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .verdict.arbitration{background:rgba(139,92,246,.14);color:#c4b5fd;border:1px solid rgba(139,92,246,.3)}
 .verdict.metadata-bad{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
 .verdict.metadata-warn{background:rgba(255,107,53,.14);color:var(--fire);border:1px solid rgba(255,107,53,.3)}
-
-/* EXPLAIN MODAL */
 .explain-back{position:fixed;inset:0;background:rgba(4,8,14,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:800;display:none;align-items:center;justify-content:center;padding:20px}
 .explain-back.show{display:flex;animation:fadeIn .18s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -293,6 +257,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .explain-reason .hl-win{color:var(--primary);font-weight:800}
 .explain-reason .hl-loss{color:var(--danger);font-weight:800}
 .explain-reason .hl-draw{color:var(--warn);font-weight:800}
+.explain-reason code{font-family:var(--ff-mono);font-size:.82em;background:var(--bg);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:#7cb4ff}
 .explain-section{margin-bottom:16px}
 .explain-section h4{font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);margin-bottom:8px}
 .explain-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem}
@@ -307,8 +272,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .explain-why-btn:hover{background:rgba(47,128,237,.28);color:#bfd9ff}
 .explain-reason-line{font-size:.74rem;color:var(--muted);margin-top:4px;line-height:1.5;padding-left:52px}
 .explain-reason-line b{color:var(--text-2);font-weight:700}
-
-/* HISTORY */
 .history-list{display:grid;gap:0}
 .h-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
 .h-item:last-child{border-bottom:none}
@@ -326,8 +289,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .h-amt.pos{color:var(--primary)}
 .h-amt.neg{color:var(--danger)}
 .h-amt.neu{color:var(--muted)}
-
-/* TOURNAMENT MINI */
 .tour-mini{padding:14px 16px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);margin-bottom:10px;transition:.15s;cursor:pointer;text-decoration:none;color:inherit;display:block}
 .tour-mini:last-child{margin-bottom:0}
 .tour-mini:hover{border-color:var(--gold);transform:translateX(2px)}
@@ -338,16 +299,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .tour-mini .tag.live{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
 .tour-mini .meta{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-family:var(--ff-mono)}
 .tour-mini .prize{color:var(--gold);font-weight:900}
-
-/* ACHIEVEMENTS */
 .ach-preview{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .ach-mini{flex:1;min-width:80px;padding:14px 12px;border-radius:var(--radius);background:var(--surface-2);border:1px solid var(--border);text-align:center;transition:.15s;cursor:pointer;text-decoration:none;color:inherit}
 .ach-mini:hover{border-color:var(--gold);transform:translateY(-2px)}
 .ach-mini .ico{font-size:1.5rem;margin-bottom:6px;display:block}
 .ach-mini .n{font-size:.7rem;font-weight:800;line-height:1.3;margin-bottom:3px}
 .ach-mini .s{font-size:.62rem;color:var(--muted);font-family:var(--ff-mono)}
-
-/* NOTIFICATIONS */
 .notif-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s;text-decoration:none;color:inherit}
 .notif-row:last-child{border-bottom:none}
 .notif-row:hover{padding-left:6px}
@@ -358,22 +315,16 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .notif-row .n-body h4{font-size:.84rem;font-weight:800;margin-bottom:3px;line-height:1.4}
 .notif-row .n-body p{font-size:.74rem;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .notif-row .n-time{font-size:.68rem;color:var(--muted-2);font-family:var(--ff-mono);flex-shrink:0;margin-left:8px}
-
-/* EMPTY */
 .empty{padding:30px 20px;text-align:center;background:var(--surface-2);border:1px dashed var(--border-2);border-radius:var(--radius)}
 .empty .ico-big{font-size:1.9rem;margin-bottom:10px;opacity:.85}
 .empty h3{font-size:.95rem;font-weight:800;margin-bottom:6px}
 .empty p{font-size:.82rem;color:var(--muted);line-height:1.5;max-width:360px;margin:0 auto 14px}
-
-/* ACCOUNT */
 .detail-list{display:grid;gap:0}
 .detail-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;border-bottom:1px solid var(--border)}
 .detail-row:last-child{border-bottom:none}
 .detail-row .label{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .detail-row .value{font-size:.84rem;color:var(--text-2);font-family:var(--ff-mono);max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
 .detail-row .value.text{font-family:var(--ff)}
-
-/* TRUST */
 .trust-wrap{margin-top:16px}
 .trust-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .trust-label{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -385,8 +336,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .trust-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#5ce0ff);transition:width .4s ease}
 .trust-bar.mid i{background:linear-gradient(90deg,var(--warn),#ffd08a)}
 .trust-bar.bad i{background:linear-gradient(90deg,var(--danger),#ff97a4)}
-
-/* CALL-OUTS */
 .callout{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius);font-size:.82rem;line-height:1.5;margin-top:16px}
 .callout.warn{background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.24);color:#ffd08a}
 .callout.info{background:rgba(47,128,237,.07);border:1px solid rgba(47,128,237,.24);color:#9cc4ff}
@@ -395,8 +344,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .callout .ico{font-size:1.05rem}
 .callout .actions{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
 .callout button{color:inherit;font-weight:800;font-size:.78rem;text-decoration:underline}
-
-/* QUICK LINKS */
 .links-section{margin-top:32px}
 .section-title{font-size:1.1rem;font-weight:900;letter-spacing:-.02em;margin-bottom:16px;display:flex;align-items:center;gap:12px}
 .section-title .line{flex:1;height:1px;background:var(--border)}
@@ -416,19 +363,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .link-tile .l-txt h4{font-size:.86rem;font-weight:800;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link-tile .l-txt p{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .link-tile .arrow{color:var(--muted-2);font-size:.9rem;flex-shrink:0}
-
-/* LOADING */
 .loading{padding:56px 22px;text-align:center;color:var(--muted);font-size:.9rem}
 .spin{width:20px;height:20px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* FOOTER */
 footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
 .foot-links{display:flex;flex-wrap:wrap;gap:20px}
 .foot-links a:hover{color:var(--text)}
-
-/* TOASTS */
 #toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:900;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
 .toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
 .toast.out{animation:toastOut .22s forwards}
@@ -590,9 +531,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
     </div>
 
     <div class="grid-2">
-
       <section>
-
         <div class="panel" id="invitesPanel" style="display:none">
           <div class="panel-head">
             <h2><span class="ico">📨</span> Invitations</h2>
@@ -615,10 +554,13 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
               (the ones flanking the <code>90:00</code> clock — e.g. <b>DHIBOSS</b> and <b>KRAFF</b>),
               and the <b>two scores</b> between them. Bracket clan tags like
               <code>[HPH]</code> are <b>ignored</b>, and so are crest images, camera metadata,
-              and GPS. It matches each team name against the <b>DLS username</b> on each player's
-              profile. If your score is <b>higher</b>, you take the pot. If scores are <b>equal</b>,
-              the match settles as a <b>draw</b> and both stakes refund.
-              Every settled match has a <b>Why?</b> button that shows exactly what was read.
+              and GPS. Screenshots must be named
+              <code>Screenshot_YYYYMMDD-HHMMSS.jpg</code>
+              (e.g. <code>Screenshot_20260923-100755.jpg</code>) — the datetime embedded in the
+              filename must fall within <b>60 minutes</b> of the match window. If your score is
+              <b>higher</b>, you take the pot. If scores are <b>equal</b>, the match settles as a
+              <b>draw</b> and both stakes refund. Every settled match has a <b>Why?</b> button
+              that shows exactly what was read.
             </div>
           </div>
 
@@ -648,11 +590,9 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
           </div>
           <div id="txList" class="history-list"></div>
         </div>
-
       </section>
 
       <section>
-
         <div class="panel">
           <div class="panel-head">
             <h2><span class="ico">🔔</span> Notifications</h2>
@@ -744,7 +684,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
             <div class="detail-row"><span class="label">Pending withdrawals</span><span class="value" id="wPendWd">0</span></div>
           </div>
         </div>
-
       </section>
     </div>
 
@@ -784,7 +723,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
   </div>
 </main>
 
-<!-- EXPLANATION MODAL -->
 <div class="explain-back" id="explainBack" onclick="if(event.target===this)Explanation.close()">
   <div class="explain-modal" id="explainModal" role="dialog" aria-modal="true"></div>
 </div>
@@ -795,9 +733,6 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 
 <script>
-/* ============================================================================
-   CONFIG
-   ============================================================================ */
 const CONFIG = {
   SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
@@ -814,9 +749,6 @@ const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
 const warn = (...a) => console.warn('[DLS]', ...a);
 const err  = (...a) => console.error('[DLS]', ...a);
 
-/* ============================================================================
-   UI HELPERS
-   ============================================================================ */
 const UI = {
   toast(msg, type='info', ms=4200){
     const el = document.createElement('div');
@@ -855,12 +787,15 @@ const UI = {
     const s = secs % 60;
     if (m >= 1) return { text: `${m}:${String(s).padStart(2,'0')}`, secs };
     return { text: `${s}s`, secs };
+  },
+  fmtDateTime(iso){
+    if (!iso) return '—';
+    try {
+      return new Date(iso).toLocaleString('en-NG',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    } catch { return '—'; }
   }
 };
 
-/* ============================================================================
-   SUPABASE
-   ============================================================================ */
 const Supa = (() => {
   const HAS = Boolean(
     CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
@@ -1070,26 +1005,102 @@ const ScreenshotReader = {
     return null;
   },
 
+  /* ==========================================================================
+     STRICT FILENAME DATETIME VALIDATION
+     Android native format: Screenshot_YYYYMMDD-HHMMSS.<ext>
+     Example: Screenshot_20260923-100755.jpg  →  2026-09-23 10:07:55
+     The datetime from the FILENAME is what we compare to the match-accept
+     window — NOT file.lastModified (unreliable after file transfers).
+     Falls back to file.lastModified for iOS IMG_xxxx and unnamed screenshots.
+     ========================================================================== */
   validateFileDetail(file, acceptedAtIso, windowMinutes = 60){
-    const fname = String(file.name || '').toLowerCase();
-    if (!fname.includes('screenshot') && !fname.startsWith('img_') && !/^\d{10,}\.png$/.test(fname)){
-      return { ok:false, reason:'not_a_screenshot' };
-    }
-    if (acceptedAtIso){
-      const accepted = new Date(acceptedAtIso).getTime();
-      const modified = Number(file.lastModified || 0);
-      const diffMin = Math.abs(modified - accepted) / 60000;
-      if (diffMin > windowMinutes){
-        return { ok:false, reason:'date_mismatch', diffMin: Math.round(diffMin) };
+    const fname = String(file.name || '').trim();
+    const lower = fname.toLowerCase();
+    const isImageExt = /\.(png|jpe?g|webp|heic)$/i.test(lower);
+
+    // Android: Screenshot_20260923-100755.jpg
+    const androidRe = /^screenshot[_\-]?(\d{4})(\d{2})(\d{2})[_\-]?(\d{2})(\d{2})(\d{2})/i;
+    // iOS: IMG_1234.PNG
+    const iosRe = /^img[_\-\s]?\d+/i;
+
+    let extractedDate = null;
+    let extractionMethod = null;
+
+    const am = lower.match(androidRe);
+    if (am && isImageExt){
+      const [, yyyy, mm, dd, HH, MM, SS] = am;
+      extractedDate = new Date(
+        Number(yyyy),
+        Number(mm) - 1,
+        Number(dd),
+        Number(HH),
+        Number(MM),
+        Number(SS)
+      );
+      if (isNaN(extractedDate.getTime())){
+        return {
+          ok:false,
+          reason:'not_a_screenshot',
+          filename: fname,
+          note:'The date embedded in the filename could not be parsed as a valid datetime.'
+        };
       }
+      extractionMethod = 'android-filename-datetime';
+    } else if (iosRe.test(lower) && isImageExt){
+      extractedDate = new Date(Number(file.lastModified || 0));
+      extractionMethod = 'ios-mtime';
+    } else if (lower.includes('screenshot') && isImageExt){
+      extractedDate = new Date(Number(file.lastModified || 0));
+      extractionMethod = 'name-only-mtime';
+    } else {
+      return {
+        ok:false,
+        reason:'not_a_screenshot',
+        filename: fname,
+        note:'Filename must look like "Screenshot_YYYYMMDD-HHMMSS.jpg" (Android) or "IMG_xxxx.png" (iOS).'
+      };
     }
-    return { ok:true };
+
+    // No match accepted time — accept whatever we found
+    if (!acceptedAtIso){
+      return {
+        ok:true,
+        extractionMethod,
+        extractedDate: extractedDate.toISOString(),
+        filename: fname
+      };
+    }
+
+    const accepted = new Date(acceptedAtIso).getTime();
+    const shotTime = extractedDate.getTime();
+    const diffMin  = Math.abs(shotTime - accepted) / 60000;
+
+    if (diffMin > windowMinutes){
+      return {
+        ok:false,
+        reason:'date_mismatch',
+        diffMin: Math.round(diffMin),
+        extractionMethod,
+        extractedDate: extractedDate.toISOString(),
+        acceptedAt:    new Date(accepted).toISOString(),
+        filename:      fname,
+        note:          `Screenshot was taken ${Math.round(diffMin)} minutes from the match window (max ${windowMinutes} min).`
+      };
+    }
+
+    return {
+      ok:true,
+      extractionMethod,
+      extractedDate: extractedDate.toISOString(),
+      acceptedAt:    new Date(accepted).toISOString(),
+      diffMin:       Math.round(diffMin),
+      filename:      fname
+    };
   }
 };
 
 /* ============================================================================
    EXPLANATION SYSTEM
-   Builds and stores a plain-English reason for every match decision.
    ============================================================================ */
 const Explanation = {
   STORAGE_KEY: 'dls_match_explanations',
@@ -1106,28 +1117,58 @@ const Explanation = {
     return this.loadAll()[matchId] || null;
   },
 
-  /* Build a full explanation for a submission */
   build(ctx){
     const {
       parsed, sides, fileCheck, myDls, oppDls,
       youScore, oppScore, confidence,
-      isCreator, winnerId, opponentName, yourName
+      isCreator
     } = ctx;
 
     const details = [];
     const issues  = [];
 
-    // Always record what we read
-    if (parsed){
-      details.push({ lbl:'Left team name (read)',  val: parsed.leftTeam  || '—' });
-      details.push({ lbl:'Left score (read)',      val: parsed.leftScore });
-      details.push({ lbl:'Right score (read)',     val: parsed.rightScore });
-      details.push({ lbl:'Right team name (read)', val: parsed.rightTeam || '—' });
-      details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
-      details.push({ lbl:'Parse method',           val: parsed.matchType || 'primary' });
-    } else {
-      details.push({ lbl:'Screenshot',             val:'No scoreboard pattern detected' });
-      details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
+    /* ---------- FILE DETAIL CHECK (before OCR) ---------- */
+    if (fileCheck){
+      if (fileCheck.filename){
+        details.push({ lbl:'File name', val: fileCheck.filename });
+      }
+      if (fileCheck.extractionMethod){
+        details.push({ lbl:'Date source', val: fileCheck.extractionMethod });
+      }
+      if (fileCheck.extractedDate){
+        details.push({ lbl:'Screenshot taken', val: UI.fmtDateTime(fileCheck.extractedDate) });
+      }
+      if (fileCheck.acceptedAt){
+        details.push({ lbl:'Match accepted at', val: UI.fmtDateTime(fileCheck.acceptedAt) });
+      }
+      if (typeof fileCheck.diffMin === 'number'){
+        details.push({ lbl:'Difference', val: fileCheck.diffMin + ' minutes' });
+      }
+
+      if (!fileCheck.ok){
+        if (fileCheck.reason === 'not_a_screenshot'){
+          issues.push(fileCheck.note || 'The uploaded file does not look like a screenshot.');
+          return {
+            verdict:'not_a_screenshot',
+            reason:`<b>File detail check failed.</b> ${UI.escape(fileCheck.note || 'The uploaded file name does not match the screenshot pattern.')}<br/><br/>Valid examples: <code>Screenshot_20260923-100755.jpg</code> (Android) or <code>IMG_1234.png</code> (iOS).`,
+            details, issues
+          };
+        }
+        if (fileCheck.reason === 'date_mismatch'){
+          issues.push(`Screenshot was taken ${fileCheck.diffMin} minutes from the match window.`);
+          return {
+            verdict:'date_mismatch',
+            reason:`<b>Date check failed.</b> The datetime embedded in the filename (<code>${UI.escape(UI.fmtDateTime(fileCheck.extractedDate))}</code>) is <b class="hl-loss">${fileCheck.diffMin} minutes</b> away from when the challenge was accepted (<code>${UI.escape(UI.fmtDateTime(fileCheck.acceptedAt))}</code>). Screenshots must be taken within <b>60 minutes</b> of the match window.`,
+            details, issues
+          };
+        }
+      }
+    }
+
+    /* ---------- OCR PARSE CHECK ---------- */
+    if (!parsed){
+      details.push({ lbl:'Screenshot', val:'No scoreboard pattern detected' });
+      details.push({ lbl:'OCR confidence', val: Math.round(confidence || 0) + '%' });
       return {
         verdict:'cannot_parse_scoreboard',
         reason:'The scoreboard could not be read from the screenshot. The app looks for a line in the top 34% of the image shaped like "TEAM1 score1 90:00 score2 TEAM2". Nothing matching was found.',
@@ -1135,33 +1176,20 @@ const Explanation = {
       };
     }
 
-    // File detail check
-    if (fileCheck && !fileCheck.ok){
-      if (fileCheck.reason === 'not_a_screenshot'){
-        issues.push('The uploaded file name does not contain "screenshot".');
-        return {
-          verdict:'not_a_screenshot',
-          reason:'The uploaded file\'s name does not indicate it is a screenshot. Only screenshots taken directly from DLS count.',
-          details, issues
-        };
-      }
-      if (fileCheck.reason === 'date_mismatch'){
-        issues.push(`The file creation date is ${fileCheck.diffMin} minutes away from the match-accept window.`);
-        return {
-          verdict:'date_mismatch',
-          reason:`The screenshot's creation date is ${fileCheck.diffMin} minutes away from when the challenge was accepted. Screenshots must be taken close to the match window.`,
-          details, issues
-        };
-      }
-    }
+    details.push({ lbl:'Left team name (read)',  val: parsed.leftTeam  || '—' });
+    details.push({ lbl:'Left score (read)',      val: parsed.leftScore });
+    details.push({ lbl:'Right score (read)',     val: parsed.rightScore });
+    details.push({ lbl:'Right team name (read)', val: parsed.rightTeam || '—' });
+    details.push({ lbl:'OCR confidence',         val: Math.round(confidence || 0) + '%' });
+    details.push({ lbl:'Parse method',           val: parsed.matchType || 'primary' });
 
-    // Name matching
+    /* ---------- NAME MATCH CHECK ---------- */
     if (!sides){
       issues.push(`Your DLS username "${myDls || '—'}" did not match either team name.`);
       issues.push(`Opponent's DLS username "${oppDls || '—'}" did not match either team name.`);
       return {
         verdict:'score_name_not_found',
-        reason:`The team names read from the scoreboard ("${parsed.leftTeam}" and "${parsed.rightTeam}") could not be matched to your DLS username ("${myDls || 'not set'}") or your opponent's ("${oppDls || 'not set'}").`,
+        reason:`The team names read from the scoreboard ("${UI.escape(parsed.leftTeam)}" and "${UI.escape(parsed.rightTeam)}") could not be matched to your DLS username ("${UI.escape(myDls || 'not set')}") or your opponent's ("${UI.escape(oppDls || 'not set')}").`,
         details, issues
       };
     }
@@ -1170,7 +1198,7 @@ const Explanation = {
     details.push({ lbl:'Your score (read)',     val: youScore });
     details.push({ lbl:'Opponent score (read)', val: oppScore });
 
-    // Score comparison
+    /* ---------- SCORE COMPARISON ---------- */
     const you = Number(youScore);
     const opp = Number(oppScore);
 
@@ -1195,7 +1223,6 @@ const Explanation = {
     };
   },
 
-  /* The settlement cross-check: if both sides read the same match, their reads should agree */
   crossCheck(match, myReading){
     const cs = Number(match.creator_score ?? NaN);
     const os = Number(match.opponent_score ?? NaN);
@@ -1222,7 +1249,6 @@ const Explanation = {
     return V[verdict] || 'See verification rules.';
   },
 
-  /* Render a short one-line summary under the match in the recent list */
   summaryLine(match, verdict){
     const you = match.creator_score ?? match.opponent_score;
     const opp = match.opponent_score ?? match.creator_score;
@@ -1231,13 +1257,12 @@ const Explanation = {
     if (verdict === 'low_score') return `Read scores ${you}–${opp} → lower score lost`;
     if (verdict === 'cannot_parse_scoreboard') return 'Scoreboard could not be read';
     if (verdict === 'score_name_not_found') return 'Names on scoreboard did not match players';
-    if (verdict === 'not_a_screenshot') return 'File did not look like a screenshot';
-    if (verdict === 'date_mismatch') return 'Screenshot date outside match window';
+    if (verdict === 'not_a_screenshot') return 'File did not match Screenshot_YYYYMMDD-HHMMSS pattern';
+    if (verdict === 'date_mismatch') return 'Screenshot filename date outside match window';
     if (verdict === 'conflict') return 'Players\' readings disagreed → arbitration';
     return null;
   },
 
-  /* Open the explanation modal for a match */
   open(matchId){
     const back = document.getElementById('explainBack');
     const modal = document.getElementById('explainModal');
@@ -1264,11 +1289,9 @@ const Explanation = {
       <span class="explain-verdict verdict ${vmap.cls}">${UI.escape(vmap.label)}</span>
     `;
 
-    // Reason
     const reason = explain?.reason || this.reasonForVerdict(verdict, match);
     html += `<div class="explain-reason">${reason}</div>`;
 
-    // Scoreboard (if we have scores)
     if (cs != null || os != null){
       html += `
         <div class="explain-section">
@@ -1282,11 +1305,10 @@ const Explanation = {
       `;
     }
 
-    // Details
     if (explain?.details?.length){
       html += `
         <div class="explain-section">
-          <h4>Full OCR read</h4>
+          <h4>Full readout</h4>
           ${explain.details.map(d => `
             <div class="explain-row">
               <span class="lbl">${UI.escape(d.lbl)}</span>
@@ -1297,7 +1319,6 @@ const Explanation = {
       `;
     }
 
-    // Issues
     if (explain?.issues?.length){
       html += `
         <div class="explain-section">
@@ -1312,7 +1333,6 @@ const Explanation = {
       `;
     }
 
-    // Timeline
     if (explain?.submittedAt){
       html += `
         <div class="explain-section">
@@ -1369,7 +1389,7 @@ const VERDICT_MAP = {
   screenshot_missing_name:  { cls:'name-mismatch', label:'✕ No DLS name' },
   dls_name_missing:         { cls:'name-mismatch', label:'✕ No DLS name' },
   score_name_not_found:     { cls:'name-mismatch', label:'✕ Name not on scoreboard' },
-  not_a_screenshot:         { cls:'metadata-bad',  label:'✕ Not a screenshot' },
+  not_a_screenshot:         { cls:'metadata-bad',  label:'✕ Bad filename' },
   screenshot_bad_detail:    { cls:'metadata-bad',  label:'✕ Bad image detail' },
   date_mismatch:            { cls:'metadata-warn', label:'✕ Date mismatch' },
   screenshot_date_mismatch: { cls:'metadata-warn', label:'✕ Wrong date' },
@@ -1395,9 +1415,9 @@ const VERDICT_RULES = {
   screenshot_missing_name:  'No DLS username matched either team name on the scoreboard — opponent awarded the pot.',
   dls_name_missing:         'Uploader\'s DLS username was missing from their screenshot — opponent awarded the pot.',
   score_name_not_found:     'The scoreboard team names could not be matched to either player\'s DLS username — opponent awarded the pot.',
-  not_a_screenshot:         'The uploaded file\'s name does not indicate it is a screenshot — opponent awarded the pot.',
+  not_a_screenshot:         'The uploaded file\'s name does not match the required Screenshot_YYYYMMDD-HHMMSS pattern — opponent awarded the pot.',
   screenshot_bad_detail:    'The image detail check failed — opponent awarded the pot.',
-  date_mismatch:            'The screenshot\'s creation date did not match the window when the challenge was accepted — opponent awarded the pot.',
+  date_mismatch:            'The datetime embedded in the filename is outside the match-accept window — opponent awarded the pot.',
   screenshot_date_mismatch: 'The screenshot\'s date fell outside the accepted-match window — opponent awarded the pot.',
   cannot_parse_scoreboard:  'The scoreboard could not be read from the screenshot — opponent awarded the pot.',
   low_score:                'Uploader\'s screenshot showed a lower score than the opponent\'s — opponent awarded the pot.',
@@ -1411,9 +1431,6 @@ const VERDICT_RULES = {
   arbitration:              'Under human review.'
 };
 
-/* ============================================================================
-   STATE
-   ============================================================================ */
 const State = {
   session: null,
   data: null,
@@ -1428,9 +1445,6 @@ const State = {
   _ticker: null
 };
 
-/* ============================================================================
-   AUTH
-   ============================================================================ */
 const Auth = {
   async getSession(){
     if (!Supa.HAS){
@@ -1450,9 +1464,6 @@ const Auth = {
   }
 };
 
-/* ============================================================================
-   DRAWER
-   ============================================================================ */
 const Drawer = {
   open(){
     $('#drawerBack')?.classList.add('show');
@@ -1466,9 +1477,6 @@ const Drawer = {
   }
 };
 
-/* ============================================================================
-   DASHBOARD
-   ============================================================================ */
 const Dashboard = {
 
   async init(){
@@ -1895,8 +1903,10 @@ const Dashboard = {
           <div class="verify-step">
             <span class="dot">3</span>
             <div class="txt">
-              <b>Screenshot detail + date check.</b> The uploaded file's details must indicate it is a
-              <b>screenshot</b>, and its creation date must fall within the match window — around
+              <b>Screenshot filename + date check.</b> The file must be named like
+              <code>Screenshot_YYYYMMDD-HHMMSS.jpg</code> (e.g. <code>Screenshot_20260923-100755.jpg</code>).
+              We extract the <b>datetime from the filename itself</b> and it must fall within
+              <b>60 minutes</b> of when the challenge was accepted — around
               <b>${UI.escape(acceptedLabel)}</b>.
               Bracket clan tags (like <code>[HPH]</code>), club crests, camera metadata, and location
               are <b>never</b> inspected.
@@ -1949,7 +1959,7 @@ const Dashboard = {
         <div class="uz-sub">
           ${busy
             ? '<span class="ocr-spin"></span> Running OCR on the scoreboard'
-            : 'Tap to pick the DLS full-time screenshot from your gallery'}
+            : 'File must be named <code>Screenshot_YYYYMMDD-HHMMSS.jpg</code>'}
         </div>
       </div>
       <input type="file" id="file-${m.id}" accept="image/*" onchange="Dashboard.handleFile('${m.id}', event)" />
@@ -1978,6 +1988,14 @@ const Dashboard = {
     const opp = preview.oppScore;
     const outcome = you > opp ? 'You win' : you < opp ? 'Opponent wins' : 'Draw — both refunded';
 
+    const fileCheck = preview.fileCheck || {};
+    const fileDateLine = fileCheck.extractedDate
+      ? `<div class="or-body" style="margin-top:6px">
+           Filename date: <b>${UI.escape(UI.fmtDateTime(fileCheck.extractedDate))}</b>
+           ${typeof fileCheck.diffMin === 'number' ? `· ${fileCheck.diffMin} min from match window` : ''}
+         </div>`
+      : '';
+
     return `
       <div class="ocr-result">
         <div class="or-head"><span>✓</span> Scoreboard read successfully</div>
@@ -1995,6 +2013,7 @@ const Dashboard = {
           Your score: <b>${you}</b> · Opponent: <b>${opp}</b> · Outcome: <b>${outcome}</b>
           ${preview.confidence != null ? `· OCR confidence: <b>${Math.round(preview.confidence)}%</b>` : ''}
         </div>
+        ${fileDateLine}
         <div class="or-actions">
           <button class="btn btn-primary btn-xs" onclick="Dashboard.submitScreenshot('${m.id}')">Submit result</button>
           <button class="btn btn-ghost btn-xs" onclick="Dashboard.clearPreview('${m.id}')">Pick another image</button>
@@ -2039,7 +2058,8 @@ const Dashboard = {
           error: result.raw
             ? 'Could not locate the scoreboard line (team1 score1 90:00 score2 team2). Please upload the full-time match summary screenshot.'
             : 'Nothing readable in the top region of the image.',
-          raw: result.raw || ''
+          raw: result.raw || '',
+          fileCheck
         };
         State.ocrBusy[matchId] = false;
         this.renderActive(State.data?.active || [], State.session?.user?.id);
@@ -2055,6 +2075,7 @@ const Dashboard = {
       if (!sides){
         State.ocrPreview[matchId] = {
           ...result,
+          fileCheck,
           error: 'The team names on the scoreboard could not be matched to your DLS username or your opponent\'s. Names found: "'
             + (result.leftTeam || '?') + '" and "' + (result.rightTeam || '?')
             + '". Your registered DLS name is "' + (myDls || 'not set') + '".',
@@ -2100,7 +2121,6 @@ const Dashboard = {
     const myDls  = isCreator ? m.creator_dls_username  : m.opponent_dls_username;
     const oppDls = isCreator ? m.opponent_dls_username : m.creator_dls_username;
 
-    // Build the explanation NOW while we still have all the OCR context
     const explain = Explanation.build({
       parsed: preview,
       sides: { leftIsYou: preview.leftIsYou, rightIsYou: preview.rightIsYou },
@@ -2117,12 +2137,6 @@ const Dashboard = {
     explain.oppDls = oppDls;
 
     let verdict = explain.verdict;
-    if (verdict === 'cannot_parse_scoreboard' || verdict === 'not_a_screenshot' || verdict === 'date_mismatch' || verdict === 'score_name_not_found'){
-      // These are hard-fail verdicts for the uploader. In the demo, they still
-      // count as their "reading" — the match settles when both sides read.
-
-      // For demo simplicity, treat unreadable as 0–0.
-    }
 
     try {
       if (!Supa.HAS){
@@ -2133,7 +2147,6 @@ const Dashboard = {
         const mm = matches[idx];
         const nowIso = new Date().toISOString();
 
-        // Save this player's reading
         if (isCreator){
           mm.creator_score = you;
           mm.opponent_score_reported = opp;
@@ -2146,10 +2159,8 @@ const Dashboard = {
           mm.opponent_verdict = verdict;
         }
 
-        // Explanation saved to localStorage
         Explanation.save(matchId, explain);
 
-        // Also attach a short copy on the match for the recent list
         mm.verification_explain = {
           verdict,
           reason: explain.reason,
@@ -2162,7 +2173,6 @@ const Dashboard = {
           const cs = Number(mm.creator_score || 0);
           const os = Number(mm.opponent_score || 0);
 
-          // Cross-check both sides' readings agree
           const check = Explanation.crossCheck(mm, {});
           if (!check.ok){
             mm.status = 'disputed';
@@ -2184,7 +2194,6 @@ const Dashboard = {
               mm.winner_id = mm.opponent_id;
               mm.verification_verdict = 'score_verified';
             } else {
-              // Draw — refund both stakes
               mm.winner_id = null;
               mm.verification_verdict = 'draw_score';
 
@@ -2206,7 +2215,6 @@ const Dashboard = {
 
         localStorage.setItem('dls_demo_matches', JSON.stringify(matches));
       } else {
-        // Supabase path
         const { error } = await Supa.client.rpc('submit_match_score', {
           p_match_id: matchId,
           p_score:    you,
@@ -2221,7 +2229,6 @@ const Dashboard = {
           })
         });
         if (error){
-          // Fallback: try without the explain param
           const { error: err2 } = await Supa.client.rpc('submit_match_score', {
             p_match_id: matchId,
             p_score:    you,
@@ -2241,7 +2248,6 @@ const Dashboard = {
       delete State.ocrPreview[matchId];
       await this.reload(true);
 
-      // If it settled right away (both sides done), pop the explanation
       if (Supa.HAS === false){
         const after = JSON.parse(localStorage.getItem('dls_demo_matches') || '[]').find(x => x.id === matchId);
         if (after && after.status === 'settled'){
@@ -2623,9 +2629,6 @@ const Dashboard = {
   }
 };
 
-/* ============================================================================
-   BOOT
-   ============================================================================ */
 (async function boot(){
   log('Dashboard boot');
   if (!Supa.HAS){
@@ -2648,13 +2651,10 @@ const Dashboard = {
   });
 })();
 
-/* ============================================================================
-   DEBUG
-   ============================================================================ */
 window.DLS = {
-  version: 'dashboard-14.0.0',
+  version: 'dashboard-15.0.0',
   async debug(){
-    console.log('======== DLS Dashboard v14 ========');
+    console.log('======== DLS Dashboard v15 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Wallet view:', State.walletView);
     console.log('Profile:', State.data?.profile);
@@ -2665,6 +2665,12 @@ window.DLS = {
     console.log('Notifications:', State.extra.notifications.length, '·', State.extra.unreadCount, 'unread');
     console.log('Rank:', State.extra.rank);
     console.log('===================================');
+  },
+  testFilename(name, acceptedAtIso){
+    const fakeFile = { name, lastModified: Date.now() };
+    const res = ScreenshotReader.validateFileDetail(fakeFile, acceptedAtIso || new Date().toISOString(), 60);
+    console.log('validateFileDetail("' + name + '"):', res);
+    return res;
   },
   async testOCR(url){
     console.log('Fetching test image…');
