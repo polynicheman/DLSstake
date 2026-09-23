@@ -148,8 +148,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 .invite-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;min-width:180px}
 .invite-pot{font-family:var(--ff-mono);font-weight:900;font-size:1.2rem;color:var(--primary);text-align:right}
 .invite-pot-label{font-size:.62rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:right;margin-bottom:2px}
-.invite-btns{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:640px){.invite-actions{align-items:flex-start}.invite-pot,.invite-pot-label{text-align:left}}
+.invite-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:640px){.invite-actions{align-items:flex-start}.invite-pot,.invite-pot-label{text-align:left}.invite-btns{justify-content:flex-start}}
 
 /* MATCH CARD */
 .match-card{display:grid;gap:16px;grid-template-columns:1fr auto;align-items:center;padding:18px 20px;background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius);transition:transform .15s,border-color .15s}
@@ -215,7 +215,7 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .foot-links a:hover{color:var(--text)}
 
 /* TOASTS */
-#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
 .toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
 .toast.out{animation:toastOut .22s forwards}
 .toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
@@ -223,6 +223,67 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 .toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
 @keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* CONFIRM MODAL */
+.modal-back{
+  position:fixed;inset:0;background:rgba(4,8,14,.72);backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);z-index:600;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-back.show{display:flex;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.modal{
+  width:100%;max-width:440px;
+  background:linear-gradient(180deg,var(--surface-2),var(--bg-2));
+  border:1px solid var(--border-2);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  padding:26px 24px 22px;
+  animation:modalIn .24s cubic-bezier(.2,.9,.3,1.15);
+  position:relative;
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+
+.modal.danger{border-color:rgba(255,77,94,.4)}
+.modal-close{
+  position:absolute;top:12px;right:12px;
+  width:32px;height:32px;border-radius:9px;
+  background:var(--surface-3);border:1px solid var(--border);
+  color:var(--muted);display:grid;place-items:center;font-size:.9rem;
+  transition:.15s;
+}
+.modal-close:hover{color:var(--text);background:var(--border-2)}
+
+.modal-icon{
+  width:52px;height:52px;border-radius:16px;
+  background:rgba(255,77,94,.12);
+  border:1px solid rgba(255,77,94,.3);
+  display:grid;place-items:center;font-size:1.5rem;
+  margin-bottom:16px;
+}
+.modal-icon.warn{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.3);color:var(--warn)}
+.modal-icon.info{background:rgba(47,128,237,.12);border-color:rgba(47,128,237,.3);color:#7cb4ff}
+
+.modal-title{font-size:1.15rem;font-weight:900;letter-spacing:-.02em;margin-bottom:8px}
+.modal-body{font-size:.88rem;color:var(--text-2);line-height:1.6;margin-bottom:20px}
+.modal-body b{color:var(--text);font-weight:800}
+.modal-body .hl{color:var(--primary);font-weight:800}
+.modal-body .hl-warn{color:var(--warn);font-weight:800}
+.modal-body .hl-bad{color:var(--danger);font-weight:800}
+
+.modal-receipt{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:20px;
+  font-size:.8rem;font-family:var(--ff-mono);color:var(--muted);
+}
+.modal-receipt .row{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.modal-receipt .row b{color:var(--text);font-weight:800}
+
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .btn{flex:1;min-width:130px}
+@media(max-width:480px){.modal-actions{flex-direction:column-reverse}.modal-actions .btn{width:100%}}
+
 ::selection{background:var(--primary);color:#04140c}
 </style>
 </head>
@@ -309,6 +370,21 @@ footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
 
 </main>
 
+<!-- CONFIRM MODAL -->
+<div class="modal-back" id="confirmModal" onclick="if(event.target===this)UI.closeConfirm()">
+  <div class="modal" id="confirmModalBox" role="dialog" aria-modal="true">
+    <button class="modal-close" onclick="UI.closeConfirm()" aria-label="Close">✕</button>
+    <div class="modal-icon" id="confirmIcon">!</div>
+    <h3 class="modal-title" id="confirmTitle">Confirm</h3>
+    <div class="modal-body" id="confirmBody"></div>
+    <div id="confirmReceipt"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirmCancelBtn" onclick="UI.closeConfirm()">Keep it</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
@@ -362,7 +438,59 @@ const UI = {
     const s = secs % 60;
     if (m >= 1) return { text: `${m}:${String(s).padStart(2,'0')}`, secs };
     return { text: `${s}s`, secs };
-  }
+  },
+
+  /* ---------- Confirmation modal ---------- */
+  _confirmResolve: null,
+
+  confirm({ title='Are you sure?', body='', receiptHtml='', icon='!', tone='danger', okLabel='Confirm', cancelLabel='Cancel' }){
+    return new Promise((resolve) => {
+      this._confirmResolve = resolve;
+
+      const back = document.getElementById('confirmModal');
+      const box  = document.getElementById('confirmModalBox');
+      const ic   = document.getElementById('confirmIcon');
+      const ttl  = document.getElementById('confirmTitle');
+      const bd   = document.getElementById('confirmBody');
+      const rc   = document.getElementById('confirmReceipt');
+      const ok   = document.getElementById('confirmOkBtn');
+      const no   = document.getElementById('confirmCancelBtn');
+      if (!back || !box || !ok) { resolve(false); return; }
+
+      box.classList.remove('danger');
+      ic.classList.remove('warn','info');
+      ic.style.color = '';
+      if (tone === 'danger') box.classList.add('danger');
+      if (tone === 'warn')   ic.classList.add('warn');
+      if (tone === 'info')   ic.classList.add('info');
+
+      ic.textContent = icon;
+      ttl.textContent = title;
+      bd.innerHTML = body;
+      rc.innerHTML = receiptHtml || '';
+      ok.textContent = okLabel;
+      no.textContent = cancelLabel;
+
+      ok.onclick = () => { this._finishConfirm(true); };
+      no.onclick = () => { this._finishConfirm(false); };
+
+      back.classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      setTimeout(() => ok.focus(), 60);
+    });
+  },
+
+  _finishConfirm(result){
+    const back = document.getElementById('confirmModal');
+    if (back) back.classList.remove('show');
+    document.body.style.overflow = '';
+    const r = this._confirmResolve;
+    this._confirmResolve = null;
+    if (r) r(result);
+  },
+
+  closeConfirm(){ this._finishConfirm(false); }
 };
 
 /* ============================================================================
@@ -506,6 +634,16 @@ const Matches = {
     return { data, error };
   },
 
+  async cancelAccepted(matchId){
+    if (!Supa.HAS) return Demo.cancelAccepted(matchId, State.session.user);
+    /* Prefer a dedicated RPC, fall back to cancel_match if the server gates it. */
+    const { data, error } = await Supa.client.rpc('cancel_accepted_match', { p_match_id: matchId });
+    if (error && /function .* does not exist/i.test(error.message || '')){
+      return Supa.client.rpc('cancel_match', { p_match_id: matchId });
+    }
+    return { data, error };
+  },
+
   subscribe(cb){
     if (!Supa.HAS) return () => {};
     try {
@@ -534,7 +672,7 @@ const Demo = (() => {
     saveUsers(users);
     return u;
   }
-  function shape(m, viewerId){
+  function shape(m){
     const users = getUsers();
     const c = users.find(u => u.id === m.creator_id);
     const o = users.find(u => u.id === m.opponent_id);
@@ -550,20 +688,20 @@ const Demo = (() => {
       return read()
         .filter(m => m.opponent_id === uid && m.status === 'pending_invite')
         .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
-        .map(m => shape(m, uid));
+        .map(m => shape(m));
     },
     listSent(uid){
       return read()
         .filter(m => m.creator_id === uid && m.status === 'pending_invite')
         .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
-        .map(m => shape(m, uid));
+        .map(m => shape(m));
     },
     listMatches(uid){
       return read()
         .filter(m => (m.creator_id === uid || m.opponent_id === uid)
                   && ['accepted','awaiting_submission','verifying','settled','disputed','cancelled'].includes(m.status))
         .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))
-        .map(m => shape(m, uid));
+        .map(m => shape(m));
     },
     accept(matchId, user){
       const all = read(); const m = all.find(x => x.id === matchId);
@@ -621,6 +759,32 @@ const Demo = (() => {
       m.status = 'cancelled';
       write(all);
       return { data: { match_id: m.id, new_balance: newBal }, error: null };
+    },
+    cancelAccepted(matchId, user){
+      const all = read(); const m = all.find(x => x.id === matchId);
+      if (!m) return { error: { message: 'Match not found' } };
+      if (m.status !== 'accepted') return { error: { message: 'Match is no longer cancellable' } };
+      if (m.creator_submitted_at || m.opponent_submitted_at)
+        return { error: { message: 'A result has already been submitted' } };
+      if (m.creator_id !== user.id && m.opponent_id !== user.id)
+        return { error: { message: 'You are not a player in this match' } };
+
+      /* Refund both stakes */
+      [m.creator_id, m.opponent_id].forEach(pid => {
+        if (!pid) return;
+        const u = getUsers().find(x => x.id === pid);
+        if (!u) return;
+        touchUser(pid, {
+          balance:   Number(u.balance || 0) + Number(m.stake_amount),
+          in_escrow: Math.max(0, Number(u.in_escrow || 0) - Number(m.stake_amount))
+        });
+      });
+
+      m.status = 'cancelled';
+      m.cancelled_at = new Date().toISOString();
+      m.cancelled_by = user.id;
+      write(all);
+      return { data: { match_id: m.id }, error: null };
     }
   };
 })();
@@ -759,23 +923,29 @@ const Lobby = {
     }
 
     let html = '';
-    if (incoming.length) html += incoming.map(m => this.inviteCard(m, 'incoming')).join('');
-    if (sent.length)     html += sent.map(m => this.inviteCard(m, 'sent')).join('');
+    if (incoming.length){
+      html += `<div style="font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);padding:4px 2px 0">Incoming · respond</div>`;
+      html += incoming.map(m => this.inviteCard(m, 'incoming')).join('');
+    }
+    if (sent.length){
+      html += `<div style="font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);padding:10px 2px 0">Sent · waiting on opponent</div>`;
+      html += sent.map(m => this.inviteCard(m, 'sent')).join('');
+    }
     list.innerHTML = html;
   },
 
   inviteCard(m, direction){
-    const uid = State.session?.user?.id;
     const isIncoming = direction === 'incoming';
 
     const other = isIncoming
       ? (m.creator?.username || 'Player')
-      : (m.opponent?.username || 'Player');
+      : (m.opponent?.username || 'Waiting…');
     const otherDls = isIncoming
-      ? m.creator_dls_username
-      : m.opponent_dls_username;
+      ? (m.creator_dls_username || m.creator?.dls_username || '—')
+      : (m.opponent_dls_username || m.opponent?.dls_username || '—');
 
     const me = State.profile?.username || 'You';
+    const myDls = State.profile?.dls_username || '—';
 
     const pot = Number(m.pot_amount || m.stake_amount * 2);
     const winnerPot = pot * (1 - CONFIG.PLATFORM_FEE_PCT / 100);
@@ -783,7 +953,20 @@ const Lobby = {
     const until = UI.until(m.expires_at);
     const countdownId = 'cd-' + m.id;
 
-    let actions = '';
+    /* Left player is always "you", right player is the other side */
+    const leftPlayer = isIncoming
+      ? { name: other, dls: otherDls, cls: 'b', you: false }
+      : { name: me,    dls: myDls,    cls: '',  you: true  };
+
+    const rightPlayer = isIncoming
+      ? { name: me,    dls: myDls,    cls: '',  you: true  }
+      : { name: other, dls: otherDls, cls: 'b', you: false };
+
+    const labelText = isIncoming
+      ? 'New invitation · respond below'
+      : `Waiting for ${UI.escape(other)} to accept`;
+
+    let actions;
     if (isIncoming){
       actions = `
         <div class="invite-btns">
@@ -793,28 +976,29 @@ const Lobby = {
     } else {
       actions = `
         <div class="invite-btns">
-          <button class="btn btn-outline btn-xs" onclick="Lobby.cancelInvite('${m.id}', this)">Cancel</button>
+          <button class="btn btn-ghost btn-xs" onclick="Lobby.openMatch('${m.id}')">View</button>
+          <button class="btn btn-danger btn-xs" onclick="Lobby.cancelInvite('${m.id}', this)">✕ Cancel challenge</button>
         </div>`;
     }
 
     return `
       <div class="invite-card">
         <div>
-          <div class="invite-label"><i></i> ${isIncoming ? 'New invitation' : 'Waiting for them to accept'}</div>
+          <div class="invite-label"><i></i> ${labelText}</div>
           <div class="invite-players">
             <div class="player">
-              <div class="avatar">${UI.escape(UI.initials(me))}</div>
+              <div class="avatar ${leftPlayer.cls}">${UI.escape(UI.initials(leftPlayer.name))}</div>
               <div class="info">
-                <div class="name">${UI.escape(me)} <span class="you">You</span></div>
-                <div class="dls">${UI.escape(State.profile?.dls_username || '—')}</div>
+                <div class="name">${UI.escape(leftPlayer.name)}${leftPlayer.you ? ' <span class="you">You</span>' : ''}</div>
+                <div class="dls">${UI.escape(leftPlayer.dls || '—')}</div>
               </div>
             </div>
             <span class="versus">vs</span>
             <div class="player">
-              <div class="avatar b">${UI.escape(UI.initials(other))}</div>
+              <div class="avatar ${rightPlayer.cls}">${UI.escape(UI.initials(rightPlayer.name))}</div>
               <div class="info">
-                <div class="name">${UI.escape(other)}</div>
-                <div class="dls">${UI.escape(otherDls || '—')}</div>
+                <div class="name">${UI.escape(rightPlayer.name)}${rightPlayer.you ? ' <span class="you">You</span>' : ''}</div>
+                <div class="dls">${UI.escape(rightPlayer.dls || '—')}</div>
               </div>
             </div>
           </div>
@@ -825,7 +1009,7 @@ const Lobby = {
           </div>
           ${until ? `
             <div class="countdown-strip">
-              <span>Expires in</span>
+              <span>${isIncoming ? 'Expires in' : 'Auto-cancels in'}</span>
               <b id="${countdownId}">${until.text}</b>
             </div>` : ''}
         </div>
@@ -905,7 +1089,17 @@ const Lobby = {
                     m.status === 'accepted' ? 'Open match' :
                     m.status === 'awaiting_submission' ? 'Submit result' :
                     'Open';
-      actions = `<button class="btn btn-primary btn-xs" onclick="Lobby.openMatch('${m.id}')">${label}</button>`;
+
+      /* Only allow cancel while accepted and nothing has been submitted */
+      const canCancel = (m.status === 'accepted')
+        && !m.creator_submitted_at
+        && !m.opponent_submitted_at;
+
+      actions = `
+        <div class="invite-btns" style="justify-content:flex-end">
+          <button class="btn btn-primary btn-xs" onclick="Lobby.openMatch('${m.id}')">${label}</button>
+          ${canCancel ? `<button class="btn btn-danger btn-xs" onclick="Lobby.cancelAccepted('${m.id}', this)">✕ Cancel</button>` : ''}
+        </div>`;
     }
 
     return `
@@ -970,16 +1164,39 @@ const Lobby = {
 
   /* ── Actions ─────────────────────────────────────────────────── */
   async accept(matchId, btn){
-    if (!confirm('Accept this challenge? Your stake will be locked in escrow immediately.')) return;
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>';
+    const invite = State.invites.find(m => m.id === matchId);
+    const stake  = Number(invite?.stake_amount || 0);
+    const pot    = Number(invite?.pot_amount || stake * 2);
+    const opp    = invite?.creator?.username || 'this player';
+    const myBal  = Number(State.profile?.balance || 0);
+
+    const ok = await UI.confirm({
+      title: 'Accept this challenge?',
+      icon: '⚔',
+      tone: 'info',
+      okLabel: `Accept & lock ${UI.money(stake)}`,
+      cancelLabel: 'Not now',
+      body: `
+        <p>You're about to accept <b>${UI.escape(opp)}</b>'s challenge.</p>
+        <p style="margin-top:8px"><span class="hl-warn">${UI.money(stake)}</span> will be locked in escrow immediately. You'll have 5 minutes to play once you open the match.</p>
+      `,
+      receiptHtml: `
+        <div class="modal-receipt">
+          <div class="row"><span>Match code</span><b>${UI.escape(invite?.match_code || '—')}</b></div>
+          <div class="row"><span>Stake you lock</span><b>${UI.money(stake)}</b></div>
+          <div class="row"><span>Pot at stake</span><b>${UI.money(pot)}</b></div>
+          <div class="row"><span>Balance after</span><b>${UI.money(Math.max(0, myBal - stake))}</b></div>
+        </div>`
+    });
+    if (!ok) return;
+
+    const orig = btn ? btn.innerHTML : null;
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
 
     const { error } = await Matches.accept(matchId);
 
     if (error){
-      btn.disabled = false;
-      btn.innerHTML = orig;
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
       UI.toast(error.message || 'Could not accept.', 'err');
       return;
     }
@@ -990,15 +1207,35 @@ const Lobby = {
   },
 
   async decline(matchId, btn){
-    if (!confirm('Decline this challenge? The creator will be refunded.')) return;
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>';
+    const invite = State.invites.find(m => m.id === matchId);
+    const opp    = invite?.creator?.username || 'the challenger';
+    const stake  = Number(invite?.stake_amount || 0);
+
+    const ok = await UI.confirm({
+      title: 'Decline this challenge?',
+      icon: '↩',
+      tone: 'warn',
+      okLabel: 'Yes, decline',
+      cancelLabel: 'Keep it',
+      body: `
+        <p>You're about to decline <b>${UI.escape(opp)}</b>'s challenge.</p>
+        <p style="margin-top:8px">No money moves on your side. Their <span class="hl">${UI.money(stake)}</span> stake will be refunded to them immediately.</p>
+      `,
+      receiptHtml: `
+        <div class="modal-receipt">
+          <div class="row"><span>Match code</span><b>${UI.escape(invite?.match_code || '—')}</b></div>
+          <div class="row"><span>Your balance</span><b>unchanged</b></div>
+          <div class="row"><span>Their refund</span><b style="color:var(--primary)">+${UI.money(stake)}</b></div>
+        </div>`
+    });
+    if (!ok) return;
+
+    const orig = btn ? btn.innerHTML : null;
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
 
     const { error } = await Matches.decline(matchId);
     if (error){
-      btn.disabled = false;
-      btn.innerHTML = orig;
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
       UI.toast(error.message || 'Could not decline.', 'err');
       return;
     }
@@ -1007,19 +1244,91 @@ const Lobby = {
   },
 
   async cancelInvite(matchId, btn){
-    if (!confirm('Cancel this invitation? Your stake will be refunded.')) return;
-    const orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spin"></span>';
+    const invite = State.sentInvites.find(m => m.id === matchId);
+    const stake  = Number(invite?.stake_amount || 0);
+    const pot    = Number(invite?.pot_amount || stake * 2);
+    const code   = invite?.match_code || matchId.slice(0, 8);
+    const opp    = invite?.opponent?.username || 'your opponent';
+    const myBal  = Number(State.profile?.balance || 0);
+
+    const ok = await UI.confirm({
+      title: 'Cancel this challenge?',
+      icon: '✕',
+      tone: 'danger',
+      okLabel: 'Yes, cancel challenge',
+      cancelLabel: 'Keep it open',
+      body: `
+        <p>You're about to cancel your challenge to <b>${UI.escape(opp)}</b>.</p>
+        <p style="margin-top:8px">Your stake will be <span class="hl">refunded to your balance immediately</span>. They will no longer be able to accept it.</p>
+      `,
+      receiptHtml: `
+        <div class="modal-receipt">
+          <div class="row"><span>Match code</span><b>${UI.escape(code)}</b></div>
+          <div class="row"><span>Your stake</span><b>${UI.money(stake)}</b></div>
+          <div class="row"><span>Pot (if accepted)</span><b>${UI.money(pot)}</b></div>
+          <div class="row"><span>You receive back</span><b style="color:var(--primary)">+${UI.money(stake)}</b></div>
+          <div class="row"><span>Balance after</span><b>${UI.money(myBal + stake)}</b></div>
+        </div>`
+    });
+
+    if (!ok) return;
+
+    const orig = btn ? btn.innerHTML : null;
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
 
     const { error } = await Matches.cancel(matchId);
+
     if (error){
-      btn.disabled = false;
-      btn.innerHTML = orig;
-      UI.toast(error.message || 'Could not cancel.', 'err');
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
+      UI.toast(error.message || 'Could not cancel challenge.', 'err');
       return;
     }
-    UI.toast('Invitation cancelled. Stake refunded.', 'ok');
+
+    UI.toast(`Challenge cancelled. ${UI.money(stake)} refunded.`, 'ok');
+    await this.reload();
+  },
+
+  async cancelAccepted(matchId, btn){
+    const m = State.matches.find(x => x.id === matchId);
+    if (!m) return;
+
+    const stake = Number(m.stake_amount || 0);
+    const opp   = (m.creator_id === State.session?.user?.id
+      ? m.opponent?.username
+      : m.creator?.username) || 'your opponent';
+
+    const ok = await UI.confirm({
+      title: 'Cancel this match?',
+      icon: '⚠',
+      tone: 'warn',
+      okLabel: 'Cancel match & refund both',
+      cancelLabel: 'Keep playing',
+      body: `
+        <p>You and <b>${UI.escape(opp)}</b> accepted this match but neither side has submitted a result yet.</p>
+        <p style="margin-top:8px">Cancelling will <span class="hl">refund both players their stakes</span> and mark the match as cancelled. This cannot be undone.</p>
+      `,
+      receiptHtml: `
+        <div class="modal-receipt">
+          <div class="row"><span>Match code</span><b>${UI.escape(m.match_code)}</b></div>
+          <div class="row"><span>Your stake</span><b>${UI.money(stake)}</b></div>
+          <div class="row"><span>You receive back</span><b style="color:var(--primary)">+${UI.money(stake)}</b></div>
+        </div>`
+    });
+
+    if (!ok) return;
+
+    const orig = btn ? btn.innerHTML : null;
+    if (btn){ btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+
+    const { error } = await Matches.cancelAccepted(matchId);
+
+    if (error){
+      if (btn){ btn.disabled = false; btn.innerHTML = orig; }
+      UI.toast(error.message || 'Could not cancel match.', 'err');
+      return;
+    }
+
+    UI.toast('Match cancelled. Both stakes refunded.', 'ok');
     await this.reload();
   },
 
@@ -1043,6 +1352,10 @@ const Lobby = {
   try { await Lobby.init(); }
   catch(e){ err('Lobby init failed:', e); UI.toast('Failed to load lobby.', 'err'); }
 
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') UI.closeConfirm();
+  });
+
   window.addEventListener('beforeunload', () => {
     if (State._channel) State._channel();
     if (State._poll)    clearInterval(State._poll);
@@ -1051,9 +1364,9 @@ const Lobby = {
 })();
 
 window.DLS = {
-  version: 'lobby-3.0.0',
+  version: 'lobby-4.0.0',
   async debug(){
-    console.log('======== DLS Lobby v3 ========');
+    console.log('======== DLS Lobby v4 ========');
     console.log('Session:', State.session?.user?.email);
     console.log('Tab:', State.tab);
     console.log('Invites:', State.invites.length);
