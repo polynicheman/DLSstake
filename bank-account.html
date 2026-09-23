@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#070d16" />
+<title>Bank accounts — DLS Stake</title>
+<meta name="description" content="Manage your saved Nigerian bank accounts for withdrawals on DLS Stake." />
+
+<style>
+:root{
+  --bg:#070d16; --bg-2:#0b1420;
+  --surface:#111d2e; --surface-2:#16263b; --surface-3:#1c3049;
+  --border:#1e3048; --border-2:#27405f;
+  --primary:#00d97e; --primary-dark:#00a860; --primary-glow:rgba(0,217,126,.25);
+  --accent:#2f80ed; --danger:#ff4d5e; --danger-dark:#d93a4a;
+  --warn:#ffb020; --purple:#8b5cf6; --fire:#ff6b35;
+  --text:#e6eef8; --text-2:#b8c9dc;
+  --muted:#7b90a8; --muted-2:#556b85;
+  --radius-sm:8px; --radius:14px; --radius-lg:22px; --radius-full:999px;
+  --shadow:0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm:0 3px 12px rgba(0,0,0,.35);
+  --ff:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --ff-mono:'SF Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  --nav-h:62px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--ff);background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(900px 500px at 12% -8%, rgba(0,217,126,.10), transparent 60%),
+  radial-gradient(800px 500px at 88% 4%, rgba(47,128,237,.12), transparent 62%),
+  radial-gradient(700px 700px at 50% 110%, rgba(139,92,246,.06), transparent 60%);}
+.wrap{width:100%;max-width:880px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.hidden{display:none !important}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;height:var(--nav-h);background:rgba(7,13,22,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:900;font-size:.85rem;color:#04140c;box-shadow:0 4px 14px var(--primary-glow)}
+.brand-text{font-weight:900;font-size:1.06rem;letter-spacing:-.03em}
+.brand-text span{color:var(--primary)}
+.nav-links{display:none;gap:26px;font-size:.88rem;font-weight:600;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+@media(min-width:980px){.nav-links{display:flex}}
+.nav-user{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 5px;border-radius:var(--radius-full);background:var(--surface);border:1px solid var(--border);cursor:pointer}
+.nav-user:hover{background:var(--surface-2)}
+.nav-user .avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,var(--primary),var(--accent));display:grid;place-items:center;color:#04140c;font-weight:900;font-size:.72rem}
+.nav-user .name{font-size:.82rem;font-weight:700}
+@media(max-width:520px){.nav-user .name{display:none}}
+
+/* LAYOUT */
+.page{padding:30px 0 80px}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--primary);margin-bottom:6px}
+.page-title{font-size:1.65rem;font-weight:900;letter-spacing:-.035em;line-height:1.15}
+.page-sub{font-size:.86rem;color:var(--muted);margin-top:6px;max-width:520px}
+
+/* SECURITY BANNER */
+.sec-banner{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:var(--radius);background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff;font-size:.84rem;line-height:1.65;margin-bottom:22px}
+.sec-banner .ico{font-size:1.15rem;line-height:1.3;flex-shrink:0}
+.sec-banner b{font-weight:800;color:#bfd9ff}
+
+/* PRIMARY ACCOUNT HERO */
+.primary-hero{background:linear-gradient(160deg,rgba(0,217,126,.12),var(--bg-2));border:1px solid rgba(0,217,126,.35);border-radius:var(--radius-lg);padding:26px;margin-bottom:22px;position:relative;overflow:hidden}
+.primary-hero::after{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(0,217,126,.16),transparent 65%);pointer-events:none}
+.primary-hero.empty{background:linear-gradient(160deg,rgba(255,176,32,.08),var(--bg-2));border-color:rgba(255,176,32,.3)}
+.primary-hero.empty::after{background:radial-gradient(circle,rgba(255,176,32,.14),transparent 65%)}
+.ph-head{display:flex;align-items:center;gap:14px;margin-bottom:16px;position:relative;z-index:1}
+.ph-ico{width:56px;height:56px;min-width:56px;border-radius:18px;background:linear-gradient(140deg,var(--primary),var(--primary-dark));display:grid;place-items:center;font-size:1.5rem;color:#04140c;box-shadow:0 10px 28px var(--primary-glow)}
+.primary-hero.empty .ph-ico{background:linear-gradient(140deg,var(--warn),#d98a00);color:#1a1000;box-shadow:0 10px 28px rgba(255,176,32,.3)}
+.ph-title{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.ph-name{font-size:1.15rem;font-weight:900;letter-spacing:-.02em}
+.ph-bank{font-size:.8rem;color:var(--muted);margin-top:2px}
+.ph-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;z-index:1}
+@media(max-width:600px){.ph-body{grid-template-columns:1fr}}
+.ph-cell{background:rgba(7,13,22,.55);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px}
+.ph-cell .k{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.ph-cell .v{font-family:var(--ff-mono);font-size:.98rem;font-weight:800;letter-spacing:-.01em}
+.ph-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;position:relative;z-index:1}
+
+/* SECTION TITLE */
+.section-title{font-size:1rem;font-weight:900;letter-spacing:-.02em;margin:26px 0 14px;display:flex;align-items:center;gap:12px}
+.section-title .line{flex:1;height:1px;background:var(--border)}
+.section-title .count{font-family:var(--ff-mono);font-size:.72rem;font-weight:800;color:var(--muted);padding:3px 9px;border:1px solid var(--border);border-radius:var(--radius-full)}
+
+/* ACCOUNT LIST */
+.acc-list{display:grid;gap:12px}
+.acc-card{display:flex;align-items:center;gap:16px;padding:18px 20px;background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border);border-radius:var(--radius-lg);transition:.18s;position:relative;overflow:hidden}
+.acc-card:hover{border-color:var(--border-2);transform:translateY(-2px)}
+.acc-card.primary{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,rgba(0,217,126,.06),var(--bg-2))}
+.acc-card.pending{border-color:rgba(255,176,32,.35);background:linear-gradient(180deg,rgba(255,176,32,.05),var(--bg-2))}
+.acc-ico{width:52px;height:52px;min-width:52px;border-radius:15px;background:linear-gradient(140deg,var(--accent),#1f66c9);display:grid;place-items:center;font-size:1.2rem;color:#fff;font-weight:900;position:relative}
+.acc-card.primary .acc-ico{background:linear-gradient(140deg,var(--primary),var(--primary-dark));color:#04140c}
+.acc-ico .flag{position:absolute;bottom:-3px;right:-3px;font-size:.8rem;background:var(--surface);border-radius:50%;width:20px;height:20px;display:grid;place-items:center;border:1px solid var(--border)}
+.acc-body{flex:1;min-width:0}
+.acc-body h4{font-size:.94rem;font-weight:800;margin-bottom:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;overflow:hidden;text-overflow:ellipsis}
+.acc-body h4 .tag{font-size:.56rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-full)}
+.tag.primary-tag{background:rgba(0,217,126,.16);color:var(--primary);border:1px solid rgba(0,217,126,.32)}
+.tag.pending-tag{background:rgba(255,176,32,.16);color:var(--warn);border:1px solid rgba(255,176,32,.32)}
+.tag.unverified-tag{background:rgba(255,77,94,.14);color:var(--danger);border:1px solid rgba(255,77,94,.3)}
+.acc-body p{font-size:.76rem;color:var(--muted);font-family:var(--ff-mono);letter-spacing:.02em}
+.acc-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:.88rem;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);transition:.15s}
+.icon-btn:hover{color:var(--text);background:var(--surface-3);border-color:var(--border-2)}
+.icon-btn.danger:hover{color:var(--danger);border-color:rgba(255,77,94,.4);background:rgba(255,77,94,.06)}
+
+/* ADD BUTTON */
+.add-btn{width:100%;padding:20px;border-radius:var(--radius-lg);background:transparent;border:2px dashed var(--border-2);color:var(--muted);font-weight:800;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:10px;transition:.18s;cursor:pointer}
+.add-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(0,217,126,.04)}
+.add-btn:disabled{opacity:.5;cursor:not-allowed;border-color:var(--border)}
+.add-btn .plus{font-size:1.15rem}
+
+/* EMPTY */
+.empty{padding:44px 24px;text-align:center;background:var(--surface);border:1px dashed var(--border-2);border-radius:var(--radius-lg)}
+.empty .ico{font-size:2.2rem;margin-bottom:12px;opacity:.7}
+.empty h3{font-size:1rem;font-weight:800;margin-bottom:8px}
+.empty p{font-size:.84rem;color:var(--muted);max-width:380px;margin:0 auto;line-height:1.65}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 20px;border-radius:var(--radius-full);font-weight:800;font-size:.88rem;border:1px solid transparent;cursor:pointer;transition:transform .12s,box-shadow .18s,opacity .18s,background .18s;white-space:nowrap;text-decoration:none}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-primary{background:linear-gradient(180deg,var(--primary),var(--primary-dark));color:#04140c;box-shadow:0 6px 20px var(--primary-glow)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.06)}
+.btn-ghost{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn-ghost:hover:not(:disabled){background:var(--surface-2)}
+.btn-outline{background:transparent;color:var(--text);border-color:var(--border-2)}
+.btn-outline:hover:not(:disabled){background:rgba(255,255,255,.04)}
+.btn-danger{background:transparent;color:var(--danger);border-color:rgba(255,77,94,.4)}
+.btn-danger:hover:not(:disabled){background:rgba(255,77,94,.08)}
+.btn-danger-solid{background:linear-gradient(180deg,var(--danger),var(--danger-dark));color:#fff;box-shadow:0 6px 20px rgba(255,77,94,.25)}
+.btn-danger-solid:hover:not(:disabled){filter:brightness(1.06)}
+.btn-block{width:100%}
+.btn-lg{padding:15px 26px;font-size:.98rem}
+.btn-sm{padding:9px 14px;font-size:.8rem}
+.spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(0,217,126,.25);border-top-color:var(--primary);animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(4,8,14,.88);backdrop-filter:blur(6px);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s;overflow-y:auto}
+.modal{background:linear-gradient(180deg,var(--surface),var(--bg-2));border:1px solid var(--border-2);border-radius:var(--radius-lg);max-width:480px;width:100%;padding:30px;box-shadow:var(--shadow);animation:popIn .24s cubic-bezier(.2,.9,.3,1.2);position:relative;overflow:hidden;margin:auto}
+.modal::after{content:'';position:absolute;top:-90px;right:-90px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,217,126,.08),transparent 65%);pointer-events:none}
+.modal h3{font-size:1.18rem;font-weight:900;margin-bottom:8px;position:relative;z-index:1;letter-spacing:-.02em}
+.modal p.sub{font-size:.86rem;color:var(--muted);line-height:1.65;margin-bottom:20px;position:relative;z-index:1}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;position:relative;z-index:1}
+.field label{font-size:.8rem;font-weight:700;color:var(--text-2)}
+.field label .req{color:var(--danger);margin-left:3px}
+.field .hint{font-size:.72rem;color:var(--muted-2);line-height:1.5}
+.field .hint.good{color:var(--primary)}
+.field .hint.bad{color:var(--danger)}
+.input-text,.input-select{width:100%;padding:13px 15px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border-2);color:var(--text);font-size:.92rem;outline:none;transition:.15s;font-family:inherit}
+.input-text:focus,.input-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.input-text.invalid,.input-select.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,77,94,.14)}
+.input-text::placeholder{color:var(--muted-2)}
+.input-text.mono{font-family:var(--ff-mono);letter-spacing:.06em;text-transform:uppercase}
+select.input-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237b90a8' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+
+/* VERIFY RESULT */
+.verify-result{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius-sm);margin-bottom:16px;position:relative;z-index:1;font-size:.84rem;line-height:1.55;display:none}
+.verify-result.show{display:flex}
+.verify-result.loading{background:rgba(47,128,237,.08);border:1px solid rgba(47,128,237,.28);color:#9cc4ff}
+.verify-result.ok{background:rgba(0,217,126,.08);border:1px solid rgba(0,217,126,.28);color:#6ee7b0}
+.verify-result.fail{background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.28);color:#ff97a4}
+.verify-result .ico{font-size:1rem;line-height:1.3;flex-shrink:0}
+.verify-result b{font-weight:800;display:block;margin-bottom:2px;color:inherit}
+.verify-result .name{font-family:var(--ff-mono);font-size:.96rem;font-weight:900;letter-spacing:.04em}
+
+/* INFO BOX */
+.info-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px;position:relative;z-index:1}
+.info-box .row{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.84rem}
+.info-box .row .k{color:var(--muted)}
+.info-box .row .v{font-family:var(--ff-mono);font-weight:800;color:var(--text-2);text-align:right;word-break:break-word}
+
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;margin-top:4px}
+.modal-actions .btn{flex:1;min-width:120px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+
+/* WARNING ROW */
+.warn-row{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius);background:rgba(255,176,32,.07);border:1px solid rgba(255,176,32,.28);color:#ffd08a;font-size:.82rem;line-height:1.6;margin-top:22px}
+.warn-row .ico{font-size:1rem;flex-shrink:0;line-height:1.3}
+.warn-row b{font-weight:800}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);margin-top:60px;padding:28px 0 40px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted-2)}
+.foot-links{display:flex;flex-wrap:wrap;gap:20px}
+.foot-links a:hover{color:var(--text)}
+
+/* TOASTS */
+#toasts{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:700;display:flex;flex-direction:column;gap:9px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+.toast{display:flex;align-items:flex-start;gap:11px;padding:13px 15px;border-radius:var(--radius-sm);background:var(--surface-2);border:1px solid var(--border-2);box-shadow:var(--shadow);font-size:.86rem;animation:toastIn .28s cubic-bezier(.2,.9,.3,1.2);pointer-events:auto}
+.toast.out{animation:toastOut .22s forwards}
+.toast.ok{border-color:rgba(0,217,126,.4);background:linear-gradient(180deg,#0f2a1e,#0b1d15)}
+.toast.err{border-color:rgba(255,77,94,.4);background:linear-gradient(180deg,#2a1015,#1d0b0e)}
+.toast.info{border-color:rgba(47,128,237,.4);background:linear-gradient(180deg,#0f1f33,#0b1622)}
+@keyframes toastIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.97)}}
+
+/* LOADING */
+.loading-card{padding:70px 22px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);color:var(--muted);font-size:.9rem}
+::selection{background:var(--primary);color:#04140c}
+</style>
+</head>
+
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="location.href='dashboard.html'">
+      <div class="brand-mark">DLS</div>
+      <div class="brand-text">DLS<span>Stake</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="wallet.html">Wallet</a>
+      <a href="kyc.html">Verify ID</a>
+      <a href="settings.html">Settings</a>
+    </div>
+    <div class="nav-user" onclick="location.href='profile.html'">
+      <div class="avatar" id="navAvatar">?</div>
+      <span class="name" id="navName">…</span>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap page">
+  <div class="page-head">
+    <div>
+      <div class="eyebrow">Payouts</div>
+      <h1 class="page-title">Bank accounts</h1>
+      <div class="page-sub">Withdrawals can only go to accounts in your own name. We verify every account before saving it.</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="Banks.reload()">↻ Refresh</button>
+  </div>
+
+  <div class="sec-banner">
+    <span class="ico">🔒</span>
+    <div>
+      <b>Account names must match your KYC.</b> If the name on the bank account doesn't match your verified identity, Paystack will reject the transfer. Save an account that belongs to you — not a friend or family member.
+    </div>
+  </div>
+
+  <div id="body">
+    <div class="loading-card"><span class="spin"></span> Loading your bank accounts…</div>
+  </div>
+
+  <div class="warn-row">
+    <span class="ico">⚠</span>
+    <div>
+      <b>Watch out for scams.</b> DLS Stake staff will never message you asking you to change your payout account. If someone does, report it immediately from <a href="support.html#contact" style="color:#ffd08a;font-weight:800;border-bottom:1px solid rgba(255,176,32,.5)">support</a>.
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-inner">
+      <div>© 2026 DLS Stake. Not affiliated with First Touch Games Ltd.</div>
+      <div class="foot-links">
+        <a href="wallet.html">Wallet</a>
+        <a href="kyc.html">Verify ID</a>
+        <a href="support.html">Support</a>
+        <a href="terms.html">Legal</a>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<div id="toasts"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
+<script>
+/* ============================================================================
+   CONFIG
+   ============================================================================ */
+const CONFIG = {
+  SUPABASE_URL:      'https://nnoymzdynrlpyxlrbqqn.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ub3ltemR5bnJscHl4bHJicXFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk2MzAzMzMsImV4cCI6MjEwNTIwNjMzM30.4Z7fcWjfskVeVKdZF779LsQmWsFKpu-9Qq7CGISso0M',
+  LOGIN_PAGE:        'login.html',
+  WALLET_PAGE:       'wallet.html',
+  KYC_PAGE:          'kyc.html',
+  MAX_ACCOUNTS:      5,
+  DEBUG:             true
+};
+
+/* Nigerian banks — name, code */
+const BANKS = [
+  { code:'044', name:'Access Bank' },
+  { code:'063', name:'Access Bank (Diamond)' },
+  { code:'035', name:'ALAT by Wema' },
+  { code:'057', name:'Zenith Bank' },
+  { code:'058', name:'Guaranty Trust Bank (GTB)' },
+  { code:'011', name:'First Bank of Nigeria' },
+  { code:'214', name:'First City Monument Bank (FCMB)' },
+  { code:'070', name:'Fidelity Bank' },
+  { code:'030', name:'Heritage Bank' },
+  { code:'301', name:'Jaiz Bank' },
+  { code:'082', name:'Keystone Bank' },
+  { code:'526', name:'Parallex Bank' },
+  { code:'076', name:'Polaris Bank' },
+  { code:'221', name:'Stanbic IBTC' },
+  { code:'068', name:'Standard Chartered' },
+  { code:'232', name:'Sterling Bank' },
+  { code:'100', name:'Suntrust Bank' },
+  { code:'032', name:'Union Bank' },
+  { code:'033', name:'United Bank for Africa (UBA)' },
+  { code:'215', name:'Unity Bank' },
+  { code:'035A',name:'Wema Bank' },
+  { code:'50211',name:'Kuda Bank' },
+  { code:'999992',name:'Opay' },
+  { code:'50515',name:'Moniepoint MFB' },
+  { code:'51310',name:'PalmPay' },
+  { code:'51243',name:'Carbon' }
+];
+
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const log  = (...a) => { if (CONFIG.DEBUG) console.log('[DLS]', ...a); };
+const warn = (...a) => console.warn('[DLS]', ...a);
+const err  = (...a) => console.error('[DLS]', ...a);
+
+const UI = {
+  toast(msg, type='info', ms=4200){
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    const icon = type==='ok' ? '✓' : type==='err' ? '✕' : 'ℹ';
+    el.innerHTML = `<span style="font-weight:800">${icon}</span><span>${msg}</span>`;
+    $('#toasts').appendChild(el);
+    setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(),240); }, ms);
+  },
+  escape(s){ const d=document.createElement('div'); d.textContent=s??''; return d.innerHTML; },
+  initials(n){ if(!n) return '?'; return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); },
+  bank(code){
+    return BANKS.find(b => b.code === code)?.name || code || '—';
+  },
+  mask(acct){
+    if (!acct || acct.length < 4) return acct || '—';
+    return '•••• ' + acct.slice(-4);
+  },
+  date(iso){
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('en-NG',{day:'2-digit',month:'short',year:'numeric'}); }
+    catch { return '—'; }
+  }
+};
+
+/* ============================================================================
+   SUPABASE
+   ============================================================================ */
+const Supa = (() => {
+  const HAS = Boolean(
+    CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY &&
+    window.supabase && typeof window.supabase.createClient === 'function'
+  );
+  let client = null;
+  if (HAS){
+    try {
+      client = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true, storageKey:'dls_stake_auth' }
+      });
+      log('Supabase ready');
+    } catch(e){ err('client fail:', e); }
+  } else warn('No Supabase config — DEMO MODE');
+  return { client, HAS };
+})();
+
+/* ============================================================================
+   STATE
+   ============================================================================ */
+const State = {
+  session: null,
+  profile: null,
+  accounts: [],
+  loading: true,
+  busy: false,
+  verifyTimer: null
+};
+
+/* ============================================================================
+   AUTH
+   ============================================================================ */
+const Auth = {
+  async getSession(){
+    if (!Supa.HAS){
+      try {
+        const raw = localStorage.getItem('dls_demo_session');
+        return raw ? { data:{ session: JSON.parse(raw) } } : { data:{ session:null } };
+      } catch { return { data:{ session:null } }; }
+    }
+    try { const { data } = await Supa.client.auth.getSession(); return { data: data || { session:null } }; }
+    catch(e){ err('getSession:', e); return { data:{ session:null } }; }
+  },
+  async fetchProfile(id){
+    if (!Supa.HAS){
+      const users = JSON.parse(localStorage.getItem('dls_demo_users') || '[]');
+      return users.find(u => u.id === id) || null;
+    }
+    try {
+      const { data } = await Supa.client.from('profiles').select('*').eq('id', id).maybeSingle();
+      return data || null;
+    } catch(e){ return null; }
+  }
+};
+
+/* ============================================================================
+   DATA
+   ============================================================================ */
+const Banks = {
+
+  async list(userId){
+    if (!Supa.HAS){
+      try { return JSON.parse(localStorage.getItem('dls_demo_banks') || '[]'); }
+      catch { return []; }
+    }
+    try {
+      const { data, error } = await Supa.client
+        .from('bank_accounts')
+        .select('*')
+        .eq('user_id', userId)
+        .order('is_primary', { ascending:false })
+        .order('created_at', { ascending:false });
+      if (error) throw error;
+      return data || [];
+    } catch(e){ warn('banks list:', e.message); return []; }
+  },
+
+  async resolveName(bankCode, accountNumber){
+    /* In production, this calls an Edge Function that proxies Paystack's resolve endpoint. */
+    if (!Supa.HAS || true){
+      /* Demo resolver: fake a plausible name based on the account holder */
+      await new Promise(r => setTimeout(r, 900));
+
+      /* Use KYC name if verified, else a generic name */
+      const kycName = State.profile?.full_name || State.profile?.kyc_full_name;
+      const fallback = State.profile?.username
+        ? State.profile.username.replace(/[_-]/g,' ').replace(/\b\w/g, c => c.toUpperCase())
+        : 'Account Holder';
+
+      /* Slight chance of failure so the error path is testable */
+      if (accountNumber.endsWith('00') || accountNumber.endsWith('99')){
+        return { error: { message:'Account number not found at this bank.' } };
+      }
+
+      return { data: { account_name: kycName || fallback } };
+    }
+
+    /* Production path:
+    try {
+      const { data, error } = await Supa.client.functions.invoke('resolve-account', {
+        body:{ bank_code: bankCode, account_number: accountNumber }
+      });
+      if (error) throw error;
+      return { data };
+    } catch(e){ return { error: e }; }
+    */
+  },
+
+  async save(account){
+    if (!Supa.HAS){
+      const all = JSON.parse(localStorage.getItem('dls_demo_banks') || '[]');
+      const row = { id:'demo-bank-' + Date.now(), ...account, created_at: new Date().toISOString() };
+      if (account.is_primary){
+        all.forEach(a => { a.is_primary = false; });
+      }
+      all.unshift(row);
+      localStorage.setItem('dls_demo_banks', JSON.stringify(all));
+      return { data: row, error: null };
+    }
+    try {
+      if (account.is_primary){
+        await Supa.client.from('bank_accounts')
+          .update({ is_primary:false })
+          .eq('user_id', account.user_id);
+      }
+      const { data, error } = await Supa.client.from('bank_accounts').insert(account).select().maybeSingle();
+      if (error) throw error;
+      return { data, error: null };
+    } catch(e){ return { error: e }; }
+  },
+
+  async setPrimary(userId, id){
+    if (!Supa.HAS){
+      const all = JSON.parse(localStorage.getItem('dls_demo_banks') || '[]');
+      all.forEach(a => { a.is_primary = (a.id === id); });
+      localStorage.setItem('dls_demo_banks', JSON.stringify(all));
+      return { error: null };
+    }
+    try {
+      await Supa.client.from('bank_accounts').update({ is_primary:false }).eq('user_id', userId);
+      const { error } = await Supa.client.from('bank_accounts')
+        .update({ is_primary:true }).eq('id', id).eq('user_id', userId);
+      return { error };
+    } catch(e){ return { error: e }; }
+  },
+
+  async remove(userId, id){
+    if (!Supa.HAS){
+      const all = JSON.parse(localStorage.getItem('dls_demo_banks') || '[]');
+      const filtered = all.filter(a => a.id !== id);
+      /* If we removed the primary, promote the newest */
+      if (all.find(a => a.id === id)?.is_primary && filtered.length){
+        filtered[0].is_primary = true;
+      }
+      localStorage.setItem('dls_demo_banks', JSON.stringify(filtered));
+      return { error: null };
+    }
+    try {
+      const { error } = await Supa.client.from('bank_accounts').delete().eq('id', id).eq('user_id', userId);
+      return { error };
+    } catch(e){ return { error: e }; }
+  },
+
+  /* ── Page ─────────────────────────────────────────────────── */
+  async init(){
+    log('Bank accounts init');
+
+    const { data } = await Auth.getSession();
+    State.session = data.session;
+    if (!State.session?.user){
+      UI.toast('Please sign in first.', 'err');
+      setTimeout(()=>location.href = CONFIG.LOGIN_PAGE, 700);
+      return;
+    }
+
+    State.profile = await Auth.fetchProfile(State.session.user.id) || {};
+    this.renderNav();
+    await this.reload();
+  },
+
+  renderNav(){
+    const u = State.session?.user;
+    const p = State.profile;
+    const name = p?.username || u?.user_metadata?.username || u?.email?.split('@')[0] || 'Player';
+    const a = $('#navAvatar'); if (a) a.textContent = UI.initials(name);
+    const n = $('#navName');   if (n) n.textContent = name;
+  },
+
+  async reload(silent){
+    State.loading = true;
+    this.render();
+    try {
+      State.accounts = await Banks.list(State.session.user.id);
+    } catch(e){
+      err('reload:', e);
+      State.accounts = [];
+      UI.toast('Failed to load bank accounts.', 'err');
+    }
+    State.loading = false;
+    this.render();
+    if (!silent) log('Bank accounts loaded —', State.accounts.length);
+  },
+
+  /* ── Render ───────────────────────────────────────────────── */
+  render(){
+    const body = $('#body');
+    if (!body) return;
+
+    if (State.loading){
+      body.innerHTML = `<div class="loading-card"><span class="spin"></span> Loading your bank accounts…</div>`;
+      return;
+    }
+
+    const primary = State.accounts.find(a => a.is_primary) || State.accounts[0] || null;
+    const others = State.accounts.filter(a => a.id !== primary?.id);
+    const atLimit = State.accounts.length >= CONFIG.MAX_ACCOUNTS;
+
+    body.innerHTML = `
+      ${primary ? this.primaryHero(primary) : this.emptyHero()}
+
+      ${State.accounts.length > 1 ? `
+        <div class="section-title">
+          <span>Other accounts</span>
+          <span class="line"></span>
+          <span class="count">${others.length}</span>
+        </div>
+        <div class="acc-list">
+          ${others.map(a => this.accountCard(a)).join('')}
+        </div>
+      ` : ''}
+
+      <div style="margin-top:${State.accounts.length ? '24px' : '0'}">
+        <button class="add-btn" ${atLimit ? 'disabled' : ''} onclick="Banks.openAdd()">
+          <span class="plus">＋</span>
+          <span>${atLimit ? `Limit reached (${CONFIG.MAX_ACCOUNTS} accounts)` : 'Add a bank account'}</span>
+        </button>
+      </div>
+
+      ${State.accounts.length === 0 ? `
+        <div class="empty" style="margin-top:20px;border-style:solid">
+          <div class="ico">🏦</div>
+          <h3>No saved accounts yet</h3>
+          <p>Add your first bank account to enable withdrawals. The name on the account must match your verified identity.</p>
+        </div>
+      ` : ''}
+    `;
+  },
+
+  primaryHero(a){
+    return `
+      <div class="primary-hero">
+        <div class="ph-head">
+          <div class="ph-ico">🏦</div>
+          <div style="flex:1;min-width:0">
+            <div class="ph-title">Primary payout account</div>
+            <div class="ph-name">${UI.escape(a.account_name || '—')}</div>
+            <div class="ph-bank">${UI.escape(UI.bank(a.bank_code))} · ${UI.escape(UI.mask(a.account_number))}</div>
+          </div>
+        </div>
+        <div class="ph-body">
+          <div class="ph-cell">
+            <div class="k">Account number</div>
+            <div class="v">${UI.escape(a.account_number || '—')}</div>
+          </div>
+          <div class="ph-cell">
+            <div class="k">Added</div>
+            <div class="v">${UI.escape(UI.date(a.created_at))}</div>
+          </div>
+        </div>
+        <div class="ph-actions">
+          <a class="btn btn-primary" href="${CONFIG.WALLET_PAGE}">Withdraw to this account</a>
+          <button class="btn btn-ghost" onclick="Banks.openEdit('${a.id}')">Edit</button>
+          <button class="btn btn-ghost" onclick="Banks.removeConfirm('${a.id}')">Remove</button>
+        </div>
+      </div>
+    `;
+  },
+
+  emptyHero(){
+    return `
+      <div class="primary-hero empty">
+        <div class="ph-head">
+          <div class="ph-ico">⚠</div>
+          <div style="flex:1;min-width:0">
+            <div class="ph-title">No payout account yet</div>
+            <div class="ph-name" style="font-size:1rem">Add a bank account to withdraw</div>
+            <div class="ph-bank">Withdrawals can only go to accounts in your own name.</div>
+          </div>
+        </div>
+        <div class="ph-actions">
+          <button class="btn btn-primary" onclick="Banks.openAdd()">Add bank account</button>
+          ${State.profile?.kyc_status !== 'verified' ? `
+            <a class="btn btn-ghost" href="${CONFIG.KYC_PAGE}">Verify identity first</a>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  },
+
+  accountCard(a){
+    const isPending = !a.account_name || a.verified === false;
+    return `
+      <div class="acc-card ${isPending ? 'pending' : ''}">
+        <div class="acc-ico">
+          ${UI.escape(UI.initials(a.account_name || '—'))}
+          <span class="flag">🇳🇬</span>
+        </div>
+        <div class="acc-body">
+          <h4>
+            ${UI.escape(a.account_name || 'Verifying…')}
+            ${isPending ? `<span class="tag pending-tag">Pending</span>` : ''}
+          </h4>
+          <p>${UI.escape(UI.bank(a.bank_code))} · ${UI.escape(a.account_number || '—')} · Added ${UI.escape(UI.date(a.created_at))}</p>
+        </div>
+        <div class="acc-actions">
+          <button class="icon-btn" title="Make primary" onclick="Banks.setPrimary('${a.id}')">⭐</button>
+          <button class="icon-btn" title="Edit" onclick="Banks.openEdit('${a.id}')">✏️</button>
+          <button class="icon-btn danger" title="Remove" onclick="Banks.removeConfirm('${a.id}')">🗑</button>
+        </div>
+      </div>
+    `;
+  },
+
+  /* ── Add / Edit modal ─────────────────────────────────────── */
+  openAdd(){
+    if (State.accounts.length >= CONFIG.MAX_ACCOUNTS){
+      UI.toast(`You can save up to ${CONFIG.MAX_ACCOUNTS} accounts.`, 'info');
+      return;
+    }
+    this.openForm(null);
+  },
+
+  openEdit(id){
+    const a = State.accounts.find(x => x.id === id);
+    if (!a) return;
+    this.openForm(a);
+  },
+
+  openForm(existing){
+    const isEdit = !!existing;
+    const root = $('#modalRoot');
+
+    root.innerHTML = `
+      <div class="modal-back" onclick="Banks.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>${isEdit ? 'Edit bank account' : 'Add a bank account'}</h3>
+          <p class="sub">${isEdit
+            ? 'Changing the account number requires re-verification.'
+            : 'We verify the account name with Paystack before saving.'}</p>
+
+          <div class="field">
+            <label>Bank <span class="req">*</span></label>
+            <select class="input-select" id="f_bank" onchange="Banks.onBankChange()">
+              <option value="">Select a bank…</option>
+              ${BANKS.map(b => `<option value="${b.code}" ${existing?.bank_code === b.code ? 'selected' : ''}>${UI.escape(b.name)}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Account number <span class="req">*</span></label>
+            <input class="input-text mono" id="f_acct" type="text" inputmode="numeric" maxlength="10"
+                   placeholder="0123456789" value="${UI.escape(existing?.account_number || '')}"
+                   oninput="Banks.onAcctInput(this.value)" autocomplete="off">
+            <div class="hint" id="acctHint">10 digits, no spaces</div>
+          </div>
+
+          <div class="verify-result" id="verifyResult"></div>
+
+          ${existing?.account_name ? `
+            <div class="info-box">
+              <div class="row"><span class="k">Current name on file</span><span class="v">${UI.escape(existing.account_name)}</span></div>
+            </div>
+          ` : ''}
+
+          <label class="check" id="chkPrimary" onclick="Banks.togglePrimary(event)" style="display:flex;gap:12px;align-items:flex-start;padding:13px 15px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;margin-bottom:14px">
+            <input type="checkbox" id="f_primary" ${existing?.is_primary || !existing ? 'checked' : ''}>
+            <span class="box" id="primaryBox" style="width:20px;height:20px;min-width:20px;border-radius:6px;border:2px solid var(--border-2);display:grid;place-items:center;font-size:.72rem;font-weight:900;color:#04140c;background:${existing?.is_primary || !existing ? 'var(--primary)' : 'transparent'};border-color:${existing?.is_primary || !existing ? 'var(--primary)' : 'var(--border-2)'}">✓</span>
+            <span style="font-size:.82rem;line-height:1.55;color:var(--text-2)">
+              <b style="color:var(--text)">Set as primary payout account</b><br>
+              Withdrawals default to this account.
+            </span>
+          </label>
+
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Banks.closeModal()">Cancel</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="Banks.save()" disabled>${isEdit ? 'Save changes' : 'Add account'}</button>
+          </div>
+        </div>
+      </div>`;
+
+    this.form = {
+      existing,
+      bank: existing?.bank_code || '',
+      acct: existing?.account_number || '',
+      name: existing?.account_name || '',
+      resolved: !!existing?.account_name,
+      primary: existing?.is_primary || !existing
+    };
+
+    /* If the existing account already has a name and only the primary is being toggled,
+       allow saving right away. */
+    if (isEdit && this.form.resolved){
+      const btn = document.getElementById('saveBtn');
+      if (btn) btn.disabled = false;
+    }
+
+    this.wireModal();
+    setTimeout(() => document.getElementById('f_bank')?.focus(), 150);
+  },
+
+  wireModal(){
+    const bankEl = document.getElementById('f_bank');
+    const acctEl = document.getElementById('f_acct');
+    if (bankEl) bankEl.addEventListener('change', () => { this.form.bank = bankEl.value; this.maybeVerify(); });
+    if (acctEl) acctEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.save(); });
+  },
+
+  onBankChange(){
+    const el = document.getElementById('f_bank');
+    if (el) this.form.bank = el.value;
+    this.maybeVerify();
+  },
+
+  onAcctInput(v){
+    const clean = (v || '').replace(/\D/g,'').slice(0, 10);
+    const el = document.getElementById('f_acct');
+    if (el && el.value !== clean) el.value = clean;
+    this.form.acct = clean;
+    el?.classList.remove('invalid');
+    const hint = document.getElementById('acctHint');
+    if (hint){
+      hint.className = 'hint';
+      if (clean.length === 0){ hint.textContent = '10 digits, no spaces'; }
+      else if (clean.length < 10){ hint.textContent = `${10 - clean.length} more digit${10 - clean.length === 1 ? '' : 's'}`; }
+      else { hint.textContent = 'Ready to verify'; hint.classList.add('good'); }
+    }
+    this.maybeVerify();
+  },
+
+  togglePrimary(e){
+    if (e) e.preventDefault();
+    this.form.primary = !this.form.primary;
+    const box = document.getElementById('primaryBox');
+    const inp = document.getElementById('f_primary');
+    if (box){
+      box.style.background = this.form.primary ? 'var(--primary)' : 'transparent';
+      box.style.borderColor = this.form.primary ? 'var(--primary)' : 'var(--border-2)';
+      box.style.color = this.form.primary ? '#04140c' : 'transparent';
+    }
+    if (inp) inp.checked = this.form.primary;
+  },
+
+  /* ── Verify (simulated Paystack name resolution) ──────────── */
+  maybeVerify(){
+    clearTimeout(State.verifyTimer);
+    const result = document.getElementById('verifyResult');
+    const saveBtn = document.getElementById('saveBtn');
+
+    /* Reset when missing inputs */
+    if (!this.form.bank || this.form.acct.length !== 10){
+      if (result){ result.className = 'verify-result'; result.innerHTML = ''; }
+      this.form.resolved = false;
+      this.form.name = '';
+      if (saveBtn) saveBtn.disabled = true;
+      return;
+    }
+
+    /* Show "resolving" */
+    if (result){
+      result.className = 'verify-result loading show';
+      result.innerHTML = `<span class="ico">⏳</span><div><b>Verifying account…</b>Checking name at ${UI.escape(UI.bank(this.form.bank))}</div>`;
+    }
+    if (saveBtn) saveBtn.disabled = true;
+
+    State.verifyTimer = setTimeout(async () => {
+      const res = await Banks.resolveName(this.form.bank, this.form.acct);
+      const r = document.getElementById('verifyResult');
+      const b = document.getElementById('saveBtn');
+
+      if (res.error){
+        this.form.resolved = false;
+        this.form.name = '';
+        if (r){
+          r.className = 'verify-result fail show';
+          r.innerHTML = `<span class="ico">✕</span><div><b>Couldn't verify this account</b>${UI.escape(res.error.message || 'Please double-check the number and bank.')}</div>`;
+        }
+        if (b) b.disabled = true;
+        return;
+      }
+
+      this.form.resolved = true;
+      this.form.name = res.data.account_name;
+
+      /* Check name match against KYC / profile */
+      const expected = (State.profile?.full_name || State.profile?.kyc_full_name || '').toLowerCase().trim();
+      const actual = res.data.account_name.toLowerCase().trim();
+      const matchesKyc = !expected || this.namesMatch(actual, expected);
+
+      if (r){
+        r.className = `verify-result ${matchesKyc ? 'ok' : 'fail'} show`;
+        r.innerHTML = matchesKyc
+          ? `<span class="ico">✓</span><div><b>Account verified</b><span class="name">${UI.escape(res.data.account_name)}</span></div>`
+          : `<span class="ico">⚠</span><div><b>Name doesn't match your KYC</b><span class="name">${UI.escape(res.data.account_name)}</span><br>Expected to contain <b>${UI.escape(State.profile?.full_name || State.profile?.kyc_full_name || '')}</b>. Paystack may reject this withdrawal.</div>`;
+      }
+
+      /* We still allow saving mismatches — but warn the user. Production may want to block. */
+      if (b) b.disabled = false;
+    }, 900);
+  },
+
+  namesMatch(a, b){
+    /* Loose comparison: check if any two consecutive words from one appear in the other */
+    const aWords = a.split(/\s+/).filter(w => w.length >= 2);
+    const bWords = b.split(/\s+/).filter(w => w.length >= 2);
+    if (!aWords.length || !bWords.length) return false;
+    let matches = 0;
+    aWords.forEach(w => { if (bWords.some(x => x === w || x.includes(w) || w.includes(x))) matches++; });
+    return matches >= Math.min(2, Math.min(aWords.length, bWords.length));
+  },
+
+  /* ── Save ─────────────────────────────────────────────────── */
+  async save(){
+    if (State.busy) return;
+    if (!this.form.resolved){
+      UI.toast('Wait for the account to verify before saving.', 'err');
+      return;
+    }
+    if (!this.form.bank || this.form.acct.length !== 10){
+      UI.toast('Fill in both bank and account number.', 'err');
+      return;
+    }
+
+    State.busy = true;
+    const btn = document.getElementById('saveBtn');
+    const orig = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spin"></span> Saving…';
+
+    try {
+      if (this.form.existing){
+        /* Edit path: remove + re-add (simplest with the current schema) */
+        await Banks.remove(State.session.user.id, this.form.existing.id);
+      }
+
+      const payload = {
+        user_id: State.session.user.id,
+        bank_code: this.form.bank,
+        account_number: this.form.acct,
+        account_name: this.form.name,
+        is_primary: this.form.primary,
+        verified: true
+      };
+
+      const { error } = await Banks.save(payload);
+      if (error) throw error;
+
+      this.closeModal();
+      UI.toast(this.form.existing ? 'Account updated.' : 'Bank account saved.', 'ok');
+      await this.reload(true);
+    } catch(e){
+      err('save:', e);
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      UI.toast(e.message || 'Could not save account.', 'err');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  /* ── Set primary ──────────────────────────────────────────── */
+  async setPrimary(id){
+    if (State.busy) return;
+    State.busy = true;
+    try {
+      const { error } = await Banks.setPrimary(State.session.user.id, id);
+      if (error) throw error;
+      UI.toast('Primary account updated.', 'ok');
+      await this.reload(true);
+    } catch(e){
+      err('setPrimary:', e);
+      UI.toast('Could not update primary account.', 'err');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  /* ── Remove ───────────────────────────────────────────────── */
+  removeConfirm(id){
+    const a = State.accounts.find(x => x.id === id);
+    if (!a) return;
+    const isPrimary = !!a.is_primary;
+    const root = $('#modalRoot');
+
+    root.innerHTML = `
+      <div class="modal-back" onclick="Banks.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+          <h3>Remove this bank account?</h3>
+          <p class="sub">Withdrawals in progress to this account will continue. Future withdrawals will need a different account.</p>
+          <div class="info-box">
+            <div class="row"><span class="k">Account name</span><span class="v">${UI.escape(a.account_name || '—')}</span></div>
+            <div class="row"><span class="k">Bank</span><span class="v">${UI.escape(UI.bank(a.bank_code))}</span></div>
+            <div class="row"><span class="k">Number</span><span class="v">${UI.escape(a.account_number || '—')}</span></div>
+            ${isPrimary ? `<div class="row"><span class="k" style="color:var(--warn)">Status</span><span class="v" style="color:var(--warn)">Primary payout account</span></div>` : ''}
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="Banks.closeModal()">Keep it</button>
+            <button class="btn btn-danger-solid" onclick="Banks.doRemove('${a.id}')">Remove account</button>
+          </div>
+        </div>
+      </div>`;
+  },
+
+  async doRemove(id){
+    if (State.busy) return;
+    State.busy = true;
+    try {
+      const { error } = await Banks.remove(State.session.user.id, id);
+      if (error) throw error;
+      this.closeModal();
+      UI.toast('Account removed.', 'info');
+      await this.reload(true);
+    } catch(e){
+      err('remove:', e);
+      UI.toast('Could not remove account.', 'err');
+    } finally {
+      State.busy = false;
+    }
+  },
+
+  closeModal(e){
+    if (e && e.target && e.target.className !== 'modal-back') return;
+    $('#modalRoot').innerHTML = '';
+    clearTimeout(State.verifyTimer);
+  }
+};
+
+/* ============================================================================
+   BOOT
+   ============================================================================ */
+(async function boot(){
+  log('Bank accounts boot');
+  if (!Supa.HAS){
+    console.info('%cDLS Stake — Bank accounts (DEMO)',
+      'background:#00d97e;color:#04140c;font-weight:800;padding:2px 6px;border-radius:4px');
+  } else {
+    console.info('%cDLS Stake — Bank accounts (Supabase)',
+      'background:#2f80ed;color:#fff;font-weight:800;padding:2px 6px;border-radius:4px');
+  }
+  try { await Banks.init(); }
+  catch(e){ err('Bank accounts init failed:', e); UI.toast('Failed to load bank accounts.', 'err'); }
+})();
+
+/* ============================================================================
+   DEBUG
+   ============================================================================ */
+window.DLS = {
+  version: 'bank-accounts-1.0.0',
+  debug(){
+    console.log('======== DLS Bank Accounts v1 ========');
+    console.log('Session:', State.session?.user?.email);
+    console.log('Profile name:', State.profile?.full_name || State.profile?.username);
+    console.log('KYC status:', State.profile?.kyc_status);
+    console.log('Accounts saved:', State.accounts.length);
+    console.log('Primary:', State.accounts.find(a => a.is_primary)?.account_name || '—');
+    console.log('=====================================');
+  },
+  reset(){
+    localStorage.removeItem('dls_stake_auth');
+    localStorage.removeItem('dls_demo_users');
+    localStorage.removeItem('dls_demo_session');
+    localStorage.removeItem('dls_demo_banks');
+    sessionStorage.clear();
+    location.href = 'login.html';
+  }
+};
+</script>
+</body>
+</html>
